@@ -220,9 +220,9 @@
     "$value": {
       "colorSpace": "srgb",
       "components": [
-        0.11372549086809158,
-        0.30588236451148987,
-        0.8470588326454163
+        0.06693556904792786,
+        0.2817048132419586,
+        0.8865650296211243
       ]
     },
     "$description": "btn primary, btn-cta, book now button, btn admin."
