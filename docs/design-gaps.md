@@ -79,8 +79,15 @@ failure, but it needs a design decision.
 no design for the button before it is pressed.
 
 Currently rendered with `--color-icon-subtle`. **This is a placeholder and needs
-a design decision** — most likely an outlined heart rather than a recoloured
-filled one.
+a design decision.**
+
+**Corrected after QA disputed the wording.** This entry used to propose "an
+outlined heart rather than a recoloured filled one" as the likely fix, which
+understated what shipped: the build already renders it outlined *and*
+recoloured — `font-variation-settings: "FILL" 0` on the unpressed state, with
+FILL flipping 0↔1 on toggle. So the open question is not whether to outline it;
+it is whether this outlined, subtle-coloured heart is the design. Still a
+decision, but a narrower one than the entry claimed.
 
 ### 6. The photo is an empty placeholder
 
@@ -92,12 +99,27 @@ Not a defect, recorded so nobody hunts for a missing asset.
 
 ---
 
-### 7. RESOLVED — `--color-text-accent` failed contrast as text
+### 7. HALF RESOLVED — `--color-text-accent` failed contrast as text
 
 The rating score (8:772) used `--color-text-accent`, which aliased
 `color-orange-500` (#f0932b). On the light surface that is **2.36:1**, where
 WCAG AA requires 4.5:1 for text at that size. Storybook's a11y addon flagged it
 as a Serious `color-contrast` violation.
+
+**Still only half resolved, and now guarded in code.** QA re-checked this on the
+staging build: the built tokens are correct (light `#9c601c` = 5.12:1, dark
+`#f0932b` = 6.44:1), but `get_variable_defs` on both 8:778 and 12:1343 **still
+returns `#f0932b` for light mode**. The Figma variable was never updated — only
+the built token was. This entry already records that a re-export silently
+reverted this fix once; nothing had been done to stop it happening a third time.
+
+`src/test/tokenContrast.test.ts` now fails the suite if
+`--color-text-accent` drops below 4.5:1 on the card surface in either mode, or
+if it points back at `orange-500`. That is a net, not a fix.
+
+**Needed in Figma:** add `color-orange-700` and repoint the light-mode
+`color/text/accent` alias at it, so the design file stops disagreeing with the
+shipped token.
 
 **Fixed at the token, not in the component.** The component already referenced
 `var(--color-text-accent)`, so nothing in `cardText` changed — which is the point
@@ -179,6 +201,61 @@ price carries blank space under it.
 
 **Needed:** a yes or no on whether that reserve is wanted. If not, drop the
 `min-height` from `.hds-card-text__meta` and the card will shrink to its content.
+
+---
+
+### 10. Horizontal orientation: the node contradicts itself
+
+Found by QA on staging, and failed there — the two horizontal rows are 2 of the
+3 failures on the board.
+
+`cardLayout` (8:1251) in horizontal splits its 269px row **unevenly**: cardImage
+8:1213 measures 130.5 and the text column 8:1318 measures 128.5. The build
+renders them equal, 129.5 / 129.5, via `grid-template-columns: 1fr 1fr`.
+
+The node disagrees with itself, which is why this is a gap and not a patch:
+
+- **Its declared layout says equal.** Both 8:1213 and 8:1318 are `flex: 1 0 0`,
+  which is an instruction to share the row evenly.
+- **Its rendered geometry says uneven.** The image carries a 1px stroke aligned
+  outside, so it grows past its share by exactly the 2px that separates 130.5
+  from 128.5.
+
+The build followed the declared intent. Grid was chosen over flex precisely so
+the stroke could not skew the tracks — that reasoning was in a CSS comment in
+`cardLayout.css`, and **only there**, which is the same mistake this document
+already corrected once on the Button width: reasoning parked where nobody
+reviewing the design will ever read it. It is here now.
+
+**Needed:** set the cardImage stroke to **inside** in Figma. The node then
+renders 129.5 / 129.5, matches its own `flex: 1 0 0`, and matches the build with
+no code change. If the uneven split is genuinely wanted, say so and the grid
+becomes explicit tracks instead — but a 2px asymmetry that only exists because
+of a stroke is far more likely to be an accident than a decision.
+
+This is the same root cause as Button gap 6. Two components now, so it is worth
+fixing at the source rather than per component.
+
+### 11. `elevation/level2` has no dark variant, so hover disappears in dark
+
+Found by QA on staging, and failed there — the third of the 3 failures.
+
+`cardContainer` `state=hover` raises the card on `--elevation-level2`. That token
+emits the **same value in both modes**: `#1b27330f` and `#1b27331a`.
+
+In dark that shadow colour, `#1b2733`, is *exactly* `--color-bg-surface-primary`.
+The card is therefore casting a shadow in its own surface colour, over a
+`#12181f` backdrop, and the composite difference works out at roughly 2/255 —
+about 0.6%. QA confirmed by eye at 2x zoom that dark `enable` and dark `hover`
+are indistinguishable.
+
+The component applies the token correctly. There is nothing to fix in the CSS,
+and no dark node to build against — the failure is recorded on observable
+grounds, not against a design.
+
+**Needed:** a dark-mode value for `elevation/level2`. A shadow in dark mode
+generally needs to be darker and more opaque than its light counterpart, not the
+same value re-emitted, because it is no longer sitting on white.
 
 ---
 
@@ -349,6 +426,49 @@ browser-driver test. Not a defect — an untested path.
 26:87, so this is faithful and not a build defect, and axe passes it because
 disabled controls are exempt from WCAG 1.4.3. Flagged because a label at 1.27:1
 cannot really be read.
+
+---
+
+## Token contrast
+
+### Open: several semantic text tokens fail WCAG AA
+
+Not a Card gap — a token-set gap, found while building the contrast guard for
+gap 7. Measured against `--color-bg-surface-primary` in each mode from the
+generated CSS (white in light, `#1b2733` in dark). WCAG AA is 4.5:1 for normal
+text.
+
+| Token | Light | Dark |
+|---|---|---|
+| `--color-text-warning` | 5.93 | **2.56** |
+| `--color-text-negative` | 7.25 | **3.29** |
+| `--color-text-positive` | **4.38** | **3.47** |
+| `--color-text-link` | 7.26 | **4.12** |
+| `--color-text-subtle` | **3.06** | 8.81 |
+| `--color-text-subtlest` | **1.72** | 4.20 |
+
+`--color-text-disabled` is excluded: WCAG exempts disabled controls.
+
+The dark column is the serious half. **`--color-text-warning` at 2.56:1 and
+`--color-text-negative` at 3.29:1 are the tokens a product reaches for when it
+has to tell someone something has gone wrong** — precisely the message that must
+not be hard to read. Every one of these is a *text* token, so there is no
+reading in which 3:1 is the applicable bar.
+
+Several are near misses that a small darkening in light or lightening in dark
+would fix, exactly as `orange-500` → `orange-700` fixed the accent. The pattern
+is the same: a colour picked as a decorative hue, then reused as text.
+
+**Not asserted in the test suite, deliberately.** `src/test/tokenContrast.test.ts`
+guards only `--color-text-accent`, because that decision was already made twice
+and lost once. These have not been ruled on by anyone, and CLAUDE.md says a gap
+is reported rather than filled in — failing the suite on them would block the
+repo on someone else's open question, and picking replacement values would be
+inventing tokens.
+
+**Needed:** a designer's pass over the dark palette for text roles, and a
+decision on whether AA is the bar the system holds itself to. Once that is
+settled, the guard test is one line per pair to extend.
 
 ---
 
