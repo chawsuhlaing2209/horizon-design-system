@@ -182,6 +182,89 @@ price carries blank space under it.
 
 ---
 
+## Button — Figma node 26:70
+
+The set publishes `variant` (filled | outlined) x `state` (enable | hover |
+pressed | disabled) = 8 nodes. All eight were built and all eight match. The
+gaps below are about what the set does **not** publish.
+
+### 1. There is no `focused` variant
+
+The set has no `state=focused` node, so there is no design for what a Horizon
+button looks like under keyboard focus. A button that cannot be seen when
+focused fails WCAG 2.4.7, so this could not simply be skipped.
+
+Built from the two tokens the system already names for exactly this job —
+`--color-border-focused` ("Keyboard focus ring") and `--border-width-focused`
+("Focus ring thickness") — applied as a `2px` outline at `1px` offset on
+`:focus-visible`. **Nothing was invented**: both tokens exist and both say what
+they are for.
+
+**Needed:** a `state=focused` variant in the set, so the ring is reviewed rather
+than inferred. Until it exists, the ring is unverified against a design.
+
+### 2. The pressed stroke is bound to a token named `focused`
+
+The outlined pressed node (26:102) binds its stroke to the style
+`color/border/primary/focused` — `#13338f`. So the token that carries the
+**pressed** border is the one named **focused**.
+
+Mirrored verbatim (`--color-border-primary-focused`) rather than swapped for a
+better-named token, because swapping would have stopped matching the design.
+
+**Needed:** either rename the style to `color/border/primary/pressed`, or
+confirm that pressed and focused are deliberately the same value. Right now the
+name and the usage disagree, and a reader of the CSS cannot tell which is
+intended. Also logged in `docs/naming-conflicts.md`.
+
+### 3. The outlined strokes are styles, not variables
+
+`color/border/primary`, `color/border/primary/hover` and
+`color/border/primary/focused` come back from the Figma connection as raw style
+paths, while every other value on the node comes back as a
+`var(--horizon-semantic-*)` variable. The matching semantic tokens do exist in
+the built set (`--color-border-primary`, `--color-border-primary-hover`,
+`--color-border-primary-focused`), so the build is correct — but the design file
+is binding these three through styles rather than variables.
+
+**Needed:** rebind those three strokes to the variables, so the outlined variant
+stays in sync when the primary blue moves. As it stands, a change to the
+variable would silently miss the outlined button.
+
+### 4. No `size` property, no `loading` state, no icon slot
+
+CLAUDE.md asks that a component cover *"every interaction state the product
+uses: default, hover, pressed, focus, disabled, loading, error, as applicable."*
+The set publishes no `size`, no `loading` and no `error`, so none was built —
+they are not applicable until they are designed.
+
+Two related observations:
+
+- The auto-layout carries an 8px gap (`--spacing-gap-xs`), which only does
+  anything when the label sits beside something. Nothing else is in the node.
+  The gap is implemented and the label is `children`, so an icon composes
+  correctly, but **there is no `icon` property in the design** and none was
+  invented as a prop.
+- The label "Sign in" sits on the node as sample content, not as a text
+  property, so there is no design-named prop for it. It is `children`.
+
+### 5. Observation: outlined hover changes only the 1px stroke
+
+Across outlined enable, hover and pressed, the label stays
+`--color-text-link` (#1547d5) and only the stroke colour moves — #1547d5 to
+#1840b1 to #13338f. Faithful to the design and built that way, but it means the
+entire hover affordance on the outlined button is a one-pixel border shifting by
+a small amount of blue. Worth a designer's second look; not a build defect.
+
+### 6. Observation: filled is 44px tall, outlined is 46px
+
+In the node, filled measures 44 (12 + 20 + 12, no stroke) and outlined measures
+46 — the stroke sits outside the padding box. Built exactly that way rather than
+equalising the two, so the outlined button is 2px taller and 2px wider than the
+filled one. If they are meant to line up in a row, the design needs to say so.
+
+---
+
 ## Token build
 
 ### Fixed: `Semi Bold` is now emitted as `600`

@@ -52,3 +52,52 @@ a control label in that one file — never in the component API, never in a type
 never in anything a consumer imports.
 
 **Status:** resolved. No decision needed.
+
+---
+
+## Button — `state` names a token `focused` that carries `pressed`
+
+Figma node 26:70. No prop was renamed; both Figma property names are kept
+verbatim:
+
+```tsx
+<Button variant="outlined" state="pressed">Sign in</Button>
+```
+
+The conflict is in the **token** name, not the prop. The outlined pressed node
+(26:102) binds its stroke to the style `color/border/primary/focused`, which
+builds to `--color-border-primary-focused`. So `button.css` reads:
+
+```css
+.hds-button[data-variant='outlined']:not(:disabled):active { /* pressed */
+  border-color: var(--color-border-primary-focused);
+}
+```
+
+A reader who trusts the token name will conclude this is the focus ring. It is
+not — the focus ring is `--color-border-focused`, a different token, applied on
+`:focus-visible`. Two tokens whose names differ by one word carry two unrelated
+states.
+
+Mirrored rather than substituted, because substituting would have stopped
+matching the design.
+
+**Suggested rename:** `color/border/primary/focused` → `color/border/primary/pressed`
+in Figma, which would build to `--color-border-primary-pressed` and put the name
+back in step with the usage. Alternatively, confirm that pressed and focused are
+deliberately one value and say so in the token description.
+
+**Status:** open — needs a designer's decision. Also in `docs/design-gaps.md`.
+
+---
+
+## Button — `state="enable"` is not `"enabled"`
+
+Figma spells the default state `enable`, not `enabled`. CLAUDE.md says prop
+names match Figma exactly, so the prop value is `enable`. It reads slightly off
+in English next to `disabled`.
+
+Kept verbatim. **Suggested rename in Figma:** `enable` → `enabled`, at which
+point the code follows.
+
+**Status:** open — cosmetic, low priority.
