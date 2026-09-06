@@ -100,6 +100,37 @@ describe('button', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
+  // Keyboard activation is the platform's job, and neither this suite nor the
+  // QA harness can deliver a trusted keypress — a bare native <button> injected
+  // into a real page records zero clicks from a synthetic Enter too. So these
+  // do not assert that Enter fires onClick. They assert the three things that
+  // would BREAK native activation if they were wrong, which is the part that is
+  // actually ours. Logged as a coverage gap in docs/design-gaps.md.
+  describe('keyboard activation is not obstructed', () => {
+    it('is a native button, not a div with a role', () => {
+      render(<Button>Sign in</Button>);
+      expect(button().tagName).toBe('BUTTON');
+      expect(button().getAttribute('role')).toBe(null);
+    });
+
+    it('is in the tab order and is not given a hand-rolled tabIndex', () => {
+      render(<Button>Sign in</Button>);
+      expect(button().tabIndex).toBe(0);
+      expect(button().hasAttribute('tabindex')).toBe(false);
+    });
+
+    it('does not intercept keydown, and passes a handler through', () => {
+      const onKeyDown = vi.fn();
+      render(<Button onKeyDown={onKeyDown}>Sign in</Button>);
+      const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+      act(() => { button().dispatchEvent(event); });
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      // Nothing in the component calls preventDefault, so the browser is still
+      // free to synthesise the click.
+      expect(event.defaultPrevented).toBe(false);
+    });
+  });
+
   it('passes through native button attributes', () => {
     render(<Button aria-label="Sign in to Horizon" name="signin">Sign in</Button>);
     expect(button().getAttribute('aria-label')).toBe('Sign in to Horizon');
