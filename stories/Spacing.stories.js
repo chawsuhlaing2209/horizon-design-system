@@ -1,5 +1,6 @@
 import { core, space, MODES, byType, groupBy, dimensionFamily, spaceGroup, sortByStep } from './lib/data.js';
 import { page, section, groupLabel, table, nameChip, value, alias, desc, el, warn } from './lib/ui.js';
+import { dom } from './lib/DomHost';
 
 const px = (v) => parseFloat(v) || 0;
 
@@ -27,7 +28,7 @@ export default {
   },
 };
 
-export const CoreScale = () =>
+const CoreScale_raw = () =>
   page(
     section(
       `Core scale — ${coreSpacing.length} steps`,
@@ -38,9 +39,8 @@ export const CoreScale = () =>
       ),
     ),
   );
-CoreScale.storyName = 'Core scale';
 
-export const SemanticByMode = () => {
+const SemanticByMode_raw = () => {
   const rolesWeb = spacingRoles('web');
   const differing = rolesWeb.filter((t) =>
     new Set(MODES.map((m) => lookup[m].get(t.name)?.value)).size > 1);
@@ -74,9 +74,8 @@ export const SemanticByMode = () => {
     ),
   );
 };
-SemanticByMode.storyName = 'Semantic, by mode';
 
-export const AppliedScale = () =>
+const AppliedScale_raw = () =>
   page(
     section(
       'Applied',
@@ -98,4 +97,12 @@ export const AppliedScale = () =>
             ]))),
     ),
   );
+
+// Each story builds plain DOM; dom() hosts it inside a React element.
+export const CoreScale = () => dom(CoreScale_raw());
+export const SemanticByMode = () => dom(SemanticByMode_raw());
+export const AppliedScale = () => dom(AppliedScale_raw());
+
+CoreScale.storyName = 'Core scale';
+SemanticByMode.storyName = 'Semantic, by mode';
 AppliedScale.storyName = 'Applied';

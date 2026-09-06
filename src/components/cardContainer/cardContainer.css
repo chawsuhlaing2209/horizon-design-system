@@ -1,0 +1,35 @@
+/* cardContainer — 8:804 (state = enable | hover) */
+
+.hds-card,
+.hds-card *,
+.hds-card *::before,
+.hds-card *::after {
+  box-sizing: border-box;
+}
+
+.hds-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+  padding: var(--spacing-padding-sm) var(--spacing-padding-md);
+  background: var(--color-bg-surface-primary);
+  border-radius: var(--border-radius-control);
+  transition: box-shadow 120ms ease-out;
+}
+
+/* state = hover carries elevation/level2. Driven by real hover, and forcible
+ * via data-state so a story can pin the state for review. */
+.hds-card:hover,
+.hds-card[data-state='hover'] {
+  box-shadow: var(--elevation-level2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hds-card { transition: none; }
+}
+
+/* cardItems — 8:810 */
+.hds-card__items {
+  width: 100%;
+}

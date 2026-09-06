@@ -1,5 +1,6 @@
 import { core, space, MODES, byType, groupBy, dimensionFamily, spaceGroup, sortByStep } from './lib/data.js';
 import { page, section, groupLabel, table, nameChip, value, alias, desc, el } from './lib/ui.js';
+import { dom } from './lib/DomHost';
 
 const dims = byType(core, 'dimension');
 const coreFamily = (prefix) => sortByStep(dims.filter((t) => t.name.startsWith(prefix)));
@@ -20,7 +21,7 @@ export default {
   },
 };
 
-export const Radius = () =>
+const Radius_raw = () =>
   page(
     section(
       'Corner radius',
@@ -48,7 +49,7 @@ export const Radius = () =>
     ),
   );
 
-export const BorderWidths = () =>
+const BorderWidths_raw = () =>
   page(
     section(
       'Border width',
@@ -79,9 +80,8 @@ export const BorderWidths = () =>
         ])),
     ),
   );
-BorderWidths.storyName = 'Border widths';
 
-export const SizeScale = () =>
+const SizeScale_raw = () =>
   page(
     section(
       'Size scale',
@@ -107,4 +107,11 @@ export const SizeScale = () =>
       ]).flat(),
     ),
   );
+
+// Each story builds plain DOM; dom() hosts it inside a React element.
+export const Radius = () => dom(Radius_raw());
+export const BorderWidths = () => dom(BorderWidths_raw());
+export const SizeScale = () => dom(SizeScale_raw());
+
+BorderWidths.storyName = 'Border widths';
 SizeScale.storyName = 'Size scale';

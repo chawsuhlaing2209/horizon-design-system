@@ -1,5 +1,6 @@
 import { semanticColor, groupBy, semanticGroup } from './lib/data.js';
 import { page, section, groupLabel, themeSplit, table, nameChip, value, alias, desc, el } from './lib/ui.js';
+import { dom } from './lib/DomHost';
 
 const GROUP_NOTE = {
   bg: 'Surfaces and fills.',
@@ -48,7 +49,7 @@ export default {
   },
 };
 
-export const LightAndDark = () => {
+const LightAndDark_raw = () => {
   const dark = byName('dark');
   return page(
     section(
@@ -61,9 +62,8 @@ export const LightAndDark = () => {
     ),
   );
 };
-LightAndDark.storyName = 'Light and dark';
 
-export const InContext = () =>
+const InContext_raw = () =>
   page(
     section(
       'In context',
@@ -112,4 +112,10 @@ export const InContext = () =>
       ),
     ),
   );
+
+// Each story builds plain DOM; dom() hosts it inside a React element.
+export const LightAndDark = () => dom(LightAndDark_raw());
+export const InContext = () => dom(InContext_raw());
+
+LightAndDark.storyName = 'Light and dark';
 InContext.storyName = 'In context';

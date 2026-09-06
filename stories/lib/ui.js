@@ -1,22 +1,13 @@
-// Small DOM helpers. The framework here is plain HTML on purpose: token docs
-// should not need a UI framework to render, and staying framework-free keeps
-// these pages working if components later arrive in React, Vue or anything else.
+// Docs-only helpers, built on the shared DOM helper. The framework here is
+// plain HTML on purpose: token docs should not need a UI framework to render.
+//
+// `el` itself lives in ./dom.js. The components are React, so this helper is
+// docs-only; it is re-exported here so the existing
+// `import { el, ... } from './lib/ui.js'` in every docs story keeps working.
 
-export const el = (tag, props = {}, children = []) => {
-  const node = document.createElement(tag);
-  for (const [k, v] of Object.entries(props)) {
-    if (v == null || v === false) continue;
-    if (k === 'style' && typeof v === 'object') Object.assign(node.style, v);
-    else if (k === 'class') node.className = v;
-    else if (k.startsWith('on') && typeof v === 'function') node.addEventListener(k.slice(2).toLowerCase(), v);
-    else node.setAttribute(k, v === true ? '' : String(v));
-  }
-  for (const c of [children].flat(Infinity)) {
-    if (c == null || c === false) continue;
-    node.appendChild(typeof c === 'string' || typeof c === 'number' ? document.createTextNode(String(c)) : c);
-  }
-  return node;
-};
+import { el } from './dom.js';
+
+export { el };
 
 export const page = (...children) => el('div', {}, children);
 

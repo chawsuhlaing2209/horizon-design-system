@@ -1,0 +1,53 @@
+/* cardLayout — 8:1251 (orientation = vertical | horizontal, hasSlot) */
+
+.hds-card-layout,
+.hds-card-layout * {
+  box-sizing: border-box;
+}
+
+.hds-card-layout {
+  /* DESIGN GAP: the 10px gap is a raw value in Figma. It is off the 4px spacing
+   * scale, so no token carries it. Held in one variable pending a design
+   * answer — see docs/design-gaps.md. */
+  --hds-card-layout-gap: 10px;
+  display: flex;
+  gap: var(--hds-card-layout-gap);
+  overflow: hidden;
+  width: 100%;
+}
+
+.hds-card-layout[data-orientation='vertical'] {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* In horizontal the image and the text column share the row evenly (8:1213 and
+ * 8:1318 are both flex:1 0 0 in the node). Grid rather than flex: with flex the
+ * image's 1px border is added on top of its zero basis, which hands it 1px more
+ * than the text column. Grid tracks stay equal regardless of the border. */
+.hds-card-layout[data-orientation='horizontal'] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+}
+
+.hds-card-layout[data-orientation='horizontal'] > * {
+  min-width: 0;
+}
+
+.hds-card-layout__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hds-card-layout-gap);
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Slot — 8:1315.
+ * DESIGN GAP: the 46px reserve is a raw value in the node, off the 4px scale. */
+.hds-card-layout__slot {
+  width: 100%;
+  min-height: 46px;
+}

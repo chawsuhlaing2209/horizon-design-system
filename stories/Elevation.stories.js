@@ -1,5 +1,6 @@
 import { effects } from './lib/data.js';
 import { page, section, table, nameChip, value, desc, el } from './lib/ui.js';
+import { dom } from './lib/DomHost';
 
 export default {
   title: 'Foundations/Elevation',
@@ -15,7 +16,7 @@ export default {
   },
 };
 
-export const Levels = () =>
+const Levels_raw = () =>
   page(
     section(
       `Elevation — ${effects.length} levels`,
@@ -38,3 +39,6 @@ export const Levels = () =>
       ])),
     ),
   );
+
+// Each story builds plain DOM; dom() hosts it inside a React element.
+export const Levels = () => dom(Levels_raw());

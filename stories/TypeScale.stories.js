@@ -1,5 +1,6 @@
 import { type, MODES, byType, typeScale } from './lib/data.js';
 import { page, section, groupLabel, table, nameChip, value, desc, el } from './lib/ui.js';
+import { dom } from './lib/DomHost';
 
 const SAMPLE = 'The quick brown fox';
 
@@ -46,12 +47,11 @@ export default {
 };
 
 // One story per mode, so the sidebar shows that three modes exist at all.
-export const Web = () => page(section('Type scale — web', `${typeScale(type.web).length} steps.`, modeTable('web')));
-export const Mobile = () => page(section('Type scale — mobile', `${typeScale(type.mobile).length} steps.`, modeTable('mobile')));
-export const BackOffice = () => page(section('Type scale — back-office', 'The compact mode.', modeTable('back-office')));
-BackOffice.storyName = 'Back-office';
+const Web_raw = () => page(section('Type scale — web', `${typeScale(type.web).length} steps.`, modeTable('web')));
+const Mobile_raw = () => page(section('Type scale — mobile', `${typeScale(type.mobile).length} steps.`, modeTable('mobile')));
+const BackOffice_raw = () => page(section('Type scale — back-office', 'The compact mode.', modeTable('back-office')));
 
-export const CompareModes = () => {
+const CompareModes_raw = () => {
   const steps = typeScale(type.web).map((r) => r.step);
   const look = Object.fromEntries(MODES.map((m) => [m, new Map(typeScale(type[m]).map((r) => [r.step, r]))]));
   const differing = steps.filter((s) => new Set(MODES.map((m) => look[m].get(s)?.size.value)).size > 1);
@@ -76,9 +76,8 @@ export const CompareModes = () => {
     ),
   );
 };
-CompareModes.storyName = 'Compare modes';
 
-export const WeightsAndFamily = () =>
+const WeightsAndFamily_raw = () =>
   page(
     section(
       'Weights and family',
@@ -96,4 +95,14 @@ export const WeightsAndFamily = () =>
       ])),
     ),
   );
+
+// Each story builds plain DOM; dom() hosts it inside a React element.
+export const Web = () => dom(Web_raw());
+export const Mobile = () => dom(Mobile_raw());
+export const BackOffice = () => dom(BackOffice_raw());
+export const CompareModes = () => dom(CompareModes_raw());
+export const WeightsAndFamily = () => dom(WeightsAndFamily_raw());
+
+BackOffice.storyName = 'Back-office';
+CompareModes.storyName = 'Compare modes';
 WeightsAndFamily.storyName = 'Weights and family';

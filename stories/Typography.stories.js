@@ -1,5 +1,6 @@
 import { typographyStyles } from './lib/data.js';
 import { page, section, groupLabel, table, nameChip, value, desc, el, warn, typographyStyle } from './lib/ui.js';
+import { dom } from './lib/DomHost';
 
 const SAMPLE = 'Horizon design system';
 
@@ -30,7 +31,7 @@ export default {
   },
 };
 
-export const Styles = () => {
+const Styles_raw = () => {
   const groups = new Map();
   for (const t of typographyStyles) {
     const r = role(t);
@@ -59,7 +60,7 @@ export const Styles = () => {
   );
 };
 
-export const Values = () =>
+const Values_raw = () =>
   page(
     section(
       'Values',
@@ -89,3 +90,7 @@ export const Values = () =>
       ),
     ),
   );
+
+// Each story builds plain DOM; dom() hosts it inside a React element.
+export const Styles = () => dom(Styles_raw());
+export const Values = () => dom(Values_raw());

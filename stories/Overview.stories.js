@@ -1,5 +1,6 @@
 import { core, semanticColor, space, type, typographyStyles, effects, MODES } from './lib/data.js';
 import { page, section, table, el, value, warn, groupLabel } from './lib/ui.js';
+import { dom } from './lib/DomHost';
 
 const COLLECTIONS = [
   ['core', 'value', core.length, 'The raw palette and dimension primitives. Never used directly in a product.'],
@@ -18,7 +19,7 @@ export default {
   parameters: { docs: { description: { component: 'What is in the system, where it comes from, and what the build does and does not ship.' } } },
 };
 
-export const Overview = () =>
+const Overview_raw = () =>
   page(
     section(
       `Horizon tokens — ${total} entries`,
@@ -71,3 +72,6 @@ export const Overview = () =>
         'core tokens exist so the semantic layer has something to point at.'),
     ),
   );
+
+// Each story builds plain DOM; dom() hosts it inside a React element.
+export const Overview = () => dom(Overview_raw());

@@ -1,5 +1,6 @@
 import { core, byType, groupBy, colorFamily, sortByStep } from './lib/data.js';
 import { page, section, groupLabel, swatchGrid } from './lib/ui.js';
+import { dom } from './lib/DomHost';
 
 const colors = byType(core, 'color');
 
@@ -18,7 +19,7 @@ export default {
   },
 };
 
-export const AllFamilies = () =>
+const AllFamilies_raw = () =>
   page(
     section(
       `Core palette — ${colors.length} colours`,
@@ -29,4 +30,8 @@ export const AllFamilies = () =>
       ]).flat(),
     ),
   );
+
+// Each story builds plain DOM; dom() hosts it inside a React element.
+export const AllFamilies = () => dom(AllFamilies_raw());
+
 AllFamilies.storyName = 'All families';

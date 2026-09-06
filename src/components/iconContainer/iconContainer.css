@@ -1,0 +1,22 @@
+/* iconContainer — 8:895 */
+
+.hds-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* DESIGN GAP: Figma binds this radius to the core token `border/radius/4`.
+   * No semantic radius carries 4px. See docs/design-gaps.md. */
+  border-radius: var(--border-radius-2);
+}
+
+.hds-icon {
+  display: block;
+  font-size: var(--size-icon-lg);
+  line-height: 1;
+  width: var(--size-icon-lg);
+  height: var(--size-icon-lg);
+  /* The ligature renders as the icon name until the face loads; keep it from
+   * spilling out of the 24px box while that happens. */
+  overflow: hidden;
+  user-select: none;
+}
