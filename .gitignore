@@ -1,4 +1,9 @@
 node_modules/
-build/
+# Anchored to the repo root on purpose. Unanchored `build/` matches a directory
+# named build at ANY depth, which was silently swallowing `.claude/skills/build/`
+# — the build skill was never committed, while `.claude/skills/test/` was.
+/build/
 .DS_Store
 storybook-static/
+# Says "Local, gitignored" in its own header, but no rule ever covered it.
+.claude/registry.local.json
