@@ -7,3 +7,4 @@ node_modules/
 storybook-static/
 # Says "Local, gitignored" in its own header, but no rule ever covered it.
 .claude/registry.local.json
+.vercel

@@ -28,6 +28,8 @@ export type ButtonProps = {
   state?: ButtonState;
   /** The label. Compose an icon alongside it and the gap token applies. */
   children: ReactNode;
+  /** Merged after `hds-button`, never in place of it. Not a Figma property. */
+  className?: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'disabled' | 'children'>;
 
 export const Button = ({
@@ -35,12 +37,21 @@ export const Button = ({
   state = 'enable',
   children,
   type = 'button',
+  className,
   ...rest
 }: ButtonProps) => (
   <button
     {...rest}
     type={type}
-    className="hds-button"
+    // `className` is destructured above rather than left in `rest` on purpose.
+    // Spreading rest first and then writing className would silently drop a
+    // consumer's class — the prop is in the public type via
+    // ButtonHTMLAttributes, so it has to actually work. `hds-button` stays
+    // first so the component's own styles are never the thing that goes
+    // missing. Everything else in rest is still overridden by the explicit
+    // attributes below, which is deliberate: `data-variant`, `data-state` and
+    // `disabled` are derived from props and are not a consumer's to set.
+    className={className ? `hds-button ${className}` : 'hds-button'}
     data-variant={variant}
     data-state={state}
     data-node-id="26:70"

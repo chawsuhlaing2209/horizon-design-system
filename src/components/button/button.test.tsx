@@ -131,6 +131,45 @@ describe('button', () => {
     });
   });
 
+  // QA found this by reading the type, not the render: `className` is public via
+  // ButtonHTMLAttributes, and spreading rest before writing className silently
+  // dropped whatever a consumer passed. Nothing exercised the path.
+  describe('className', () => {
+    it('keeps hds-button when a consumer passes nothing', () => {
+      render(<Button>Sign in</Button>);
+      expect(button().className).toBe('hds-button');
+    });
+
+    it('merges a consumer class instead of discarding it', () => {
+      render(<Button className="checkout__cta">Sign in</Button>);
+      expect(button().classList.contains('hds-button')).toBe(true);
+      expect(button().classList.contains('checkout__cta')).toBe(true);
+    });
+
+    it('never lets a consumer class replace hds-button', () => {
+      render(<Button className="checkout__cta">Sign in</Button>);
+      expect(button().className.startsWith('hds-button')).toBe(true);
+    });
+
+    it('still applies the variant and state hooks alongside it', () => {
+      render(<Button className="checkout__cta" variant="outlined" state="hover">Sign in</Button>);
+      expect(button().dataset.variant).toBe('outlined');
+      expect(button().dataset.state).toBe('hover');
+    });
+  });
+
+  // The derived attributes are written after the spread on purpose, so a
+  // consumer cannot desynchronise the rendered state from the props.
+  it('does not let a consumer override the derived attributes', () => {
+    render(
+      <Button variant="filled" state="enable" {...({ 'data-variant': 'outlined', 'data-state': 'pressed' } as object)}>
+        Sign in
+      </Button>
+    );
+    expect(button().dataset.variant).toBe('filled');
+    expect(button().dataset.state).toBe('enable');
+  });
+
   it('passes through native button attributes', () => {
     render(<Button aria-label="Sign in to Horizon" name="signin">Sign in</Button>);
     expect(button().getAttribute('aria-label')).toBe('Sign in to Horizon');
