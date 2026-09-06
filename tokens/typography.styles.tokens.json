@@ -3,12 +3,9 @@
     "$type": "typography",
     "$description": "horizon.type.display.lg — web and mobile.",
     "$value": {
-      "fontFamily": "Inter",
-      "fontWeight": "Regular",
-      "fontSize": {
-        "value": 57,
-        "unit": "px"
-      },
+      "fontFamily": "{family-default}",
+      "fontWeight": "{weight-regular}",
+      "fontSize": "{size-display-lg}",
       "lineHeight": 64,
       "letterSpacing": {
         "value": -0.25,
