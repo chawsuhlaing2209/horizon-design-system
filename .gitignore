@@ -2,3 +2,6 @@ node_modules/
 build/
 .DS_Store
 storybook-static/
+
+# Airtable registry IDs — local only
+.claude/registry.local.json

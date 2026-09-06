@@ -92,22 +92,49 @@ Not a defect, recorded so nobody hunts for a missing asset.
 
 ---
 
-### 7. `--color-text-accent` fails contrast as text
+### 7. RESOLVED — `--color-text-accent` failed contrast as text
 
-The rating score (8:772) uses `--color-text-accent` (#f0932b) on
-`--color-bg-surface-primary` (#ffffff) at 14px/600.
+The rating score (8:772) used `--color-text-accent`, which aliased
+`color-orange-500` (#f0932b). On the light surface that is **2.36:1**, where
+WCAG AA requires 4.5:1 for text at that size. Storybook's a11y addon flagged it
+as a Serious `color-contrast` violation.
 
-Measured contrast: **2.36:1**. WCAG AA requires 4.5:1 for text that size.
-Storybook's a11y addon flags it as a Serious `color-contrast` violation — the
-only one on the component; the other five text roles pass (title and price
-15.17:1, the three secondary lines 5.47:1).
+**Fixed at the token, not in the component.** The component already referenced
+`var(--color-text-accent)`, so nothing in `cardText` changed — which is the point
+of a semantic layer. The role was broken for every consumer, not just this card.
 
-Left as designed, per "report the gap rather than filling it in". **This needs a
-token decision, not a component fix**: either a darker accent for text use
-(#8a5a00, the existing `--color-text-warning`, clears AA at 4.6:1), or a separate
-`color.text.accent.strong` role, or the rating stops being accent-coloured.
+What changed in `tokens/`:
 
-Every other text role on the card passes AA.
+| Token | Before | After |
+|---|---|---|
+| `color-orange-700` (new primitive) | — | `#9c601c` |
+| `color-text-accent` — light | `{color-orange-500}` #f0932b, 2.36:1 | `{color-orange-700}` #9c601c, **5.12:1** |
+| `color-text-accent` — dark | `{color-orange-500}` #f0932b, 6.44:1 | unchanged — already passing |
+| `color-icon-accent` — both | `{color-orange-500}` | unchanged |
+
+Three things worth knowing about the shape of this fix:
+
+- **It was only broken in light mode.** On the dark surface #f0932b is 6.44:1 and
+  passes comfortably, so only the light mode file was repointed. That is what
+  per-mode token files are for.
+- **`color-icon-accent` was deliberately left alone.** It is the decorative
+  rating star; non-text decoration is not held to the 4.5:1 text threshold, and
+  darkening it would have dulled the design for no accessibility gain.
+- **`color-amber-700` (#8a5a00) was rejected**, despite already existing and
+  clearing AA at 5.93:1. It is documented as the *warning* colour. A 4.7-star
+  rating is not a warning, and borrowing a semantic role because the value
+  happens to fit is how a token system rots.
+
+`color-orange-700` is derived from orange-500 along the same hue (31.9 vs 31.7),
+so it still reads as the same accent rather than as brown.
+
+Every text role on the card now passes AA in both themes; the a11y addon reports
+**0 violations, 11 passes**, down from 1 Serious.
+
+**Carried over into Figma — not yet done.** `tokens/` is the committed Figma
+export. This change was made in code, so the next re-export will overwrite it
+unless the same primitive and alias are added to the Figma variable collection.
+That is a design task, not an engineering one.
 
 ### 8. The image tint has no strength token
 

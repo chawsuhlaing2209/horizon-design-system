@@ -1,0 +1,12 @@
+{
+  "$comment": "Committed template. Copy to registry.local.json and fill in real IDs. Never commit registry.local.json.",
+  "baseId": "appXXXXXXXXXXXXXX",
+  "baseName": "<your Airtable base name>",
+  "tables": {
+    "components": "tblXXXXXXXXXXXXXX",
+    "stagingTesting": "tblXXXXXXXXXXXXXX",
+    "dsFeedback": "tblXXXXXXXXXXXXXX",
+    "githubCommits": "tblXXXXXXXXXXXXXX",
+    "oneOffComponents": "tblXXXXXXXXXXXXXX"
+  }
+}

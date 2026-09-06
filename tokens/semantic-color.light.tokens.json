@@ -151,8 +151,8 @@
   },
   "color-text-accent": {
     "$type": "color",
-    "$value": "{color-orange-500}",
-    "$description": "Rating and highlight."
+    "$value": "{color-orange-700}",
+    "$description": "Rating and highlight. Points at orange-700, not orange-500: orange-500 is 2.36:1 on the light surface and fails WCAG AA for text."
   },
   "color-border-default": {
     "$type": "color",
