@@ -1,0 +1,85 @@
+/* cardText — 8:778 (metadata, review, price) */
+
+.hds-card-text,
+.hds-card-text * {
+  box-sizing: border-box;
+}
+
+.hds-card-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-gap-xs);
+  width: 100%;
+  word-break: break-word;
+}
+
+.hds-card-text__heading,
+.hds-card-text__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-gap-2xs);
+  width: 100%;
+}
+
+.hds-card-text__meta {
+  white-space: nowrap;
+  /* QA finding 1. Instance 12:1343 keeps this container at 48px with both its
+   * rows hidden, so the card holds its height whichever rows have data. 48px is
+   * not a magic number — it is exactly the space the two rows occupy, so it is
+   * composed from their own tokens rather than written as a literal:
+   *   review row  --lineheight-label-lg  20
+   *   row gap     --spacing-gap-2xs       4
+   *   price row   --lineheight-body-lg   24
+   * Change a row's type scale and the reserve follows it. */
+  min-height: calc(
+    var(--lineheight-label-lg) + var(--spacing-gap-2xs) + var(--lineheight-body-lg)
+  );
+}
+
+.hds-card-text__row {
+  display: flex;
+  align-items: center;
+  /* 4px raw in the node. --spacing-gap-2xs carries the same value, so it is
+   * bound here rather than left raw. */
+  gap: var(--spacing-gap-2xs);
+  width: 100%;
+}
+
+/* title/md */
+.hds-card-text__title {
+  margin: 0;
+  font: var(--title-md), system-ui, sans-serif;
+  letter-spacing: var(--tracking-title-md);
+  color: var(--color-text-primary);
+  width: 100%;
+}
+
+/* body/sm */
+.hds-card-text__location,
+.hds-card-text__review-count,
+.hds-card-text__price-info {
+  margin: 0;
+  font: var(--body-sm), system-ui, sans-serif;
+  letter-spacing: var(--tracking-body-sm);
+  color: var(--color-text-secondary);
+}
+
+.hds-card-text__location { width: 100%; }
+
+/* label/lg/bold */
+.hds-card-text__rating {
+  margin: 0;
+  font: var(--label-lg-bold), system-ui, sans-serif;
+  letter-spacing: var(--tracking-label-lg);
+  color: var(--color-text-accent);
+}
+
+/* body/lg/bold */
+.hds-card-text__price {
+  margin: 0;
+  font: var(--body-lg-bold), system-ui, sans-serif;
+  letter-spacing: var(--tracking-body-lg);
+  color: var(--color-text-primary);
+}

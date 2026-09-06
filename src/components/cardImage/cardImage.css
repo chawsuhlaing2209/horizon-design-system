@@ -1,0 +1,131 @@
+/* cardImage — 8:1186 (ratio = 3:2 | 1:1, state = idle | hover)
+ *
+ * Every value resolves to a token from build/tokens/css/tokens.css. Where the
+ * design bound a property to the CORE layer instead of the semantic layer, this
+ * mirrors that binding rather than inventing a semantic token — each is marked
+ * DESIGN GAP and listed in docs/design-gaps.md.
+ */
+
+.hds-card-image,
+.hds-card-image *,
+.hds-card-image *::before,
+.hds-card-image *::after {
+  box-sizing: border-box;
+}
+
+.hds-card-image {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+  border: var(--border-width-default) solid var(--color-border-default);
+  /* DESIGN GAP: Figma binds this to the core token `border/radius/8`. No
+   * semantic radius carries 8px (--border-radius-surface is 12px). */
+  border-radius: var(--border-radius-4);
+}
+
+/* DESIGN GAP: the variant is named `ratio=3:2` but the node geometry is 4:3
+ * (363.5 x 272.625, image frame 256/192). Geometry wins so the build matches
+ * the node; the variant name needs correcting in Figma. */
+.hds-card-image[data-ratio='3:2'] { aspect-ratio: 4 / 3; }
+.hds-card-image[data-ratio='1:1'] { aspect-ratio: 1 / 1; }
+
+.hds-card-image__photo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* No photo supplied: a quiet surface stands in rather than a broken image. */
+.hds-card-image__photo--empty {
+  background: var(--color-bg-surface-secondary);
+}
+
+/* Overlay — 8:1182. Visible only in state=hover, or on a real pointer hover. */
+.hds-card-image__overlay {
+  position: absolute;
+  /* Bleeds over the border, as the node does. Derived from the border token so
+   * the two stay in step. */
+  inset: calc(var(--border-width-default) * -1);
+  z-index: 2;
+  border-radius: var(--border-radius-4);
+  /* QA finding 2. The node paints --color-bg-overlay through a stop whose own
+   * opacity is 20%, so the top of the gradient resolves to rgba(27,39,51,0.11)
+   * — a faint wash, not the full 0.55 scrim. Painting the token at full
+   * strength made the tint roughly five times too dark.
+   *
+   * The token is applied unchanged and the stop's opacity is carried on the
+   * layer, so 0.55 x 0.2 = 0.11 exactly as the node resolves it. That keeps
+   * --color-bg-overlay honest: it is documented as the modal scrim, and this
+   * use tints an image, which is a different job.
+   *
+   * DESIGN GAP: the 0.2 stop opacity has no token behind it. Either give the
+   * image tint its own colour role, or add a token for the strength. */
+  --hds-card-image-overlay-strength: 0.2;
+  background: linear-gradient(180deg, var(--color-bg-overlay) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+  pointer-events: none;
+}
+
+/* A pinned `state` always wins over the pointer, so a story can hold either
+ * state for review. With no pinned state (`auto`) a real pointer over the IMAGE
+ * drives it.
+ *
+ * QA finding 4: this was previously `.hds-card:hover`, an ancestor rule. That
+ * tinted the image whenever the pointer was anywhere on the card — including
+ * over the text — which no design calls for, and which beat the prop so
+ * `state='idle'` could not be held. cardContainer keeps its own hover rule;
+ * this one must not reach across the subcomponent boundary. */
+.hds-card-image[data-state='hover'] .hds-card-image__overlay,
+.hds-card-image[data-state='auto']:hover .hds-card-image__overlay {
+  opacity: var(--hds-card-image-overlay-strength);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hds-card-image__overlay { transition: none; }
+}
+
+/* iconButton — 8:1166 */
+.hds-card-image__favorite {
+  position: absolute;
+  z-index: 3;
+  /* DESIGN GAP: raw sub-pixel offsets in the node, no token behind them. */
+  top: 7px;
+  right: 6.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* DESIGN GAP: Figma binds this padding and gap to the core tokens
+   * `spacing/8`, `spacing/sm` and `spacing/4`. The semantic equivalents
+   * (--spacing-padding-xs, --spacing-gap-2xs) exist but were not applied. */
+  gap: var(--spacing-1);
+  padding: var(--spacing-2);
+  /* 40px in the node, unbound there. --size-control-md carries exactly that. */
+  min-width: var(--size-control-md);
+  min-height: var(--size-control-md);
+  max-height: var(--size-control-md);
+  background: var(--color-bg-secondary);
+  border: none;
+  border-radius: var(--border-radius-full);
+  color: var(--color-icon-negative);
+  cursor: pointer;
+}
+
+/* DESIGN GAP: the unfavourited look has no design. Falls back to the subtle
+ * icon colour; needs a design decision (most likely an outlined heart). */
+.hds-card-image__favorite[aria-pressed='false'] {
+  color: var(--color-icon-subtle);
+}
+
+.hds-card-image__favorite:focus-visible {
+  outline: var(--border-width-focused) solid var(--color-border-focused);
+  outline-offset: var(--border-width-default);
+}

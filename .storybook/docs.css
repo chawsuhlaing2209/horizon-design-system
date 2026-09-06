@@ -1,0 +1,203 @@
+/* Chrome for the token docs. Uses the semantic tokens wherever a real product
+   surface would, so the documentation is itself a consumer of the system. */
+
+.docs-root {
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  padding: var(--spacing-margin-lg, 24px);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.docs-section + .docs-section { margin-top: 40px; }
+
+.docs-section > h2 {
+  font: var(--title-lg, 500 22px/28px Inter);
+  margin: 0 0 4px;
+}
+
+.docs-section > p.docs-note {
+  color: var(--color-text-secondary);
+  font: var(--body-md, 400 14px/20px Inter);
+  margin: 0 0 16px;
+  max-width: 68ch;
+}
+
+.docs-group-label {
+  font: var(--label-md, 500 12px/16px Inter);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-subtle);
+  margin: 24px 0 8px;
+}
+
+/* --- name / value chips ------------------------------------------------- */
+
+.docs-name {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  cursor: copy;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+}
+.docs-name:hover { text-decoration: underline; }
+.docs-name[data-copied='true']::after {
+  content: ' copied';
+  color: var(--color-text-positive);
+}
+
+.docs-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.docs-alias {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: var(--color-text-subtle);
+}
+
+.docs-desc {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-secondary);
+}
+
+/* --- colour swatches ----------------------------------------------------- */
+
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.swatch {
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-surface, 8px);
+  overflow: hidden;
+  background: var(--color-bg-surface-primary);
+}
+
+.swatch-chip {
+  height: 64px;
+  /* Checkerboard shows through anything with alpha. */
+  background-image:
+    linear-gradient(45deg, #0000 25%, #8883 25% 75%, #0000 75%),
+    linear-gradient(45deg, #0000 25%, #8883 25% 75%, #0000 75%);
+  background-size: 12px 12px;
+  background-position: 0 0, 6px 6px;
+}
+.swatch-chip > span { display: block; height: 100%; }
+
+.swatch-meta {
+  padding: 8px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* --- generic token table -------------------------------------------------- */
+
+.docs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.docs-table th {
+  text-align: left;
+  font: var(--label-md, 500 12px/16px Inter);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-subtle);
+  padding: 0 12px 8px 0;
+  border-bottom: 1px solid var(--color-border-default);
+  white-space: nowrap;
+}
+.docs-table td {
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  vertical-align: middle;
+}
+.docs-table td:last-child, .docs-table th:last-child { padding-right: 0; }
+
+/* --- spacing / sizing bars ------------------------------------------------ */
+
+.docs-bar {
+  background: var(--color-bg-primary);
+  height: 16px;
+  border-radius: 2px;
+  min-width: 1px;
+}
+.docs-box {
+  background: var(--color-bg-primary-subtle);
+  border: 1px solid var(--color-bg-primary);
+  box-sizing: border-box;
+}
+.docs-radius {
+  width: 72px;
+  height: 48px;
+  background: var(--color-bg-primary-subtle);
+  border: 2px solid var(--color-bg-primary);
+}
+
+/* --- elevation ------------------------------------------------------------ */
+
+.elev-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+  /* A busy ground — a shadow is invisible on a flat white page. */
+  background: var(--color-bg-base-subtle);
+  padding: 24px;
+  border-radius: var(--border-radius-surface, 8px);
+}
+.elev-card {
+  background: var(--color-bg-surface-primary);
+  border-radius: var(--border-radius-surface, 8px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* --- side-by-side theme panels -------------------------------------------- */
+
+.theme-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 900px) { .theme-split { grid-template-columns: 1fr; } }
+
+.theme-panel {
+  background: var(--color-bg-base);
+  /* `color` inherits as a computed value, so redeclaring the custom property on
+     this subtree is not enough — the panel has to re-reference it, or its
+     children keep the colour computed on the themed root above. */
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-surface, 8px);
+  padding: 16px;
+}
+.theme-panel > h3 {
+  font: var(--title-sm, 500 14px/20px Inter);
+  color: var(--color-text-secondary);
+  margin: 0 0 12px;
+}
+
+/* --- warnings -------------------------------------------------------------- */
+
+.docs-warn {
+  border-left: 3px solid var(--color-border-negative);
+  background: var(--color-bg-negative-subtle);
+  color: var(--color-text-primary);
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin: 12px 0;
+}
