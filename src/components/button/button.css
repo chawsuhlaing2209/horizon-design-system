@@ -1,0 +1,110 @@
+/* button — 26:70 (variant = filled | outlined, state = enable | hover | pressed | disabled)
+ *
+ * Every value resolves to a semantic token from build/tokens/css/tokens.css.
+ * No raw hex, px, or font names live in this file.
+ *
+ * Two things about the box are translated from the node rather than tidied up:
+ *
+ *   - filled draws no stroke, so it measures 44px tall (12 + 20 + 12).
+ *     outlined adds a 1px stroke on each edge and measures 46px. The design
+ *     puts the stroke outside the padding box, and this mirrors that instead
+ *     of equalising the two.
+ *   - width is hug, not the 94px the instances happen to sit at in the frame.
+ *     94px is what "Sign in" plus 24px of inset comes to.
+ */
+
+.hds-button,
+.hds-button *,
+.hds-button *::before,
+.hds-button *::after {
+  box-sizing: border-box;
+}
+
+.hds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* The auto-layout gap. It only shows when the label is composed with an
+   * icon; the node itself ships a bare label. */
+  gap: var(--spacing-gap-xs);
+  padding: var(--spacing-padding-sm) var(--spacing-padding-lg);
+  border: 0;
+  border-radius: var(--border-radius-control);
+  font: var(--label-lg);
+  letter-spacing: var(--tracking-label-lg);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease-out, border-color 120ms ease-out;
+}
+
+/* ---- variant = filled ---------------------------------------------------- */
+
+.hds-button[data-variant='filled'] {
+  background: var(--color-bg-primary);
+  color: var(--color-text-inverse);
+}
+
+.hds-button[data-variant='filled']:not(:disabled):hover,
+.hds-button[data-variant='filled'][data-state='hover'] {
+  background: var(--color-bg-primary-hovered);
+}
+
+.hds-button[data-variant='filled']:not(:disabled):active,
+.hds-button[data-variant='filled'][data-state='pressed'] {
+  background: var(--color-bg-primary-pressed);
+}
+
+.hds-button[data-variant='filled']:disabled {
+  background: var(--color-bg-primary-disabled);
+  color: var(--color-text-disabled);
+}
+
+/* ---- variant = outlined -------------------------------------------------- */
+
+.hds-button[data-variant='outlined'] {
+  background: transparent;
+  border: var(--border-width-default) solid var(--color-border-primary);
+  color: var(--color-text-link);
+}
+
+.hds-button[data-variant='outlined']:not(:disabled):hover,
+.hds-button[data-variant='outlined'][data-state='hover'] {
+  border-color: var(--color-border-primary-hover);
+}
+
+/* NAMING GAP: the node binds the pressed stroke to the style
+ * `color/border/primary/focused`, so the token that carries the PRESSED border
+ * is the one named `focused`. Mirrored verbatim rather than swapped for a
+ * better-named token that would not match the design. See docs/design-gaps.md. */
+.hds-button[data-variant='outlined']:not(:disabled):active,
+.hds-button[data-variant='outlined'][data-state='pressed'] {
+  border-color: var(--color-border-primary-focused);
+}
+
+.hds-button[data-variant='outlined']:disabled {
+  border-color: var(--color-border-disabled);
+  color: var(--color-text-disabled);
+}
+
+/* ---- state = disabled ---------------------------------------------------- */
+
+.hds-button:disabled {
+  cursor: default;
+}
+
+/* ---- focus --------------------------------------------------------------- */
+
+/* DESIGN GAP: the component set has no `state=focused` variant, so there is no
+ * node to match here. The two tokens used are the ones the system already
+ * names for this job — `--color-border-focused` is documented "Keyboard focus
+ * ring" and `--border-width-focused` "Focus ring thickness" — so nothing is
+ * invented, but the ring is unreviewed until the variant exists in Figma.
+ * Raised in docs/design-gaps.md. */
+.hds-button:focus-visible {
+  outline: var(--border-width-focused) solid var(--color-border-focused);
+  outline-offset: var(--border-width-default);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hds-button { transition: none; }
+}
