@@ -189,6 +189,18 @@
     "$value": "{color-neutral-950}",
     "$description": "Border on an inverse surface."
   },
+  "color-border-primary": {
+    "$type": "color",
+    "$value": "{color-blue-400}"
+  },
+  "color-border-primary-hover": {
+    "$type": "color",
+    "$value": "{color-blue-300}"
+  },
+  "color-border-primary-focused": {
+    "$type": "color",
+    "$value": "{color-blue-200}"
+  },
   "color-icon-primary": {
     "$type": "color",
     "$value": "{color-neutral-0}",

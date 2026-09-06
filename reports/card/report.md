@@ -439,3 +439,39 @@ Two tests added for finding 1's precondition — jsdom does no layout, so the
 `min-height` itself cannot be asserted there; what is asserted is that the
 container survives in the tree with both rows hidden, and disappears entirely
 when `metadata` is false.
+
+---
+
+## 8 · Contrast defect — fixed (appended)
+
+The one accessibility defect QA raised (§2 case 43 / design-gaps §7) is closed.
+
+`--color-text-accent` aliased `color-orange-500` (#f0932b) — **2.36:1** on the
+light surface against AA's 4.5:1. Fixed at the token layer: the component already
+referenced `var(--color-text-accent)` and did not change.
+
+| | Before | After |
+|---|---|---|
+| rating score, light | #f0932b · 2.36:1 · **FAIL** | #9c601c · **5.12:1** · PASS |
+| rating score, dark | #f0932b · 6.44:1 · PASS | unchanged |
+| a11y addon | 1 Serious violation, 11 passes | **0 violations, 11 passes** |
+
+All six text roles now pass AA in both themes:
+
+| Role | Light | Dark |
+|---|---|---|
+| title | 15.17:1 | 15.17:1 |
+| location | 5.47:1 | 11.19:1 |
+| rating | **5.12:1** | 6.44:1 |
+| review count | 5.47:1 | 11.19:1 |
+| price | 15.17:1 | 15.17:1 |
+| price info | 5.47:1 | 11.19:1 |
+
+Only light mode was repointed — dark already passed. `color-icon-accent` is
+untouched, since the rating star is decoration and not held to the text
+threshold. `color-amber-700` was rejected as a ready-made fix despite clearing
+AA: it is the warning role, and a rating is not a warning.
+
+**Open follow-up for design:** `tokens/` is the committed Figma export, so the
+new `color-orange-700` primitive and the light-mode alias must be mirrored in the
+Figma variable collection or the next re-export will revert them.

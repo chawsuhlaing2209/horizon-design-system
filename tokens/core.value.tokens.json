@@ -220,9 +220,9 @@
     "$value": {
       "colorSpace": "srgb",
       "components": [
-        0.11372549086809158,
-        0.30588236451148987,
-        0.8470588326454163
+        0.08129215985536575,
+        0.2783610224723816,
+        0.8333712816238403
       ]
     },
     "$description": "btn primary, btn-cta, book now button, btn admin."
@@ -406,6 +406,18 @@
       ]
     },
     "$description": "Accent. Review rating."
+  },
+  "color-orange-700": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.611764705882353,
+        0.3764705882352941,
+        0.10980392156862745
+      ]
+    },
+    "$description": "DERIVED from orange-500 on the same hue, dark enough for text. orange-500 is 2.36:1 on white and fails WCAG AA; this is 5.12:1. Use for accent TEXT; orange-500 stays the decorative accent."
   },
   "color-neutral-900a": {
     "$type": "color",
