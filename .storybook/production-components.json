@@ -1,0 +1,6 @@
+{
+  "$comment": "Components cleared to exist in the production Storybook. A component belongs here only while its registry Development status is Completed or Released. DevOps adds a name on promotion and removes it the moment the component regresses to To be fixed or Fixing. Foundations/token stories are not components and are always built.",
+  "components": [
+    "button"
+  ]
+}

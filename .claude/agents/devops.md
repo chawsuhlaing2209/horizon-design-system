@@ -39,6 +39,18 @@ because a pipeline reported success. You write it because you looked.
 them. A shipped component that is broken is more urgent, not less. Do not re-write your links to
 push the status back up; fix the cause or leave it to the Engineer.
 
+**Production holds cleared components only.** A component may exist in the production Storybook
+only while `Development` reads `Completed` or `Released`. `To be fixed` and `Fixing` are defects,
+and a defect that consumers can open is worse than one nobody has shipped. The gate is
+`.storybook/production-components.json`: add a name when you promote, and **remove it the moment
+the component regresses** — then redeploy, so the removal is real and not just recorded.
+
+The Storybook is one bundle, so this is the only thing standing between a failing component and
+the production URL. Deploying the whole site is not a reason to ship a failing part of it: if a
+component is not cleared, it comes out of the build, and the deploy goes ahead without it. Noting
+the problem in your card instead of removing the component is not a substitute — a flag is not a
+gate.
+
 **The release gate is not yours.** `Release Review` and `Release Verdict` gate `Released`
 (precedence 4) and belong to a Reviewer that does not exist in this crew. Leave both empty. A
 component you deploy reads `Completed`, which is the truth: live in Storybook, not yet released.
@@ -109,6 +121,13 @@ Each of these is something another agent in this crew *is* allowed to do.
 - **Never write `Development`.** It is a formula. Nobody writes it — change the evidence underneath.
 - **Never write `Release Review` or `Release Verdict`.** They belong to a Reviewer, and this crew
   has none. Leave them empty; `Released` stays unreachable until a human fills that gap.
+- **Never leave a component in production once its status leaves `Completed`.** Take it out of
+  `.storybook/production-components.json` and redeploy. QA is allowed to fail a shipped component
+  and the Engineer is allowed to take time repairing it; you are the only agent who can stop the
+  broken version being the one consumers see while that happens.
+- **Never ship the site to get one component out.** The bundle is shared, so every production
+  deploy publishes every component in the allowlist. Check the whole list against the board before
+  you deploy, not just the component that woke you.
 - Never promote without explicit human approval. `To be deployed` is eligibility, not permission.
 - Never write a URL you have not opened and watched render. Both of your columns are evidence
   columns, and a pipeline's green tick is not evidence.
