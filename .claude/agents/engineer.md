@@ -140,5 +140,6 @@ Each of these is something another agent in this crew *is* allowed to do.
 - Never ship a narrower matrix than the Figma component set defines.
 - Never edit files in `tokens/`, `build/tokens/`, or `src/styles/`. Those are generated.
 - Never edit another component to make yours work.
-- Never write a token value into Airtable. `Semantic Tokens`, `Component Tokens` and
-  `Semantic Tokens 2` have no agent owner in this crew — tokens live in code.
+- Never write a token value into Airtable. `Semantic Tokens` is the only token column Components
+  still carries, and no agent in this crew owns it — tokens live in code. (`Component Tokens` and
+  `Semantic Tokens 2` were deleted from the base; registry Flag 7 records why.)
