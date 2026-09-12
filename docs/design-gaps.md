@@ -215,26 +215,47 @@ renders them equal, 129.5 / 129.5, via `grid-template-columns: 1fr 1fr`.
 
 The node disagrees with itself, which is why this is a gap and not a patch:
 
-- **Its declared layout says equal.** Both 8:1213 and 8:1318 are `flex: 1 0 0`,
-  which is an instruction to share the row evenly.
-- **Its rendered geometry says uneven.** The image carries a 1px stroke aligned
-  outside, so it grows past its share by exactly the 2px that separates 130.5
-  from 128.5.
+- **Its declared layout says equal.** Both 8:1213 and 8:1318 are `layoutGrow: 1`
+  / `layoutSizingHorizontal: FILL`, which is an instruction to share the row
+  evenly.
+- **Its rendered geometry says uneven.** 130.5 / 128.5.
 
-The build followed the declared intent. Grid was chosen over flex precisely so
-the stroke could not skew the tracks — that reasoning was in a CSS comment in
-`cardLayout.css`, and **only there**, which is the same mistake this document
-already corrected once on the Button width: reasoning parked where nobody
-reviewing the design will ever read it. It is here now.
+**CORRECTED 2026-09-12 — the cause is not the stroke.** This entry previously
+said cardImage carried a 1px stroke aligned outside. Read directly from the
+file, all four cardImage variants (8:1184, 8:1187, 8:1185, 8:1196) already have
+`strokeAlign: "INSIDE"` at weight 1, and so does the instance 8:1213. There is
+no outside stroke to correct, and the remedy this entry recommended was a no-op.
 
-**Needed:** set the cardImage stroke to **inside** in Figma. The node then
-renders 129.5 / 129.5, matches its own `flex: 1 0 0`, and matches the build with
-no code change. If the uneven split is genuinely wanted, say so and the grid
-becomes explicit tracks instead — but a 2px asymmetry that only exists because
-of a stroke is far more likely to be an accident than a decision.
+The actual cause is an **aspect-ratio lock fighting the fill**:
 
-This is the same root cause as Button gap 6. Two components now, so it is worth
-fixing at the source rather than per component.
+| Property of instance 8:1213 | Value |
+|---|---|
+| `layoutSizingVertical` | `FIXED` |
+| height | 97.875 |
+| `targetAspectRatio` | `{x: 256, y: 192}` = 4:3 |
+
+The image's height is fixed, so the aspect lock derives its width from that
+height rather than from its share of the row: 97.875 x 4/3 = **130.5 exactly**.
+The text column takes the remainder, 128.5. The `layoutGrow: 1` on both children
+never gets to decide anything.
+
+This also ties gap 10 to **gap 1** above: the lock is 4:3 on a variant published
+as `ratio=3:2`, with the component property literally set to `"3:2"`. One wrong
+aspect ratio produces both defects.
+
+**Needed — a design decision, and the two options do not agree:**
+
+1. **Rename the variant to `4:3`** (what gap 1 recommends). Keeps the geometry,
+   fixes the name, and **leaves both QA rows failing**, because 130.5 / 128.5 is
+   unchanged.
+2. **Make the split even.** Let the width come from the fill share rather than
+   from the fixed height, so the node renders 129.5 / 129.5, matches its own
+   `layoutGrow: 1`, and matches the build with no code change. This changes the
+   image's rendered proportions in the horizontal card.
+
+Option 1 is honest about what the design currently is. Option 2 is what closes
+the two failing rows. Picking 1 means accepting that Card cannot pass on these
+two cases without a separate decision to change the code instead.
 
 ### 11. `elevation/level2` has no dark variant, so hover disappears in dark
 
@@ -253,9 +274,29 @@ The component applies the token correctly. There is nothing to fix in the CSS,
 and no dark node to build against — the failure is recorded on observable
 grounds, not against a design.
 
-**Needed:** a dark-mode value for `elevation/level2`. A shadow in dark mode
-generally needs to be darker and more opaque than its light counterpart, not the
-same value re-emitted, because it is no longer sitting on white.
+**CORRECTED 2026-09-12 — this cannot be fixed as an effect style.** Read from
+the file, `elevation/level2` is `remote: true`: it lives in the **1. Horizon
+Tokens** library, not in the Card file. Both of its drop shadows carry
+`boundVariables: {}` — the colours are hardcoded, not bound to anything.
+
+More fundamentally, **Figma effect styles have no modes.** There is no dark slot
+on an effect style to fill in, which is exactly why `tokens/effects.styles.tokens.json`
+emits one flat value per level with no mode dimension at all, for all five
+levels rather than just level 2.
+
+**Needed:** in the **1. Horizon Tokens** file, bind the two shadow colours of
+`elevation/level2` to a colour **variable** that carries light and dark modes —
+variables have modes, effect styles do not. Then the single style resolves per
+theme and the export gains the mode dimension for free.
+
+A dark shadow generally needs to be darker and more opaque than its light
+counterpart, not the same value re-emitted, because it is no longer sitting on
+white. The current value is worse than merely unadjusted: `#1b2733` is *exactly*
+`--color-bg-surface-primary` in dark, so the card casts a shadow in its own
+surface colour.
+
+This affects levels 1 through 5, not only level 2. Level 2 is simply the one a
+component happened to use in dark and fail on.
 
 ---
 

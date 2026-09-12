@@ -356,3 +356,74 @@ And one thing is more urgent than either, though it is recorded as a pass:
 
 No verdict here is final until a human reads it, and no finding above is marked
 resolved by me.
+
+---
+
+## Re-test — 2026-09-12
+
+Re-run against the same deployed staging build (`ev1k2psuq`), which was first
+confirmed current: the build serves `--color-text-accent: #9c601c` in light and
+`#f0932b` in dark, so it already carries the contrast fix and is not a stale
+artifact from before the repairs.
+
+Gates on the staging branch at this commit: `npm run lint` clean, `npm test`
+**58/58**.
+
+### The six earlier findings — all still fixed
+
+| Finding | Expected | Measured on staging | Result |
+|---|---|---|---|
+| 1 · card 48px short | `.hds-card` 227 × 296.25 | 227 × 296.25; chain 146.25 + 10 + 116 = 272.25 | Holds |
+| 2 · overlay ~5× too dark | effective top alpha 0.11 | gradient stop `rgba(27,39,51,0.55)` × layer opacity `0.2` = **0.11** | Holds |
+| 3 · favourite never toggles | `aria-pressed` flips, colour moves | `false` → `true` → `false`; `rgb(138,148,166)` → `rgb(165,38,29)` | Holds |
+| 4 · card hover overrode `cardImage.state` | state pinned by prop, not ancestor | `data-state="hover"` set from the prop; rule is `.hds-card-image[data-state=…]`, not `.hds-card:hover` | Holds |
+| 5 · `state=hover, ratio=1:1` had no story | story exists | `components-card--image-state-hover-ratio-1-x-1` served | Holds |
+| contrast · `--color-text-accent` 2.36:1 | AA pass | `#9c601c` in light | Holds |
+
+Finding 2 was initially mis-read this run as a regression: `backgroundColor`
+returns `rgba(0,0,0,0)` because the tint is painted through `background-image`,
+not `background-color`. Read from the gradient stop it resolves exactly as
+designed. Recorded because the wrong probe, not the component, produced the
+scare.
+
+### The three failures — all three reproduce, none is a code defect
+
+| Row | Case | Measured now | Why no fix was made |
+|---|---|---|---|
+| `recruJ0K6kqgODxAC` | horizontal split, light | `grid-template-columns: 129.5px 129.5px`; total 269, gap 10 both correct | Design gap 10 |
+| `reccHjcAahTTrHUit` | horizontal split, dark | identical to light | Design gap 10 |
+| `recRKWuTGZeXeI8Ce` | `cardContainer state=hover`, dark | `--elevation-level2` byte-identical in both modes: `0px 2px 4px 0px #1b27330f, 0px 4px 8px 0px #1b27331a`, and `--color-bg-surface-primary` in dark is `#1b2733` — the same colour | Design gap 11 |
+
+Only the **split** differs on the first two; the row's total width (269) and gap
+(10) match the node exactly. The node declares `layoutGrow: 1` / `FILL` on both
+children — an instruction to share evenly — and only its *rendered* geometry is
+uneven. The build follows the declared intent.
+
+**Correction, same day, after reading the Figma file directly.** This report and
+design gap 10 both attributed that to cardImage carrying a 1px stroke aligned
+outside. That is false: all four cardImage variants and the instance 8:1213
+already have `strokeAlign: "INSIDE"` at weight 1. The real cause is an
+aspect-ratio lock — instance 8:1213 is `layoutSizingVertical: FIXED` at height
+97.875 with `targetAspectRatio` 256:192 (4:3), so its width is derived as
+97.875 x 4/3 = **130.5 exactly**, and the text column takes the remaining 128.5.
+The fill share never gets to decide. The lock being 4:3 on a variant published
+as `ratio=3:2` also makes this the same defect as gap 1.
+
+Encoding the node's 130.5 / 128.5 would mean writing two raw px values into a
+component file to reproduce a stroke artifact. `CLAUDE.md` lists raw px inside a
+component as a failure to avoid, so that route is closed without a design
+decision to open it.
+
+On the third, the component applies `--elevation-level2` correctly and there is
+no dark node to build against. `CLAUDE.md`: *a token that exists in one mode and
+not another is a design gap; report it rather than filling it in.*
+
+### Board
+
+No row changed status. Nothing was repaired, so nothing earned
+`Fixed (To re-test)` — 48 Passed · 3 Failed stands, and `Development` stays
+`To be fixed`. Two designer decisions unblock it:
+
+1. Set the cardImage stroke to **inside** in Figma (gap 10) — closes two rows,
+   no code change.
+2. Give `elevation/level2` a **dark-mode value** (gap 11) — closes the third.
