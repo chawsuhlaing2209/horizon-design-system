@@ -395,10 +395,19 @@ scare.
 | `recRKWuTGZeXeI8Ce` | `cardContainer state=hover`, dark | `--elevation-level2` byte-identical in both modes: `0px 2px 4px 0px #1b27330f, 0px 4px 8px 0px #1b27331a`, and `--color-bg-surface-primary` in dark is `#1b2733` — the same colour | Design gap 11 |
 
 Only the **split** differs on the first two; the row's total width (269) and gap
-(10) match the node exactly. The node declares `flex: 1 0 0` on both children —
-an instruction to share evenly — and only its *rendered* geometry is uneven,
-because cardImage's 1px stroke is aligned outside. The build follows the
-declared intent.
+(10) match the node exactly. The node declares `layoutGrow: 1` / `FILL` on both
+children — an instruction to share evenly — and only its *rendered* geometry is
+uneven. The build follows the declared intent.
+
+**Correction, same day, after reading the Figma file directly.** This report and
+design gap 10 both attributed that to cardImage carrying a 1px stroke aligned
+outside. That is false: all four cardImage variants and the instance 8:1213
+already have `strokeAlign: "INSIDE"` at weight 1. The real cause is an
+aspect-ratio lock — instance 8:1213 is `layoutSizingVertical: FIXED` at height
+97.875 with `targetAspectRatio` 256:192 (4:3), so its width is derived as
+97.875 x 4/3 = **130.5 exactly**, and the text column takes the remaining 128.5.
+The fill share never gets to decide. The lock being 4:3 on a variant published
+as `ratio=3:2` also makes this the same defect as gap 1.
 
 Encoding the node's 130.5 / 128.5 would mean writing two raw px values into a
 component file to reproduce a stroke artifact. `CLAUDE.md` lists raw px inside a
