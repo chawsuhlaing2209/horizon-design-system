@@ -66,4 +66,5 @@ default, hover, pressed, focus, disabled, loading, error, as applicable.
 ## Git
 - A component branch never merges into main.
 Main accepts PRs from staging only.
+- npm releases publish from main only, through `npm run release:publish`.
 

@@ -1,0 +1,150 @@
+{
+  "$component": "card",
+  "$commit": "48075e64563322f4a01e3c59f9b23bf5dbfc23dc",
+  "$figma": {
+    "file": "r1CpQEYecqROS0oIOMlqAx",
+    "page": "7:701",
+    "usage": "40:240",
+    "component": "34:317"
+  },
+  "use_when": [
+    "Use a card to display content and actions on a single topic.\nCards should be easy to scan for relevant and actionable information.",
+    "Cards can serve as entry points into deeper levels of detail or navigation, such as a music album or details on an upcoming vacation.",
+    "Cards can be displayed together in a grid, vertical list, or carousel.",
+    "Use cards to contain related elements",
+    "Contents can include anything from images to headlines, supporting text, buttons, and lists",
+    "Can also contain other components in slot area.",
+    "Cards have flexible layouts and dimensions based on their contents. Configuration is done at subcomponent level: CardLayout."
+  ],
+  "dont_use_when": [
+    {
+      "text": "Don’t scroll within a card to reveal information",
+      "alternative": null
+    },
+    {
+      "text": "Cards shouldn’t contain content that can be swiped, such as an image carousel or pagination. Also, swipe gestures shouldn’t cause portions of cards to detach upon swiping.",
+      "alternative": null
+    },
+    {
+      "text": "Don’t let cards bump other elements out of the way. When a card is picked up, it appears in front of all elements, except app bars and navigation.",
+      "alternative": null
+    },
+    {
+      "text": "On a mobile device, cards can't internally scroll, as it could cause two scroll bars to be displayed.",
+      "alternative": null
+    }
+  ],
+  "best_practice": [
+    "Adjust the card layout so content remains the main focus on large screens",
+    "When designing for large screens, use multiple columns to display content",
+    "Certain devices or user contexts require different components to meet platform expectations",
+    "Expand a card to reveal information",
+    "A card should only have one swipe action assigned to it",
+    "When moving a card, increase its elevation",
+    "On a mobile device, cards can expand to reveal more content, scrolling within the screen. Content within cards doesn’t scroll."
+  ],
+  "variant_intent": {
+    "container.state": {
+      "enable": null,
+      "hover": "`hover` raises the card on elevation/level2."
+    },
+    "layout.orientation": {
+      "vertical": "Stacks the image above the text, or beside it.",
+      "horizontal": "Stacks the image above the text, or beside it."
+    },
+    "image.ratio": {
+      "3:2": null,
+      "1:1": null
+    },
+    "image.state": {
+      "idle": "Pins the overlay: `hover` forces it on, `idle` forces it off.",
+      "hover": "Pins the overlay: `hover` forces it on, `idle` forces it off."
+    }
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--body-lg-bold",
+    "--body-sm",
+    "--border-radius-2",
+    "--border-radius-4",
+    "--border-radius-control",
+    "--border-radius-full",
+    "--border-width-default",
+    "--border-width-focused",
+    "--color-bg-overlay",
+    "--color-bg-secondary",
+    "--color-bg-surface-primary",
+    "--color-bg-surface-secondary",
+    "--color-border-default",
+    "--color-border-focused",
+    "--color-icon-negative",
+    "--color-icon-subtle",
+    "--color-text-accent",
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--elevation-level2",
+    "--label-lg-bold",
+    "--lineheight-body-lg",
+    "--lineheight-label-lg",
+    "--size-control-md",
+    "--size-icon-lg",
+    "--spacing-1",
+    "--spacing-2",
+    "--spacing-gap-2xs",
+    "--spacing-gap-xs",
+    "--spacing-padding-md",
+    "--spacing-padding-sm",
+    "--title-md",
+    "--tracking-body-lg",
+    "--tracking-body-sm",
+    "--tracking-label-lg",
+    "--tracking-title-md"
+  ],
+  "a11y": [
+    {
+      "text": "The card root is an <article> element.",
+      "source": "src/components/cardContainer/cardContainer.tsx:22"
+    },
+    {
+      "text": "The title renders as a <p>, not a heading element.",
+      "source": "src/components/cardText/cardText.tsx:40"
+    },
+    {
+      "text": "The favourite control is a native <button type=\"button\"> in the tab order, with aria-label defaulting to \"Save to favourites\" and aria-pressed carrying its pressed state.",
+      "source": "src/components/card/card.test.tsx:139"
+    },
+    {
+      "text": "Uncontrolled, each click flips aria-pressed between \"true\" and \"false\".",
+      "source": "src/components/card/card.test.tsx:160"
+    },
+    {
+      "text": "image.overlayAction=false removes the favourite button from the DOM.",
+      "source": "src/components/card/card.test.tsx:77"
+    },
+    {
+      "text": "The favourite glyph is aria-hidden=\"true\"; the button's aria-label is its name.",
+      "source": "src/components/iconContainer/iconContainer.tsx:24"
+    },
+    {
+      "text": "A supplied image renders as an <img> whose alt is image.imageAlt.",
+      "source": "src/components/card/card.test.tsx:82"
+    },
+    {
+      "text": "image.imageAlt defaults to \"\", which marks the photo as decorative.",
+      "source": "src/components/cardImage/cardImage.tsx:56"
+    },
+    {
+      "text": "The favourite button's :focus-visible draws an outline of var(--border-width-focused) solid var(--color-border-focused), offset var(--border-width-default).",
+      "source": "src/components/cardImage/cardImage.css:128"
+    },
+    {
+      "text": "prefers-reduced-motion: reduce removes the card's elevation transition.",
+      "source": "src/components/cardContainer/cardContainer.css:28"
+    },
+    {
+      "text": "prefers-reduced-motion: reduce removes the image overlay transition.",
+      "source": "src/components/cardImage/cardImage.css:92"
+    }
+  ]
+}

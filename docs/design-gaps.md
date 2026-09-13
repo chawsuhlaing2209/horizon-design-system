@@ -474,6 +474,14 @@ cannot really be read.
 
 ---
 
+### 10. The usage column headings on the Button page say "card"
+
+On page `💠 Button`, the `Usage` frame (65:750) heads its first two columns
+`Use a card` (65:754) and `Do not use a card` (65:763). The lines under them are
+about buttons; the headings were copied from the Card page and never renamed.
+`button.intent.json` transposes the lines as written and does not rely on the
+headings. **Needed:** rename the headings on the Button page.
+
 ## Token contrast
 
 ### Open: several semantic text tokens fail WCAG AA
