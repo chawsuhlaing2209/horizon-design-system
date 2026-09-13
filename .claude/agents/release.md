@@ -143,7 +143,7 @@ IDs through `.claude/registry.local.json`.
 | Release Review, Release Verdict | Read back after writing |
 
 **Staging Testing — read:** `Testing Results` and `Context`, for gate 6 and for the waivers gate 3
-accepts.
+accepts. Gate 3 also accepts a `WAIVED FOR RELEASE` block under the gap in `docs/design-gaps.md`.
 
 **Components — write**
 
