@@ -5,8 +5,7 @@
     "file": "r1CpQEYecqROS0oIOMlqAx",
     "page": "7:701",
     "usage": "40:240",
-    "component": "12:1343",
-    "componentSet": "34:317"
+    "component": "34:317"
   },
   "use_when": [
     "Use a card to display content and actions on a single topic.\nCards should be easy to scan for relevant and actionable information.",
@@ -53,13 +52,13 @@
       "vertical": "Stacks the image above the text, or beside it.",
       "horizontal": "Stacks the image above the text, or beside it."
     },
-    "image.state": {
-      "idle": "Pins the overlay: `hover` forces it on, `idle` forces it off.",
-      "hover": "Pins the overlay: `hover` forces it on, `idle` forces it off."
-    },
     "image.ratio": {
       "3:2": null,
       "1:1": null
+    },
+    "image.state": {
+      "idle": "Pins the overlay: `hover` forces it on, `idle` forces it off.",
+      "hover": "Pins the overlay: `hover` forces it on, `idle` forces it off."
     }
   },
   "placement": [],
@@ -104,51 +103,47 @@
   ],
   "a11y": [
     {
-      "text": "The card's root element is an <article>.",
+      "text": "The card root is an <article> element.",
       "source": "src/components/cardContainer/cardContainer.tsx:22"
     },
     {
-      "text": "The favourite control is a native <button type=\"button\">, in the tab order (tabIndex 0).",
+      "text": "The title renders as a <p>, not a heading element.",
+      "source": "src/components/cardText/cardText.tsx:40"
+    },
+    {
+      "text": "The favourite control is a native <button type=\"button\"> in the tab order, with aria-label defaulting to \"Save to favourites\" and aria-pressed carrying its pressed state.",
       "source": "src/components/card/card.test.tsx:139"
     },
     {
-      "text": "The favourite button's aria-label defaults to \"Save to favourites\" (favoriteLabel).",
-      "source": "src/components/card/card.test.tsx:139"
-    },
-    {
-      "text": "The favourite button carries aria-pressed, which is \"true\" by default (defaultFavorited is true).",
-      "source": "src/components/card/card.test.tsx:139"
-    },
-    {
-      "text": "When uncontrolled, clicking the favourite button toggles aria-pressed between \"false\" and \"true\".",
+      "text": "Uncontrolled, each click flips aria-pressed between \"true\" and \"false\".",
       "source": "src/components/card/card.test.tsx:160"
     },
     {
-      "text": "overlayAction=false removes the favourite button from the DOM.",
+      "text": "image.overlayAction=false removes the favourite button from the DOM.",
       "source": "src/components/card/card.test.tsx:77"
     },
     {
-      "text": "The heart glyph inside the favourite button is aria-hidden=\"true\".",
+      "text": "The favourite glyph is aria-hidden=\"true\"; the button's aria-label is its name.",
       "source": "src/components/iconContainer/iconContainer.tsx:24"
     },
     {
-      "text": "A supplied image renders as <img> with alt set from imageAlt.",
-      "source": "src/components/card/card.test.tsx:89"
+      "text": "A supplied image renders as an <img> whose alt is image.imageAlt.",
+      "source": "src/components/card/card.test.tsx:82"
     },
     {
-      "text": "imageAlt defaults to an empty string, which marks the photo as decorative.",
-      "source": "src/components/cardImage/cardImage.tsx:33"
+      "text": "image.imageAlt defaults to \"\", which marks the photo as decorative.",
+      "source": "src/components/cardImage/cardImage.tsx:56"
     },
     {
-      "text": "The favourite button's :focus-visible draws an outline of --border-width-focused in --color-border-focused, offset by --border-width-default.",
+      "text": "The favourite button's :focus-visible draws an outline of var(--border-width-focused) solid var(--color-border-focused), offset var(--border-width-default).",
       "source": "src/components/cardImage/cardImage.css:128"
     },
     {
-      "text": "Under prefers-reduced-motion: reduce, the card's transition is removed.",
+      "text": "prefers-reduced-motion: reduce removes the card's elevation transition.",
       "source": "src/components/cardContainer/cardContainer.css:28"
     },
     {
-      "text": "Under prefers-reduced-motion: reduce, the image overlay's transition is removed.",
+      "text": "prefers-reduced-motion: reduce removes the image overlay transition.",
       "source": "src/components/cardImage/cardImage.css:92"
     }
   ]
