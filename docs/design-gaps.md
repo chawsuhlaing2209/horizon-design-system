@@ -257,6 +257,12 @@ been re-checked with this test and may share this cause rather than the
 
 ### 11. `elevation/level2` has no dark variant, so hover disappears in dark
 
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card with this defect. Staging Testing row `recRKWuTGZeXeI8Ce` was set
+> to `Passed` on that decision, and its Context says so; it is not a measured
+> pass. In dark, hovering a card still shows no visible change. Re-test the row
+> when the fix below lands.
+
 Found by QA on staging, and failed there — the third of the 3 failures.
 
 `cardContainer` `state=hover` raises the card on `--elevation-level2`. That token

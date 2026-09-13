@@ -483,3 +483,13 @@ Figma change; the build already matched the declared intent.
 `Development` read back as **To be fixed** (Synchronization 97.06%) — the one
 remaining `Failed` row, `recRKWuTGZeXeI8Ce` (design gap 11, `elevation/level2`
 has no dark value), holds it there. A human still has to read this verdict.
+
+---
+
+## Release decision — 2026-09-13
+
+The one remaining failure, `cardContainer state=hover` in dark
+(`recRKWuTGZeXeI8Ce`, design gap 11), was **waived by the product owner** and
+the row set to `Passed` with the waiver written into its Context. The defect
+is unchanged. With every row passing, `Development` moved to `To be deployed`
+and Card was approved for production.
