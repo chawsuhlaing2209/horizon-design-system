@@ -10,16 +10,18 @@ Use this when a component's `Development` reads `Completed` and someone wants it
 released. The verdict and the report link are two of the three cells that move
 the registry to `Released` (precedence 4). The third is `Astro Link`.
 
-**This is the Reviewer's skill.** The registry gives `Release Review` and
-`Release Verdict` to the Reviewer and to nobody else. Do not run it on a component
+**This is the release agent's skill** (`.claude/agents/release.md`). The registry
+gives `Release Review` and `Release Verdict` to the release agent and to nobody
+else. Do not run it on a component
 you built, tested, wrote the intent file for, or documented — not in this session
 and not in the commits under review. A review by an author is not a review.
 
 **Cleared is not approval.** It says the component passed the gates, not that it
 should ship. A human approves (`CLAUDE.md`).
 
-The reviewer reads, runs checks, and reports. It **never edits an intent file,
-never fixes what it finds, and never publishes.** A finding names where it is and
+The review reads, runs checks, and reports. It **never edits an intent file,
+never fixes what it finds, and never publishes.** Publishing is a later step the
+release agent takes only after a person approves the version. A finding names where it is and
 who can clear it. The repair belongs to someone else.
 
 ## Steps
@@ -54,7 +56,7 @@ missing, not what was probably true.
 | 4 | **Public surface decided** | The component is exported from `src/index.ts` with its prop types. The types its props are built from are exported too. `dist/index.d.ts` exposes the same names. |
 | 5 | **Names final** | Every property in the Figma component set (`get_metadata` on the node, or `componentPropertyDefinitions` on the set) has a prop of the same name. `docs/naming-conflicts.md` holds no entry for the component that is not marked resolved. |
 | 6 | **States complete** | Every variant × state row in the Figma component set has a story, and every Staging Testing row for the component reads `Passed`. A waived row counts only with its waiver recorded. |
-| 7 | **Version meaning known** | `package.json` `version` is not on the registry (`npm view <name>@<version>`). The change since the last release tag (`git diff v<last>..<sha> -- src/`) is classified by what it does to the public surface: removed or renamed export or prop → breaking, added → feature, neither → fix. The version bump matches that class, and 0.x counts a breaking change as a minor bump. With no earlier tag, the release is the first, and the report says so. |
+| 7 | **Version meaning known** | The change since the last release tag (`git diff v<last>..<sha> -- src/`) is classified by what it does to the public surface: removed or renamed export or prop → breaking, added → feature, neither → fix. 0.x counts a breaking change as a minor bump. The version that class forces is named in the report, with the change that forces it, and is not on the registry (`npm view <name>@<version>`). `package.json` does not have to say it yet: the version is proposed after review and bumped after approval. With no earlier tag, the release is the first, its version is `package.json`'s, and the report says so. |
 
 **Check:** every gate has a result and the evidence behind it — a command and its
 output, a file and line, or a registry value read back.

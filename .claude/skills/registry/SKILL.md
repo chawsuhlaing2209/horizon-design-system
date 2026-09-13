@@ -90,8 +90,8 @@ one alone is not a release.
 
 ## Ownership
 
-Owners are one of: **Human**, **PM**, **Engineer**, **QA**, **DevOps**,
-**Reviewer**, **Token-builder**, or **Derived** (no writer).
+Owners are one of: **Human**, **PM**, **Engineer**, **QA**, **DevOps**, **Doc Generator**,
+**Release**, **Token-builder**, or **Derived** (no writer).
 `Derived` means the cell is computed by Airtable — see *Nobody writes these*.
 
 ### Components
@@ -103,7 +103,7 @@ Owners are one of: **Human**, **PM**, **Engineer**, **QA**, **DevOps**,
 | Figma | Human | The design source. Feeds precedence 8. |
 | Staging Storybook | Engineer | Written after the staging build is deployed and seen to render. Feeds precedence 7. |
 | Production Storybook | DevOps | Written on promotion to production. Feeds precedence 5. |
-| Astro Link | DevOps | The deep-linked docs page, written only after it is seen to render. Feeds precedence 4. Release never writes this. |
+| Astro Link | Doc Generator | The deep-linked docs page, written only after the live page was fetched and holds all five tabs. Feeds precedence 4. Release never writes this. |
 | Design | Human | Sign-off. Blank means not signed off; no agent nudges it along. Feeds precedence 8. |
 | **Development** | **Derived** | **Formula. No agent may write it.** |
 | Synchronization % | Derived | Formula over the two count columns. |
@@ -119,8 +119,8 @@ Owners are one of: **Human**, **PM**, **Engineer**, **QA**, **DevOps**,
 | GitHub Commits | Engineer | Links to the GitHub Commits table. |
 | Composes | Engineer | The components this one imports. Build up, never sideways. |
 | Composed Into | Derived | Reverse of Composes. Read it to find who must be re-tested. |
-| Release Review | Reviewer | URL of the review report **at the commit it reviewed** — never a branch URL. Written with Release Verdict or not at all. |
-| Release Verdict | Reviewer | `Cleared` or `Blocked`. Empty means not reviewed. Written with Release Review or not at all. |
+| Release Review | Release | URL of the review report **at the commit it reviewed** — never a branch URL. Written with Release Verdict or not at all. |
+| Release Verdict | Release | `Cleared` or `Blocked`. Empty means not reviewed. Written with Release Review or not at all. |
 
 ### Staging Testing
 
@@ -236,7 +236,7 @@ before trusting any synchronisation number.
 **Flag 5 — the staleness rule in `Release Review` is prose, not a check.**
 "A review is stale once Last Modified is later than the commit it links to" —
 nothing computes this and nothing enforces it. A stale review looks exactly like
-a fresh one. The Reviewer must compare the dates by hand.
+a fresh one. The release agent must compare the dates by hand.
 
 **Flag 6 — `[Production] Test Records` is plain text; `[Staging] Test Records` is
 a record link.** Production results cannot be rolled up, counted, or fed into any
@@ -253,9 +253,9 @@ that remains: in the sibling `Sunim Design System` base the same-named column is
 record link into a real Semantic Tokens table, so a token written here as plain text
 is not the same object it is there.
 
-**Flag 8 — half resolved: the skill exists, the Reviewer does not.** `Release
-Review` and `Release Verdict` both cite `.claude/skills/release-review/SKILL.md` as
-the source of "the seven gates". That skill now exists. There is still no Reviewer
-agent and no Release agent under `.claude/agents/`, so the Reviewer columns have an
-owner on paper and no owner in fact. Leave them empty rather than filling them from
-a different agent — the skill itself forbids running it on work you authored.
+**Flag 8 — resolved.** `Release Review` and `Release Verdict` both cite
+`.claude/skills/release-review/SKILL.md` as the source of "the seven gates". That
+skill exists, and the release agent (`.claude/agents/release.md`) runs it and owns
+both columns. The Airtable column descriptions may still say "Reviewer"; the
+owner is the release agent. No other agent fills them — the skill forbids running
+it on work you authored.

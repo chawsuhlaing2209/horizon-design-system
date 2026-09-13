@@ -123,8 +123,9 @@ Each of these is something another agent in this crew *is* allowed to do.
   who cannot mark your own work fixed, because you are the one who fixed it.
 - **Never create or amend a Staging Testing row.** QA owns every column in that table. A row from
   you is the builder scoring the exam.
-- **Never write `Production Storybook` or `Astro Link`.** DevOps writes both, and only after
-  opening them. Your staging link is where your authority ends.
+- **Never write `Production Storybook` or `Astro Link`.** DevOps writes the first and the Doc
+  Generator the second, each only after opening what it links to. Your staging link is where your
+  authority ends.
 - **Never merge to main.** DevOps is the only agent permitted to. Your branch goes to staging via
   PR, and no further.
 - **Never open an Asana ticket.** PM turns gaps into tickets. You report a blocker in your card and
