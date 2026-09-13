@@ -4,12 +4,13 @@
 // The atom. Two variant properties in Figma, both kept verbatim:
 //
 //   variant  filled | outlined
-//   state    enable | hover | pressed | disabled
+//   state    enable | hover | focused | disabled
 //
-// `state` is a pin, not the only driver. Real `:hover` and `:active` render the
-// same tokens, so the component behaves as a button; `state` forces one of them
-// so a story or a QA pass can hold a state still and look at it. This is the
-// same arrangement cardContainer uses for its own `state`.
+// `state` is a pin, not the only driver. A real `:hover` and a real keyboard
+// `:focus-visible` render the same tokens as `hover` and `focused`, so the
+// component behaves as a button; `state` forces one of them so a story or a QA
+// pass can hold a state still and look at it. Card uses the same arrangement
+// for its own `state`. The set has no pressed state.
 //
 // The label is `children`. Figma carries "Sign in" as sample content on the
 // node rather than as a text property, so there is no design-named prop for it
@@ -18,7 +19,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export type ButtonVariant = 'filled' | 'outlined';
-export type ButtonState = 'enable' | 'hover' | 'pressed' | 'disabled';
+export type ButtonState = 'enable' | 'hover' | 'focused' | 'disabled';
 
 export type ButtonProps = {
   /** Figma `variant`. */

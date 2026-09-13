@@ -1,4 +1,4 @@
-/* button — 26:70 (variant = filled | outlined, state = enable | hover | pressed | disabled)
+/* button — 26:70 (variant = filled | outlined, state = enable | hover | focused | disabled)
  *
  * Every value resolves to a semantic token from build/tokens/css/tokens.css.
  * No raw hex, px, or font names live in this file.
@@ -6,11 +6,12 @@
  * Two things about the box are translated from the node rather than tidied up:
  *
  *   - filled draws no stroke, so it measures 44px tall (12 + 20 + 12).
- *     outlined adds a 1px stroke on each edge and measures 46px. The design
- *     puts the stroke outside the padding box, and this mirrors that instead
- *     of equalising the two.
- *   - width is hug, not the 94px the instances happen to sit at in the frame.
- *     94px is what "Sign in" plus 24px of inset comes to.
+ *     outlined includes its 1px stroke in the layout, so it hugs to 46px
+ *     tall, as the node does.
+ *   - width is hug, not the node's fixed 94px. In the node the outlined stroke
+ *     sits inside that fixed 94, so the inset beside it is 23. Outlined takes
+ *     the border width off the inline padding, so filled and outlined are the
+ *     same width for any label: 94 for "Sign in".
  */
 
 .hds-button,
@@ -34,7 +35,7 @@
   letter-spacing: var(--tracking-label-lg);
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 120ms ease-out, border-color 120ms ease-out;
+  transition: background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out;
 }
 
 /* ---- variant = filled ---------------------------------------------------- */
@@ -49,8 +50,9 @@
   background: var(--color-bg-primary-hovered);
 }
 
-.hds-button[data-variant='filled']:not(:disabled):active,
-.hds-button[data-variant='filled'][data-state='pressed'] {
+/* state = focused (26:82) binds its fill to `color/bg/primary/pressed`. */
+.hds-button[data-variant='filled']:not(:disabled):focus-visible,
+.hds-button[data-variant='filled'][data-state='focused'] {
   background: var(--color-bg-primary-pressed);
 }
 
@@ -62,22 +64,23 @@
 /* ---- variant = outlined -------------------------------------------------- */
 
 .hds-button[data-variant='outlined'] {
+  padding-inline: calc(var(--spacing-padding-lg) - var(--border-width-default));
   background: transparent;
   border: var(--border-width-default) solid var(--color-border-primary);
   color: var(--color-text-link);
 }
 
+/* state = hover (26:100) binds the stroke to `color/border/primary/hover` and
+ * the label to `color/text/link/hovered`. */
 .hds-button[data-variant='outlined']:not(:disabled):hover,
 .hds-button[data-variant='outlined'][data-state='hover'] {
   border-color: var(--color-border-primary-hover);
+  color: var(--color-text-link-hovered);
 }
 
-/* NAMING GAP: the node binds the pressed stroke to the style
- * `color/border/primary/focused`, so the token that carries the PRESSED border
- * is the one named `focused`. Mirrored verbatim rather than swapped for a
- * better-named token that would not match the design. See docs/design-gaps.md. */
-.hds-button[data-variant='outlined']:not(:disabled):active,
-.hds-button[data-variant='outlined'][data-state='pressed'] {
+/* state = focused (26:102) binds its stroke to `color/border/primary/focused`. */
+.hds-button[data-variant='outlined']:not(:disabled):focus-visible,
+.hds-button[data-variant='outlined'][data-state='focused'] {
   border-color: var(--color-border-primary-focused);
 }
 
@@ -94,15 +97,11 @@
 
 /* ---- focus --------------------------------------------------------------- */
 
-/* DESIGN GAP: the component set has no `state=focused` variant, so there is no
- * node to match here. The two tokens used are the ones the system already
- * names for this job — `--color-border-focused` is documented "Keyboard focus
- * ring" and `--border-width-focused` "Focus ring thickness" — so nothing is
- * invented, but the ring is unreviewed until the variant exists in Figma.
- * Raised in docs/design-gaps.md. */
+/* Keyboard focus renders the `state=focused` variants above. The node draws no
+ * ring, so the browser's default outline is removed rather than left on top of
+ * the design. */
 .hds-button:focus-visible {
-  outline: var(--border-width-focused) solid var(--color-border-focused);
-  outline-offset: var(--border-width-default);
+  outline: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
