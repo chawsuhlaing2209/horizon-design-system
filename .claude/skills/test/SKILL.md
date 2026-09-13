@@ -73,7 +73,7 @@ A state that only changes colour has not been tested. Confirm behaviour:
 
 ### 5 · Capture the visual states
 Screenshot each state, including hover, disabled, and loading. Save them to
-`reports/<Component>/`. Where a case fails, capture the Figma render beside it.
+`reports/<name>/`, lowercase. Where a case fails, capture the Figma render beside it.
 
 ### 6 · Check the tokens
 Confirm no raw hex, px, or font value appears in the component or its CSS. The
