@@ -1,8 +1,8 @@
 // Figma node under test:
-// https://www.figma.com/design/r1CpQEYecqROS0oIOMlqAx/2.-Horizon-Component?node-id=12-1343
+// https://www.figma.com/design/r1CpQEYecqROS0oIOMlqAx/2.-Horizon-Component?node-id=34-317
 //
-// Subcomponent nodes that carry the variants:
-//   cardContainer  ?node-id=8-804
+// The Card set carries `state` itself (12:1343 enable, 34:318 hover).
+// Subcomponent nodes that carry the other variants:
 //   cardLayout     ?node-id=8-1251
 //   cardImage      ?node-id=8-1186
 //   cardText       ?node-id=8-778
@@ -14,9 +14,8 @@
 
 import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Card } from './card';
+import { Card, type CardState } from './card';
 import type { CardImageRatio, CardImageState } from '../cardImage/cardImage';
-import type { CardContainerState } from '../cardContainer/cardContainer';
 import type { CardLayoutOrientation } from '../cardLayout/cardLayout';
 
 // A stand-in photo. The Slide Image in Figma is an empty placeholder, so there
@@ -30,7 +29,7 @@ const DEMO_PHOTO =
   );
 
 type Flat = {
-  state: CardContainerState;
+  state: CardState;
   orientation: CardLayoutOrientation;
   hasSlot: boolean;
   ratio: CardImageRatio;
@@ -73,7 +72,7 @@ const CardStory = (a: Flat) => {
     <div style={{ padding: '24px', width: 'fit-content' }}>
       <div style={{ width: frameWidth(a.orientation) }}>
         <Card
-          container={{ state: a.state }}
+          state={a.state}
           layout={{ orientation: a.orientation, hasSlot: a.hasSlot }}
           slot={a.hasSlot ? SLOT : undefined}
           image={{
@@ -108,7 +107,7 @@ const CardStory = (a: Flat) => {
 };
 
 const FIGMA = {
-  container: 'cardContainer (8:804)',
+  card: 'card (34:317)',
   layout: 'cardLayout (8:1251)',
   image: 'cardImage (8:1186)',
   text: 'cardText (8:778)',
@@ -140,21 +139,21 @@ const meta: Meta<Flat> = {
     docs: {
       description: {
         component:
-          'Card, built from Figma node 12:1343 and composed from cardContainer, ' +
-          'cardLayout, cardImage and cardText. The component API is nested by ' +
-          'subcomponent so every Figma property name stays verbatim — including ' +
-          'the two different properties both called `state`. These controls are ' +
-          'flat for usability and are mapped onto that shape.',
+          'Card, built from Figma set 34:317 and composed from cardLayout, ' +
+          'cardImage and cardText. `state` is a prop on Card; the other ' +
+          'properties are grouped by subcomponent so every Figma property name ' +
+          'stays verbatim — including cardImage\'s own `state`. These controls ' +
+          'are flat for usability and are mapped onto that shape.',
       },
     },
   },
 
   argTypes: {
     state: {
-      description: 'cardContainer `state`. `hover` raises the card on elevation/level2.',
+      description: 'Card `state`. `hover` raises the card on elevation/level2.',
       options: ['enable', 'hover'],
       control: { type: 'radio' },
-      table: { category: FIGMA.container, defaultValue: { summary: 'enable' } },
+      table: { category: FIGMA.card, defaultValue: { summary: 'enable' } },
     },
     orientation: {
       description: 'cardLayout `orientation`.',
@@ -168,10 +167,10 @@ const meta: Meta<Flat> = {
       table: { category: FIGMA.layout, defaultValue: { summary: 'false' } },
     },
     ratio: {
-      description: 'cardImage `ratio`. The `3:2` variant renders 4:3 — see docs/design-gaps.md.',
-      options: ['3:2', '1:1'],
+      description: 'cardImage `ratio`.',
+      options: ['4:3', '1:1'],
       control: { type: 'radio' },
-      table: { category: FIGMA.image, defaultValue: { summary: '3:2' } },
+      table: { category: FIGMA.image, defaultValue: { summary: '4:3' } },
     },
     imageState: {
       description:
@@ -211,7 +210,7 @@ const meta: Meta<Flat> = {
     state: 'enable',
     orientation: 'vertical',
     hasSlot: false,
-    ratio: '3:2',
+    ratio: '4:3',
     imageState: 'auto',
     overlayAction: true,
     metadata: true,
@@ -240,7 +239,7 @@ const args = (o: Partial<Flat>) => ({ args: o });
 /** Reproduces instance 12:1343 exactly: metadata shown, review and price off. */
 export const FigmaNode: Story = { name: 'Figma node 12:1343', ...args({ imageState: 'hover', review: false, price: false }) };
 
-/* ---- cardContainer · state -------------------------------------------- */
+/* ---- card · state ----------------------------------------------------- */
 export const StateEnable: Story = { name: 'state = enable', ...args({ state: 'enable' }) };
 export const StateHover: Story = { name: 'state = hover', ...args({ state: 'hover' }) };
 
@@ -252,7 +251,7 @@ export const OrientationHorizontal: Story = { name: 'orientation = horizontal', 
 export const HasSlot: Story = { name: 'hasSlot = true', ...args({ hasSlot: true }) };
 
 /* ---- cardImage · ratio, state, overlayAction -------------------------- */
-export const Ratio3x2: Story = { name: 'ratio = 3:2', ...args({ ratio: '3:2' }) };
+export const Ratio4x3: Story = { name: 'ratio = 4:3', ...args({ ratio: '4:3' }) };
 export const Ratio1x1: Story = { name: 'ratio = 1:1', ...args({ ratio: '1:1' }) };
 export const ImageStateIdle: Story = { name: 'imageState = idle', ...args({ imageState: 'idle', image: DEMO_PHOTO }) };
 export const ImageStateHover: Story = { name: 'imageState = hover', ...args({ imageState: 'hover', image: DEMO_PHOTO }) };

@@ -31,24 +31,29 @@ afterEach(() => {
 const q = (sel: string) => host.querySelector(sel);
 
 describe('card — composition', () => {
-  it('reintegrates all four subcomponents', () => {
+  it('is its own container and reintegrates all three subcomponents', () => {
     render(<Card />);
-    expect(q('[data-node-id="8:804"]')).toBeTruthy();   // cardContainer
+    expect(q('article.hds-card[data-node-id="34:317"]')).toBeTruthy(); // card set
     expect(q('[data-node-id="8:1251"]')).toBeTruthy();  // cardLayout
     expect(q('[data-node-id="8:1186"]')).toBeTruthy();  // cardImage
     expect(q('[data-node-id="8:778"]')).toBeTruthy();   // cardText
   });
 
   it('keeps the two Figma `state` properties independent', () => {
-    render(<Card container={{ state: 'hover' }} image={{ state: 'idle' }} />);
+    render(<Card state="hover" image={{ state: 'idle' }} />);
     expect(q('.hds-card')?.getAttribute('data-state')).toBe('hover');
     expect(q('.hds-card-image')?.getAttribute('data-state')).toBe('idle');
   });
 });
 
-describe('cardContainer — state', () => {
+describe('card — state', () => {
+  it('defaults to state=enable', () => {
+    render(<Card />);
+    expect(q('.hds-card')?.getAttribute('data-state')).toBe('enable');
+  });
+
   it.each(['enable', 'hover'] as const)('renders state=%s', (state) => {
-    render(<Card container={{ state }} />);
+    render(<Card state={state} />);
     expect(q('.hds-card')?.getAttribute('data-state')).toBe(state);
   });
 });
@@ -69,7 +74,7 @@ describe('cardLayout — orientation and hasSlot', () => {
 });
 
 describe('cardImage — ratio, state, overlayAction', () => {
-  it.each(['3:2', '1:1'] as const)('renders ratio=%s', (ratio) => {
+  it.each(['4:3', '1:1'] as const)('renders ratio=%s', (ratio) => {
     render(<Card image={{ ratio }} />);
     expect(q('.hds-card-image')?.getAttribute('data-ratio')).toBe(ratio);
   });
@@ -110,11 +115,8 @@ describe('cardText — metadata, review, price', () => {
     expect(q('.hds-card-text__price')).toBeNull();
   });
 
-  // QA finding 1. Instance 12:1343 keeps the metadata container at its full
-  // height with both rows hidden, so the card holds 296.25 either way. The
-  // reserve is a CSS min-height composed from the two rows' own line-height
-  // tokens; jsdom does no layout, so what is asserted here is its precondition —
-  // the container must still be in the tree when both rows are hidden.
+  // The metadata container (8:770) hugs its rows, so it reserves no height. It
+  // stays in the tree while `metadata` is true, even with both rows hidden.
   it('keeps the metadata container when both rows are hidden', () => {
     render(<Card text={{ review: false, price: false }} />);
     expect(q('.hds-card-text__meta')).toBeTruthy();
@@ -203,8 +205,8 @@ describe('cardImage — overlay state is not overridden by the card', () => {
     expect(q('.hds-card-image')?.getAttribute('data-state')).toBe(state);
   });
 
-  it('keeps container and image state independent', () => {
-    render(<Card container={{ state: 'hover' }} image={{ state: 'idle' }} />);
+  it('keeps card and image state independent', () => {
+    render(<Card state="hover" image={{ state: 'idle' }} />);
     expect(q('.hds-card')?.getAttribute('data-state')).toBe('hover');
     expect(q('.hds-card-image')?.getAttribute('data-state')).toBe('idle');
   });

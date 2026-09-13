@@ -7,8 +7,7 @@
 // from them — a consumer typing `image` or `layout` needs the names.
 
 export { Button, type ButtonProps, type ButtonVariant, type ButtonState } from './components/button/button';
-export { Card, type CardProps } from './components/card/card';
-export type { CardContainerProps, CardContainerState } from './components/cardContainer/cardContainer';
+export { Card, type CardProps, type CardState } from './components/card/card';
 export type { CardLayoutProps, CardLayoutOrientation } from './components/cardLayout/cardLayout';
 export type { CardImageProps, CardImageRatio, CardImageState } from './components/cardImage/cardImage';
 export type { CardTextProps } from './components/cardText/cardText';
