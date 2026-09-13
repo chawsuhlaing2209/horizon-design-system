@@ -1,6 +1,6 @@
 {
   "$component": "card",
-  "$commit": "48075e64563322f4a01e3c59f9b23bf5dbfc23dc",
+  "$commit": "108e8b09d0958769f40bbde5d2ae67b50c0140b8",
   "$figma": {
     "file": "r1CpQEYecqROS0oIOMlqAx",
     "page": "7:701",
@@ -49,8 +49,8 @@
       "hover": "`hover` raises the card on elevation/level2."
     },
     "layout.orientation": {
-      "vertical": "Stacks the image above the text, or beside it.",
-      "horizontal": "Stacks the image above the text, or beside it."
+      "vertical": null,
+      "horizontal": null
     },
     "image.ratio": {
       "3:2": null,
@@ -103,48 +103,76 @@
   ],
   "a11y": [
     {
-      "text": "The card root is an <article> element.",
-      "source": "src/components/cardContainer/cardContainer.tsx:22"
+      "text": "The card renders as an <article> element",
+      "source": "src/components/cardContainer/cardContainer.tsx:21"
     },
     {
-      "text": "The title renders as a <p>, not a heading element.",
-      "source": "src/components/cardText/cardText.tsx:40"
+      "text": "The favourite control renders as a native <button> element",
+      "source": "src/components/card/card.test.tsx:142"
     },
     {
-      "text": "The favourite control is a native <button type=\"button\"> in the tab order, with aria-label defaulting to \"Save to favourites\" and aria-pressed carrying its pressed state.",
-      "source": "src/components/card/card.test.tsx:139"
+      "text": "The favourite button has type=\"button\"",
+      "source": "src/components/card/card.test.tsx:143"
     },
     {
-      "text": "Uncontrolled, each click flips aria-pressed between \"true\" and \"false\".",
-      "source": "src/components/card/card.test.tsx:160"
+      "text": "The favourite button carries aria-pressed, \"true\" by default",
+      "source": "src/components/card/card.test.tsx:144"
     },
     {
-      "text": "image.overlayAction=false removes the favourite button from the DOM.",
-      "source": "src/components/card/card.test.tsx:77"
+      "text": "favoriteLabel defaults to \"Save to favourites\" and is rendered as the favourite button's aria-label",
+      "source": "src/components/card/card.test.tsx:145"
     },
     {
-      "text": "The favourite glyph is aria-hidden=\"true\"; the button's aria-label is its name.",
-      "source": "src/components/iconContainer/iconContainer.tsx:24"
+      "text": "The favourite button is in the tab order (tabIndex 0)",
+      "source": "src/components/card/card.test.tsx:146"
     },
     {
-      "text": "A supplied image renders as an <img> whose alt is image.imageAlt.",
-      "source": "src/components/card/card.test.tsx:82"
+      "text": "Uncontrolled, clicking the favourite button toggles aria-pressed",
+      "source": "src/components/card/card.test.tsx:166"
     },
     {
-      "text": "image.imageAlt defaults to \"\", which marks the photo as decorative.",
-      "source": "src/components/cardImage/cardImage.tsx:56"
+      "text": "Controlled by favorited, clicking the favourite button does not change aria-pressed on its own",
+      "source": "src/components/card/card.test.tsx:180"
     },
     {
-      "text": "The favourite button's :focus-visible draws an outline of var(--border-width-focused) solid var(--color-border-focused), offset var(--border-width-default).",
-      "source": "src/components/cardImage/cardImage.css:128"
+      "text": "The favourite button is not rendered when overlayAction is false",
+      "source": "src/components/card/card.test.tsx:79"
     },
     {
-      "text": "prefers-reduced-motion: reduce removes the card's elevation transition.",
-      "source": "src/components/cardContainer/cardContainer.css:28"
+      "text": "The favourite icon glyph is aria-hidden=\"true\"",
+      "source": "src/components/iconContainer/iconContainer.tsx:22"
     },
     {
-      "text": "prefers-reduced-motion: reduce removes the image overlay transition.",
-      "source": "src/components/cardImage/cardImage.css:92"
+      "text": "A supplied photo renders as an <img> whose alt is imageAlt",
+      "source": "src/components/card/card.test.tsx:89"
+    },
+    {
+      "text": "imageAlt defaults to an empty string",
+      "source": "src/components/cardImage/cardImage.tsx:55"
+    },
+    {
+      "text": "With no photo supplied, a <div> renders in place of the <img>",
+      "source": "src/components/cardImage/cardImage.tsx:86"
+    },
+    {
+      "text": "The favourite button's :focus-visible draws an outline of --border-width-focused in --color-border-focused",
+      "source": "src/components/cardImage/cardImage.css:129"
+    },
+    {
+      "text": "The favourite button's :focus-visible outline is offset by --border-width-default",
+      "source": "src/components/cardImage/cardImage.css:130"
+    },
+    {
+      "text": "The title renders as a <p> element",
+      "source": "src/components/cardText/cardText.tsx:38"
+    },
+    {
+      "text": "The card's box-shadow transition is removed under prefers-reduced-motion: reduce",
+      "source": "src/components/cardContainer/cardContainer.css:29"
+    },
+    {
+      "text": "The image overlay's opacity transition is removed under prefers-reduced-motion: reduce",
+      "source": "src/components/cardImage/cardImage.css:93"
     }
   ]
 }
