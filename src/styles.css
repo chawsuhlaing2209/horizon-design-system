@@ -1,0 +1,28 @@
+/* Every component's stylesheet, in one place. Components carry no CSS imports
+ * of their own; a consumer imports this once (plus tokens.css for the values).
+ *
+ * Order is the order the component modules used to import their CSS, so the
+ * cascade is unchanged: a subcomponent's rules come before the component that
+ * composes it (iconContainer before cardImage).
+ *
+ * CLAUDE.md:
+ *   Typography — "Install required font and load properly from Google Font CDN"
+ *   Icon       — "Install and import material symbols from
+ *                 https://fonts.google.com/icons"
+ *
+ * Inter is the family every type token names (--family-default). Material
+ * Symbols Outlined is the icon face — node 8:1107 "favorite" carries the
+ * Material Symbols keyword list. `display=block` on the icon face avoids the
+ * flash where the ligature name renders as the literal word before the font
+ * arrives. The faces load here, not in Storybook, so a consumer gets them too.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block');
+
+@import './components/button/button.css';
+@import './components/cardContainer/cardContainer.css';
+@import './components/cardLayout/cardLayout.css';
+@import './components/iconContainer/iconContainer.css';
+@import './components/cardImage/cardImage.css';
+@import './components/cardText/cardText.css';

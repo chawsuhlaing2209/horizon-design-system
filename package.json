@@ -1,8 +1,32 @@
 {
-  "name": "horizon-design-system",
-  "version": "1.0.0",
+  "name": "@theproductiveschedule/horizon-design-system",
+  "version": "0.1.0",
+  "private": true,
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./styles.css": "./dist/styles.css",
+    "./tokens.css": "./dist/tokens.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build:tokens": "node build-tokens.js",
     "build:token-data": "node build-token-data.js",
@@ -13,12 +37,20 @@
     "build-storybook": "storybook build",
     "pretest": "npm run tokens",
     "test": "vitest run",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "build:lib": "tsup",
+    "build:css": "node build-css.js",
+    "build:package": "npm run build:tokens && npm run build:lib && npm run build:css",
+    "prepublishOnly": "npm run build:package && npm test",
+    "release:publish": "node release-publish.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
   "devDependencies": {
     "@storybook/addon-a11y": "^10.6.0",
     "@storybook/addon-docs": "^10.5.10",
@@ -27,14 +59,13 @@
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "jsdom": "^27.0.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "storybook": "^10.6.0",
     "style-dictionary": "^5.5.2",
+    "tsup": "^8.5.1",
     "typescript": "^7.0.2",
     "vite": "^8.2.2",
     "vitest": "^3.2.7"
-  },
-  "dependencies": {
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
   }
 }

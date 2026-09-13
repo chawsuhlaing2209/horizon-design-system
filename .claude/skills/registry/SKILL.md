@@ -253,9 +253,9 @@ that remains: in the sibling `Sunim Design System` base the same-named column is
 record link into a real Semantic Tokens table, so a token written here as plain text
 is not the same object it is there.
 
-**Flag 8 — two descriptions point at `.claude/skills/release-review/SKILL.md`,
-which does not exist in this repo.** `Release Review` and `Release Verdict` both
-cite it as the source of "the seven gates". There is also no Reviewer agent and no
-Release agent defined under `.claude/agents/`. Until both exist, the Reviewer
-columns have an owner on paper and no owner in fact — leave them empty rather
-than filling them from a different agent.
+**Flag 8 — half resolved: the skill exists, the Reviewer does not.** `Release
+Review` and `Release Verdict` both cite `.claude/skills/release-review/SKILL.md` as
+the source of "the seven gates". That skill now exists. There is still no Reviewer
+agent and no Release agent under `.claude/agents/`, so the Reviewer columns have an
+owner on paper and no owner in fact. Leave them empty rather than filling them from
+a different agent — the skill itself forbids running it on work you authored.

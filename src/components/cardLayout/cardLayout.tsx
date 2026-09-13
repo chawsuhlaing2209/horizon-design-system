@@ -7,7 +7,6 @@
 // Variants: orientation = vertical | horizontal, plus hasSlot.
 
 import type { ReactNode } from 'react';
-import './cardLayout.css';
 
 export type CardLayoutOrientation = 'vertical' | 'horizontal';
 

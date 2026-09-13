@@ -5,9 +5,7 @@
 // they are properly aligned and spaced within the interface."
 //
 // Icons are Material Symbols, per CLAUDE.md. The face is loaded from the Google
-// Fonts CDN in .storybook/fonts.css; the glyph is selected by its ligature name.
-
-import './iconContainer.css';
+// Fonts CDN in src/styles.css; the glyph is selected by its ligature name.
 
 export type IconContainerProps = {
   /** Material Symbols ligature name, e.g. `favorite`. */

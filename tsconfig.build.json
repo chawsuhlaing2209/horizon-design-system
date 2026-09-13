@@ -1,0 +1,16 @@
+{
+  // Declaration emit for the package, run from tsup.config.ts. tsup's own `dts`
+  // cannot run here: it needs the TypeScript JS API, and TypeScript 7 ships
+  // only the native compiler. Following imports from src/index.ts keeps tests
+  // and stories out of dist.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "types": []
+  },
+  "include": ["src/index.ts"]
+}

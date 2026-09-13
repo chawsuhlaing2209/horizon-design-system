@@ -8,7 +8,6 @@
 
 import { useState } from 'react';
 import { IconContainer } from '../iconContainer/iconContainer';
-import './cardImage.css';
 
 export type CardImageRatio = '3:2' | '1:1';
 export type CardImageState = 'idle' | 'hover';
