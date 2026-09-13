@@ -1,0 +1,7 @@
+{
+  "$comment": "Components cleared to exist in the production Storybook. DevOps adds a name when it promotes a component whose Development reads To be deployed and a human has approved the release; writing Production Storybook then moves it to Completed. A name stays only while Development reads Completed or Released, and is removed the moment the component regresses to To be fixed or Fixing. Foundations/token stories are not components and are always built.",
+  "components": [
+    "button",
+    "card"
+  ]
+}
