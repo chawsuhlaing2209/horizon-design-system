@@ -263,7 +263,7 @@ and `box-sizing` — none of which is a design value.
 
 | File | What it is |
 |---|---|
-| `reports/Button/figma-26-70-component-set.png` | The Figma render of node 26:70, all eight symbols, for side-by-side comparison |
+| `reports/button/figma-26-70-component-set.png` | The Figma render of node 26:70, all eight symbols, for side-by-side comparison |
 
 Live captures of each state — the eight pinned stories, the light and dark matrix, the
 outlined focus ring, and the hovered filled and outlined buttons — were taken against
