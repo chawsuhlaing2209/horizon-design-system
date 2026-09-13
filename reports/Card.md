@@ -424,3 +424,62 @@ No row changed status. Nothing was repaired, so nothing earned
 1. Set the cardImage stroke to **inside** in Figma (gap 10) — closes two rows,
    no code change.
 2. Give `elevation/level2` a **dark-mode value** (gap 11) — closes the third.
+
+## QA re-test of the two horizontal rows — 2026-09-13
+
+Scope: `recruJ0K6kqgODxAC` (light) and `reccHjcAahTTrHUit` (dark), both
+`Fixed (To re-test)` after the Figma change that moved the cardImage 1px border
+from the auto-layout frame to the inner Slide Image rectangle. No code changed.
+`recRKWuTGZeXeI8Ce` (dark hover elevation) was not touched and stays `Failed`.
+
+Build: the Card record's `Staging Storybook` cell, read from the registry —
+`https://horizon-design-system-ev1k2psuq-chawsuhlaing2209s-projects.vercel.app`,
+story `components-card--orientation-horizontal` via `iframe.html`, in Claude in Chrome.
+
+### Font check (canvas measureText, declared family vs bogus family)
+
+| Family | Declared | Bogus | Loaded |
+|---|---|---|---|
+| Inter 16px | 238.81 | 269.72 | yes |
+| Material Symbols Outlined 24px (`arrow_forward`) | 24.00 | 187.84 | yes |
+
+Identical numbers in the light and dark loads. `document.fonts` also lists Inter
+500/600/100–900 and Material Symbols Outlined 100–700 as `loaded`.
+
+### Figma expected — node 8:1250, read live (get_metadata + read-only use_figma)
+
+| Property | Value |
+|---|---|
+| Row | HORIZONTAL auto-layout, 269 x 172, itemSpacing 10, padding 0 |
+| cardImage 8:1213 | 129.5 wide at x 0 — `layoutGrow 1`, `FILL` |
+| Text column 8:1318 | 129.5 wide at x 139.5 — `layoutGrow 1`, `FILL` |
+| Strokes | none on either child frame; 1px `INSIDE` on the Slide Image rectangle in all four cardImage variants (8:1175, 8:1189, 8:1150, 8:1198) |
+
+The node's rendered geometry now agrees with its declared even share.
+
+### Staging measured (getBoundingClientRect)
+
+| Theme | Theme proof | Layout | Gap | grid-template-columns | Image | Body (offset) |
+|---|---|---|---|---|---|---|
+| Light | no data-theme wrapper, `--color-bg-surface-primary` `#fff` | 269 x 172 | 10px | 129.5px 129.5px | 129.5 | 129.5 (139.5) |
+| Dark (`globals=theme:dark`) | `DIV data-theme=dark`, `--color-bg-surface-primary` `#1b2733` at the layout | 269 x 172 | 10px | 129.5px 129.5px | 129.5 | 129.5 (139.5) |
+
+Delta against the node: 0.00px on every value, both themes. Screenshots of both
+were taken in the browser session and inspected; the render shows the image,
+heart iconButton, text column and slot as expected in each theme.
+
+### Verdicts written
+
+| Row | Case | Result |
+|---|---|---|
+| `recruJ0K6kqgODxAC` | cardLayout horizontal, hasSlot=true, light | **Passed** |
+| `reccHjcAahTTrHUit` | cardLayout horizontal, hasSlot=true, dark | **Passed** |
+
+`Suggestion for Improvement` cleared on both. Design gap 10 is closed by the
+Figma change; the build already matched the declared intent.
+
+### Board after the writes
+
+`Development` read back as **To be fixed** (Synchronization 97.06%) — the one
+remaining `Failed` row, `recRKWuTGZeXeI8Ce` (design gap 11, `elevation/level2`
+has no dark value), holds it there. A human still has to read this verdict.
