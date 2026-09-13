@@ -22,6 +22,12 @@ name is wrong in Figma and should be renamed to `4:3`.**
 
 ### 2. Values bound to core tokens instead of semantic ones
 
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card with these values on core tokens: the image and icon-container radii
+> (`--border-radius-4`, `--border-radius-2`) and the favourite-button insets
+> (`--spacing-1`, `--spacing-2`). They render as designed. The semantic tokens
+> above still do not exist.
+
 CLAUDE.md: *"Components use semantic tokens only."* These properties are bound in
 Figma to the core layer, so honouring the design and honouring the rule are in
 conflict. The design's binding was mirrored and flagged rather than silently
@@ -40,6 +46,12 @@ the existing semantic spacing tokens.
 
 ### 3. Values with no token at all
 
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card with these raw values: the 10px layout gap, the 7px / 6.5px favourite
+> offset, and the 46px reserve. This waives the open gap only. Release-review
+> gate 3's separate rule against raw px in component CSS still fails until the
+> values move onto the scale or get tokens.
+
 | Property | Value | Note |
 |---|---|---|
 | `cardLayout` gap | 10px | off the 4px scale; no token can carry it |
@@ -51,6 +63,11 @@ slot) or add tokens for them. Until then they are raw values in `card.css`, each
 marked in a comment.
 
 ### 4. Interaction states missing from the design
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card without designed pressed, focus or disabled states. The system's
+> generic focus ring stands in for focus, and it has not been reviewed against a
+> design.
 
 CLAUDE.md: *"Every component covers every interaction state the product uses:
 default, hover, pressed, focus, disabled, loading, error, as applicable."*
@@ -74,6 +91,10 @@ shipping a keyboard-operable button with no visible focus is an accessibility
 failure, but it needs a design decision.
 
 ### 5. The unfavourited heart has no design
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card with the unfavourited heart in `--color-icon-subtle`, which has no
+> design behind it.
 
 `favorite` (8:1107) appears only in its filled, negative-coloured form. There is
 no design for the button before it is pressed.
@@ -100,6 +121,11 @@ Not a defect, recorded so nobody hunts for a missing asset.
 ---
 
 ### 7. HALF RESOLVED — `--color-text-accent` failed contrast as text
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card while the Figma variable `color/text/accent` still returns `#f0932b`
+> in light mode. The shipped token (`#9c601c`, 5.12:1) is unaffected; only the
+> design file disagrees with it.
 
 The rating score (8:772) used `--color-text-accent`, which aliased
 `color-orange-500` (#f0932b). On the light surface that is **2.36:1**, where
@@ -168,6 +194,10 @@ will silently reintroduce a WCAG AA failure.** Adding them in Figma is the only
 durable fix; the code-side change is a stopgap.
 
 ### 8. The image tint has no strength token
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card with the tint strength held as the private value
+> `--hds-card-image-overlay-strength: 0.2` rather than a token.
 
 `cardImage`'s overlay (8:1182) paints `--color-bg-overlay` through a gradient
 stop whose own opacity is 20%, so the node resolves to `rgba(27,39,51,0.11)`.
@@ -336,6 +366,11 @@ unverified against a design.
 
 ### 2. The pressed stroke is bound to a token named `focused`
 
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Button with the outlined pressed stroke on the token named
+> `color/border/primary/focused`. The matching entry in
+> `docs/naming-conflicts.md` is a separate decision, and it stays open.
+
 The outlined pressed node (26:102) binds its stroke to the style
 `color/border/primary/focused` — `#13338f`. So the token that carries the
 **pressed** border is the one named **focused**.
@@ -349,6 +384,10 @@ name and the usage disagree, and a reader of the CSS cannot tell which is
 intended. Also logged in `docs/naming-conflicts.md`.
 
 ### 3. The outlined strokes are styles, not variables
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Button with the outlined strokes bound to styles. A change to the primary
+> variable would still not reach them in Figma.
 
 `color/border/primary`, `color/border/primary/hover` and
 `color/border/primary/focused` come back from the Figma connection as raw style
@@ -393,6 +432,10 @@ a small amount of blue. Worth a designer's second look; not a build defect.
 
 ### 6. The outlined stroke is aligned outside, and the frame hides it
 
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Button with filled at 94 x 44 and outlined at 96 x 46, so a filled and an
+> outlined button side by side in a row do not align.
+
 Corrected after QA disputed the first version of this entry, which claimed the
 node makes outlined *"2px taller and 2px wider."* The node does not say that
 about width, and the correction matters.
@@ -429,6 +472,10 @@ in one line. Until that call is made, the code matches the node as the node
 currently stands and this misalignment is real.
 
 ### 7. Dark mode presses in opposite directions
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Button with dark-mode presses as built: filled darkens to `#2e7cc4`, and
+> outlined lightens to `#7fa8ee`.
 
 Found by QA. In light mode both variants darken under press. In dark mode they
 do not:
@@ -475,6 +522,11 @@ cannot really be read.
 ---
 
 ### 10. The usage column headings on the Button page say "card"
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Button while the Figma usage headings on the Button page still read
+> `Use a card` and `Do not use a card`. `button.intent.json` carries the lines,
+> not the headings, so it is unaffected.
 
 On page `💠 Button`, the `Usage` frame (65:750) heads its first two columns
 `Use a card` (65:754) and `Do not use a card` (65:763). The lines under them are
