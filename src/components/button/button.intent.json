@@ -1,6 +1,6 @@
 {
   "$component": "button",
-  "$commit": "48075e64563322f4a01e3c59f9b23bf5dbfc23dc",
+  "$commit": "108e8b09d0958769f40bbde5d2ae67b50c0140b8",
   "$figma": {
     "file": "r1CpQEYecqROS0oIOMlqAx",
     "page": "25:65",
@@ -70,40 +70,56 @@
   ],
   "a11y": [
     {
-      "text": "Renders a native <button> element with no role attribute.",
-      "source": "src/components/button/button.test.tsx:110"
+      "text": "Renders a native <button> element",
+      "source": "src/components/button/button.test.tsx:38"
     },
     {
-      "text": "type defaults to \"button\", so it does not submit a surrounding form.",
-      "source": "src/components/button/button.test.tsx:41"
+      "text": "Sets no role attribute on the button",
+      "source": "src/components/button/button.test.tsx:113"
     },
     {
-      "text": "state=\"disabled\" sets the native disabled attribute.",
-      "source": "src/components/button/button.test.tsx:82"
+      "text": "type defaults to \"button\"",
+      "source": "src/components/button/button.test.tsx:43"
     },
     {
-      "text": "onClick does not fire while state=\"disabled\".",
-      "source": "src/components/button/button.test.tsx:87"
+      "text": "state=\"disabled\" sets the native disabled attribute",
+      "source": "src/components/button/button.test.tsx:84"
     },
     {
-      "text": "In the tab order (tabIndex 0) with no tabindex attribute set.",
-      "source": "src/components/button/button.test.tsx:116"
+      "text": "A button with state=\"disabled\" does not fire onClick",
+      "source": "src/components/button/button.test.tsx:91"
     },
     {
-      "text": "Does not call preventDefault on keydown; a consumer onKeyDown handler receives the event.",
-      "source": "src/components/button/button.test.tsx:122"
+      "text": "state=\"enable\", \"hover\" and \"pressed\" leave the native disabled attribute unset",
+      "source": "src/components/button/button.test.tsx:98"
     },
     {
-      "text": "Native button attributes pass through, including aria-label.",
-      "source": "src/components/button/button.test.tsx:173"
+      "text": "The button is in the tab order (tabIndex 0)",
+      "source": "src/components/button/button.test.tsx:118"
     },
     {
-      "text": ":focus-visible draws an outline of var(--border-width-focused) solid var(--color-border-focused), offset var(--border-width-default).",
-      "source": "src/components/button/button.css:103"
+      "text": "No tabindex attribute is set on the button",
+      "source": "src/components/button/button.test.tsx:119"
     },
     {
-      "text": "prefers-reduced-motion: reduce removes the background and border transition.",
-      "source": "src/components/button/button.css:108"
+      "text": "A keydown event is passed to onKeyDown and is not default-prevented",
+      "source": "src/components/button/button.test.tsx:130"
+    },
+    {
+      "text": "aria-label passed as a prop reaches the rendered button",
+      "source": "src/components/button/button.test.tsx:175"
+    },
+    {
+      "text": ":focus-visible draws an outline of --border-width-focused in --color-border-focused",
+      "source": "src/components/button/button.css:104"
+    },
+    {
+      "text": "The :focus-visible outline is offset by --border-width-default",
+      "source": "src/components/button/button.css:105"
+    },
+    {
+      "text": "The background and border transition is removed under prefers-reduced-motion: reduce",
+      "source": "src/components/button/button.css:109"
     }
   ]
 }
