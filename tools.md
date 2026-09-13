@@ -13,6 +13,7 @@ Stack facts and commands only. Rules about how we work live in `CLAUDE.md`.
 - Tests: Vitest
 - Library build: tsup (ESM + CJS); declarations from `tsc` via `tsconfig.build.json`
 - Accessibility: Storybook a11y addon
+- Documentation site: Astro Starlight — one page per component, written by the `astro-page` skill
 
 ## Commands
 
@@ -36,6 +37,7 @@ Stack facts and commands only. Rules about how we work live in `CLAUDE.md`.
 - Components: `src/components/<Name>/`
 - Agents: `.claude/agents/`
 - Skills: `.claude/skills/`
+- Docs site (Astro Starlight): **not created yet.** Record its folder and production URL here when it exists; component pages go in `<folder>/src/content/docs/components/<name>.mdx`
 
 ## Dependency rules
 
