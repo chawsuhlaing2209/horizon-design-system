@@ -6,8 +6,6 @@
 //
 // Properties: metadata, review, price — all booleans.
 
-import './cardText.css';
-
 export type CardTextProps = {
   /** Figma `metadata`. Shows the rating and price block as a whole. */
   metadata?: boolean;

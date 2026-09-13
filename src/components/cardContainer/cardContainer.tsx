@@ -7,7 +7,6 @@
 // Variants: state = enable | hover.
 
 import type { ReactNode } from 'react';
-import './cardContainer.css';
 
 export type CardContainerState = 'enable' | 'hover';
 

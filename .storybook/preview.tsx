@@ -6,8 +6,9 @@ import '../build/tokens/css/tokens-dark.css';
 // light. See writeLightThemeBlock() in build-token-data.js.
 import '../build/tokens/css/docs-theme-light.css';
 import './docs.css';
-// CLAUDE.md: install required font and load properly from Google Font CDN.
-import './fonts.css';
+// Every component's CSS and the Google Fonts faces (CLAUDE.md), from the same
+// stylesheet the package ships. Components no longer import their own CSS.
+import '../src/styles.css';
 
 import type { Preview } from '@storybook/react-vite';
 

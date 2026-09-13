@@ -16,7 +16,6 @@
 // and no default here — a button without a label is a bug, not a variant.
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import './button.css';
 
 export type ButtonVariant = 'filled' | 'outlined';
 export type ButtonState = 'enable' | 'hover' | 'pressed' | 'disabled';
