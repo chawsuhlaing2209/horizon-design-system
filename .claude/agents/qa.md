@@ -94,7 +94,7 @@ that is, say so in `Context`, and report the missing option. **Never create a ne
 a row fit — that edits the base's schema to match one test run, and the next component inherits
 your improvisation.
 
-### 2 · One report per run: `reports/<Component>.md`
+### 2 · One report per run: `reports/<name>.md`
 
 | Section | What goes in it |
 |---|---|
@@ -125,7 +125,7 @@ a human reads it.
 🔍 QA · Button · staging
 Matrix 12 cases · Passed 9 · Failed 3
 Visual 2 (border transparent, label size)   States 1 (loading never resolves)
-Screenshots 12 ✓   Report → reports/Button.md
+Screenshots 12 ✓   Report → reports/button.md
 Staging Testing → 12 rows written (9 Passed, 3 Failed)   Development now To be fixed
 Verdict → back to the engineer
 ```
