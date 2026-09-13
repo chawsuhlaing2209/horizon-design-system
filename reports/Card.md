@@ -399,15 +399,12 @@ Only the **split** differs on the first two; the row's total width (269) and gap
 children — an instruction to share evenly — and only its *rendered* geometry is
 uneven. The build follows the declared intent.
 
-**Correction, same day, after reading the Figma file directly.** This report and
-design gap 10 both attributed that to cardImage carrying a 1px stroke aligned
-outside. That is false: all four cardImage variants and the instance 8:1213
-already have `strokeAlign: "INSIDE"` at weight 1. The real cause is an
-aspect-ratio lock — instance 8:1213 is `layoutSizingVertical: FIXED` at height
-97.875 with `targetAspectRatio` 256:192 (4:3), so its width is derived as
-97.875 x 4/3 = **130.5 exactly**, and the text column takes the remaining 128.5.
-The fill share never gets to decide. The lock being 4:3 on a variant published
-as `ratio=3:2` also makes this the same defect as gap 1.
+**Superseded 2026-09-13.** This paragraph first blamed an outside stroke, then an
+aspect-ratio lock. Both were wrong. Tested directly in Figma: the 1px border on
+the cardImage auto-layout frame adds to its fill basis even when `INSIDE` —
+removing it gave 129.5 / 129.5. The border has since been moved to the inner
+image rectangle in all four variants; see design gap 10 for the change and its
+verification.
 
 Encoding the node's 130.5 / 128.5 would mean writing two raw px values into a
 component file to reproduce a stroke artifact. `CLAUDE.md` lists raw px inside a

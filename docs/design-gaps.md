@@ -204,58 +204,56 @@ price carries blank space under it.
 
 ---
 
-### 10. Horizontal orientation: the node contradicts itself
+### 10. Horizontal orientation: uneven split — RESOLVED in Figma, 2026-09-13
 
 Found by QA on staging, and failed there — the two horizontal rows are 2 of the
 3 failures on the board.
 
-`cardLayout` (8:1251) in horizontal splits its 269px row **unevenly**: cardImage
-8:1213 measures 130.5 and the text column 8:1318 measures 128.5. The build
-renders them equal, 129.5 / 129.5, via `grid-template-columns: 1fr 1fr`.
+`cardLayout` (8:1251) in horizontal split its 269px row **unevenly**: cardImage
+8:1213 measured 130.5 and the text column 8:1318 measured 128.5, while both are
+`layoutGrow: 1` / `FILL` — an instruction to share evenly. The build renders the
+declared intent, 129.5 / 129.5.
 
-The node disagrees with itself, which is why this is a gap and not a patch:
+**Cause — proven by experiment, not inferred.** Each cardImage variant carried
+its 1px border on the auto-layout **frame**. Figma adds a frame's stroke to its
+basis when sharing space between `FILL` siblings — **even with
+`strokeAlign: INSIDE`**, which it already was. With the stroke removed the row
+measured 129.5 / 129.5; restored, 130.5 / 128.5. The skew was a constant 2px at
+every width (196 / 194 at 400), which is the signature of a fixed addition, not
+rounding.
 
-- **Its declared layout says equal.** Both 8:1213 and 8:1318 are `layoutGrow: 1`
-  / `layoutSizingHorizontal: FILL`, which is an instruction to share the row
-  evenly.
-- **Its rendered geometry says uneven.** 130.5 / 128.5.
+Two earlier explanations in this entry were wrong and are retracted:
 
-**CORRECTED 2026-09-12 — the cause is not the stroke.** This entry previously
-said cardImage carried a 1px stroke aligned outside. Read directly from the
-file, all four cardImage variants (8:1184, 8:1187, 8:1185, 8:1196) already have
-`strokeAlign: "INSIDE"` at weight 1, and so does the instance 8:1213. There is
-no outside stroke to correct, and the remedy this entry recommended was a no-op.
+- *"The stroke is aligned outside."* It was never outside — all four variants
+  were `INSIDE`. The stroke was the cause; the alignment was not.
+- *"An aspect-ratio lock derives the width from a fixed height."* Unlocking the
+  aspect ratio left the split at 130.5 / 128.5. The lock is not the cause. (Gap 1
+  still stands on its own: the variant published as `ratio=3:2` is 4:3.)
 
-The actual cause is an **aspect-ratio lock fighting the fill**:
+**Fix, applied to the Card file.**
 
-| Property of instance 8:1213 | Value |
+| Change | Nodes |
 |---|---|
-| `layoutSizingVertical` | `FIXED` |
-| height | 97.875 |
-| `targetAspectRatio` | `{x: 256, y: 192}` = 4:3 |
+| Border moved from the variant frame to its inner `Slide Image` rectangle, `INSIDE`, radius 8 — carrying all three bindings: colour, `border/width/default` on all four sides, `border/radius/8` on all four corners | variants 8:1184, 8:1187, 8:1185, 8:1196 → rects 8:1175, 8:1189, 8:1150, 8:1198 |
+| Frames keep radius 8 and `clipsContent`, so the image still clips round | same four variants |
+| Identical frame-stroke overrides cleared, so no instance paints a doubled border | 8:1213, 8:1232, I34:376;8:1232, I34:358;8:1232 |
 
-The image's height is fixed, so the aspect lock derives its width from that
-height rather than from its share of the row: 97.875 x 4/3 = **130.5 exactly**.
-The text column takes the remainder, 128.5. The `layoutGrow: 1` on both children
-never gets to decide anything.
+**Verified in Figma:** horizontal 129.5 / 129.5, and even at 300, 400 and 517px
+wide; vertical unchanged at 269 × 201.75; Card still 227 × 296.25; zero
+cardImage instances left with a frame stroke; border renders with rounded
+corners.
 
-This also ties gap 10 to **gap 1** above: the lock is 4:3 on a variant published
-as `ratio=3:2`, with the component property literally set to `"3:2"`. One wrong
-aspect ratio produces both defects.
+**Knock-on in the hover variants:** the `Overlay` layer now sits above the
+border instead of below it, so the 20% gradient faintly tints the top edge. This
+matches the build, whose overlay is documented as bleeding over the border.
 
-**Needed — a design decision, and the two options do not agree:**
+**Code:** no change. The build already rendered what the node now renders.
 
-1. **Rename the variant to `4:3`** (what gap 1 recommends). Keeps the geometry,
-   fixes the name, and **leaves both QA rows failing**, because 130.5 / 128.5 is
-   unchanged.
-2. **Make the split even.** Let the width come from the fill share rather than
-   from the fixed height, so the node renders 129.5 / 129.5, matches its own
-   `layoutGrow: 1`, and matches the build with no code change. This changes the
-   image's rendered proportions in the horizontal card.
+**Button gap 6** blames the same mechanism on the outlined stroke. It has not
+been re-checked with this test and may share this cause rather than the
+"aligned outside" one it records.
 
-Option 1 is honest about what the design currently is. Option 2 is what closes
-the two failing rows. Picking 1 means accepting that Card cannot pass on these
-two cases without a separate decision to change the code instead.
+---
 
 ### 11. `elevation/level2` has no dark variant, so hover disappears in dark
 
