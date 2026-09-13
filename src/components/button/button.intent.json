@@ -5,8 +5,7 @@
     "file": "r1CpQEYecqROS0oIOMlqAx",
     "page": "25:65",
     "usage": "65:750",
-    "component": "26:70",
-    "componentSet": "26:70"
+    "component": "26:70"
   },
   "use_when": [
     "Buttons communicate actions that people can take. They are typically placed throughout the UI, in places like: Dialogs, Modal windows, Forms, Cards, Toolbars\nThey can also be placed within standard button groups.",
@@ -40,8 +39,8 @@
     },
     "state": {
       "enable": null,
-      "hover": "Real `:hover` and `:active` render the same tokens, so the component behaves as a button; `state` forces one of them so a story or a QA pass can hold a state still and look at it.",
-      "pressed": "Real `:hover` and `:active` render the same tokens, so the component behaves as a button; `state` forces one of them so a story or a QA pass can hold a state still and look at it.",
+      "hover": null,
+      "pressed": null,
       "disabled": "`disabled` also sets the native `disabled` attribute."
     }
   },
@@ -75,31 +74,35 @@
       "source": "src/components/button/button.test.tsx:110"
     },
     {
-      "text": "Defaults to type=\"button\", so it does not submit a surrounding form.",
+      "text": "type defaults to \"button\", so it does not submit a surrounding form.",
       "source": "src/components/button/button.test.tsx:41"
-    },
-    {
-      "text": "Is in the tab order (tabIndex 0) with no tabindex attribute set.",
-      "source": "src/components/button/button.test.tsx:116"
-    },
-    {
-      "text": "Does not call preventDefault on keydown, and passes an onKeyDown handler through.",
-      "source": "src/components/button/button.test.tsx:122"
     },
     {
       "text": "state=\"disabled\" sets the native disabled attribute.",
       "source": "src/components/button/button.test.tsx:82"
     },
     {
-      "text": "state=\"disabled\" does not fire onClick.",
+      "text": "onClick does not fire while state=\"disabled\".",
       "source": "src/components/button/button.test.tsx:87"
     },
     {
-      "text": ":focus-visible draws an outline of --border-width-focused in --color-border-focused, offset by --border-width-default.",
+      "text": "In the tab order (tabIndex 0) with no tabindex attribute set.",
+      "source": "src/components/button/button.test.tsx:116"
+    },
+    {
+      "text": "Does not call preventDefault on keydown; a consumer onKeyDown handler receives the event.",
+      "source": "src/components/button/button.test.tsx:122"
+    },
+    {
+      "text": "Native button attributes pass through, including aria-label.",
+      "source": "src/components/button/button.test.tsx:173"
+    },
+    {
+      "text": ":focus-visible draws an outline of var(--border-width-focused) solid var(--color-border-focused), offset var(--border-width-default).",
       "source": "src/components/button/button.css:103"
     },
     {
-      "text": "Under prefers-reduced-motion: reduce, the background and border transitions are removed.",
+      "text": "prefers-reduced-motion: reduce removes the background and border transition.",
       "source": "src/components/button/button.css:108"
     }
   ]
