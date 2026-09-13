@@ -1,0 +1,109 @@
+{
+  "$component": "button",
+  "$commit": "48075e64563322f4a01e3c59f9b23bf5dbfc23dc",
+  "$figma": {
+    "file": "r1CpQEYecqROS0oIOMlqAx",
+    "page": "25:65",
+    "usage": "65:750",
+    "component": "26:70"
+  },
+  "use_when": [
+    "Buttons communicate actions that people can take. They are typically placed throughout the UI, in places like: Dialogs, Modal windows, Forms, Cards, Toolbars\nThey can also be placed within standard button groups.",
+    "Use visually-prominent filled buttons for the most important actions",
+    "Use buttons for discrete actions.",
+    "A button container’s width is dynamically set to fit its label text",
+    "Button container width can be responsive, which allows it to stretch horizontally"
+  ],
+  "dont_use_when": [
+    {
+      "text": "Don’t clutter your UI with too many buttons. Consider presenting low-priority actions in overflow menus or as icon buttons.",
+      "alternative": "overflow menus or as icon buttons"
+    },
+    {
+      "text": "A button container’s width shouldn’t be narrower than its label text",
+      "alternative": null
+    },
+    {
+      "text": "Don’t wrap text. For maximum legibility, label text should remain on a single line.",
+      "alternative": null
+    }
+  ],
+  "best_practice": [
+    "Use sentence case for button label text, capitalizing the first word and proper nouns",
+    "Buttons can move in the layout, but elements should remain in the same order"
+  ],
+  "variant_intent": {
+    "variant": {
+      "filled": null,
+      "outlined": null
+    },
+    "state": {
+      "enable": null,
+      "hover": null,
+      "pressed": null,
+      "disabled": "`disabled` also sets the native `disabled` attribute."
+    }
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--border-radius-control",
+    "--border-width-default",
+    "--border-width-focused",
+    "--color-bg-primary",
+    "--color-bg-primary-disabled",
+    "--color-bg-primary-hovered",
+    "--color-bg-primary-pressed",
+    "--color-border-disabled",
+    "--color-border-focused",
+    "--color-border-primary",
+    "--color-border-primary-focused",
+    "--color-border-primary-hover",
+    "--color-text-disabled",
+    "--color-text-inverse",
+    "--color-text-link",
+    "--label-lg",
+    "--spacing-gap-xs",
+    "--spacing-padding-lg",
+    "--spacing-padding-sm",
+    "--tracking-label-lg"
+  ],
+  "a11y": [
+    {
+      "text": "Renders a native <button> element with no role attribute.",
+      "source": "src/components/button/button.test.tsx:110"
+    },
+    {
+      "text": "type defaults to \"button\", so it does not submit a surrounding form.",
+      "source": "src/components/button/button.test.tsx:41"
+    },
+    {
+      "text": "state=\"disabled\" sets the native disabled attribute.",
+      "source": "src/components/button/button.test.tsx:82"
+    },
+    {
+      "text": "onClick does not fire while state=\"disabled\".",
+      "source": "src/components/button/button.test.tsx:87"
+    },
+    {
+      "text": "In the tab order (tabIndex 0) with no tabindex attribute set.",
+      "source": "src/components/button/button.test.tsx:116"
+    },
+    {
+      "text": "Does not call preventDefault on keydown; a consumer onKeyDown handler receives the event.",
+      "source": "src/components/button/button.test.tsx:122"
+    },
+    {
+      "text": "Native button attributes pass through, including aria-label.",
+      "source": "src/components/button/button.test.tsx:173"
+    },
+    {
+      "text": ":focus-visible draws an outline of var(--border-width-focused) solid var(--color-border-focused), offset var(--border-width-default).",
+      "source": "src/components/button/button.css:103"
+    },
+    {
+      "text": "prefers-reduced-motion: reduce removes the background and border transition.",
+      "source": "src/components/button/button.css:108"
+    }
+  ]
+}
