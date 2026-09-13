@@ -109,7 +109,7 @@ Each of these is something another agent in this crew *is* allowed to do.
 
 - **Never write any Components column.** The Engineer writes `Staging Storybook`, `Commit`,
   `Composes` and GitHub Commits; QA writes the two test-record columns; DevOps writes
-  `Production Storybook` and `Astro Link`. You verify all of them and own none of them.
+  `Production Storybook`; the Doc Generator writes `Astro Link`. You verify all of them and own none of them.
 - **Never set or change `Testing Results`, and never add a Staging Testing row.** QA owns that
   table. A missing row is a ticket you open, not a row you write.
 - **Never merge to main and never deploy.** DevOps promotes, after a human approves.
