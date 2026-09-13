@@ -204,39 +204,64 @@ price carries blank space under it.
 
 ---
 
-### 10. Horizontal orientation: the node contradicts itself
+### 10. Horizontal orientation: uneven split — RESOLVED in Figma, 2026-09-13
 
 Found by QA on staging, and failed there — the two horizontal rows are 2 of the
 3 failures on the board.
 
-`cardLayout` (8:1251) in horizontal splits its 269px row **unevenly**: cardImage
-8:1213 measures 130.5 and the text column 8:1318 measures 128.5. The build
-renders them equal, 129.5 / 129.5, via `grid-template-columns: 1fr 1fr`.
+`cardLayout` (8:1251) in horizontal split its 269px row **unevenly**: cardImage
+8:1213 measured 130.5 and the text column 8:1318 measured 128.5, while both are
+`layoutGrow: 1` / `FILL` — an instruction to share evenly. The build renders the
+declared intent, 129.5 / 129.5.
 
-The node disagrees with itself, which is why this is a gap and not a patch:
+**Cause — proven by experiment, not inferred.** Each cardImage variant carried
+its 1px border on the auto-layout **frame**. Figma adds a frame's stroke to its
+basis when sharing space between `FILL` siblings — **even with
+`strokeAlign: INSIDE`**, which it already was. With the stroke removed the row
+measured 129.5 / 129.5; restored, 130.5 / 128.5. The skew was a constant 2px at
+every width (196 / 194 at 400), which is the signature of a fixed addition, not
+rounding.
 
-- **Its declared layout says equal.** Both 8:1213 and 8:1318 are `flex: 1 0 0`,
-  which is an instruction to share the row evenly.
-- **Its rendered geometry says uneven.** The image carries a 1px stroke aligned
-  outside, so it grows past its share by exactly the 2px that separates 130.5
-  from 128.5.
+Two earlier explanations in this entry were wrong and are retracted:
 
-The build followed the declared intent. Grid was chosen over flex precisely so
-the stroke could not skew the tracks — that reasoning was in a CSS comment in
-`cardLayout.css`, and **only there**, which is the same mistake this document
-already corrected once on the Button width: reasoning parked where nobody
-reviewing the design will ever read it. It is here now.
+- *"The stroke is aligned outside."* It was never outside — all four variants
+  were `INSIDE`. The stroke was the cause; the alignment was not.
+- *"An aspect-ratio lock derives the width from a fixed height."* Unlocking the
+  aspect ratio left the split at 130.5 / 128.5. The lock is not the cause. (Gap 1
+  still stands on its own: the variant published as `ratio=3:2` is 4:3.)
 
-**Needed:** set the cardImage stroke to **inside** in Figma. The node then
-renders 129.5 / 129.5, matches its own `flex: 1 0 0`, and matches the build with
-no code change. If the uneven split is genuinely wanted, say so and the grid
-becomes explicit tracks instead — but a 2px asymmetry that only exists because
-of a stroke is far more likely to be an accident than a decision.
+**Fix, applied to the Card file.**
 
-This is the same root cause as Button gap 6. Two components now, so it is worth
-fixing at the source rather than per component.
+| Change | Nodes |
+|---|---|
+| Border moved from the variant frame to its inner `Slide Image` rectangle, `INSIDE`, radius 8 — carrying all three bindings: colour, `border/width/default` on all four sides, `border/radius/8` on all four corners | variants 8:1184, 8:1187, 8:1185, 8:1196 → rects 8:1175, 8:1189, 8:1150, 8:1198 |
+| Frames keep radius 8 and `clipsContent`, so the image still clips round | same four variants |
+| Identical frame-stroke overrides cleared, so no instance paints a doubled border | 8:1213, 8:1232, I34:376;8:1232, I34:358;8:1232 |
+
+**Verified in Figma:** horizontal 129.5 / 129.5, and even at 300, 400 and 517px
+wide; vertical unchanged at 269 × 201.75; Card still 227 × 296.25; zero
+cardImage instances left with a frame stroke; border renders with rounded
+corners.
+
+**Knock-on in the hover variants:** the `Overlay` layer now sits above the
+border instead of below it, so the 20% gradient faintly tints the top edge. This
+matches the build, whose overlay is documented as bleeding over the border.
+
+**Code:** no change. The build already rendered what the node now renders.
+
+**Button gap 6** blames the same mechanism on the outlined stroke. It has not
+been re-checked with this test and may share this cause rather than the
+"aligned outside" one it records.
+
+---
 
 ### 11. `elevation/level2` has no dark variant, so hover disappears in dark
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card with this defect. Staging Testing row `recRKWuTGZeXeI8Ce` was set
+> to `Passed` on that decision, and its Context says so; it is not a measured
+> pass. In dark, hovering a card still shows no visible change. Re-test the row
+> when the fix below lands.
 
 Found by QA on staging, and failed there — the third of the 3 failures.
 
@@ -253,9 +278,29 @@ The component applies the token correctly. There is nothing to fix in the CSS,
 and no dark node to build against — the failure is recorded on observable
 grounds, not against a design.
 
-**Needed:** a dark-mode value for `elevation/level2`. A shadow in dark mode
-generally needs to be darker and more opaque than its light counterpart, not the
-same value re-emitted, because it is no longer sitting on white.
+**CORRECTED 2026-09-12 — this cannot be fixed as an effect style.** Read from
+the file, `elevation/level2` is `remote: true`: it lives in the **1. Horizon
+Tokens** library, not in the Card file. Both of its drop shadows carry
+`boundVariables: {}` — the colours are hardcoded, not bound to anything.
+
+More fundamentally, **Figma effect styles have no modes.** There is no dark slot
+on an effect style to fill in, which is exactly why `tokens/effects.styles.tokens.json`
+emits one flat value per level with no mode dimension at all, for all five
+levels rather than just level 2.
+
+**Needed:** in the **1. Horizon Tokens** file, bind the two shadow colours of
+`elevation/level2` to a colour **variable** that carries light and dark modes —
+variables have modes, effect styles do not. Then the single style resolves per
+theme and the export gains the mode dimension for free.
+
+A dark shadow generally needs to be darker and more opaque than its light
+counterpart, not the same value re-emitted, because it is no longer sitting on
+white. The current value is worse than merely unadjusted: `#1b2733` is *exactly*
+`--color-bg-surface-primary` in dark, so the card casts a shadow in its own
+surface colour.
+
+This affects levels 1 through 5, not only level 2. Level 2 is simply the one a
+component happened to use in dark and fail on.
 
 ---
 
