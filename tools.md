@@ -37,7 +37,7 @@ Stack facts and commands only. Rules about how we work live in `CLAUDE.md`.
 - Components: `src/components/<Name>/`
 - Agents: `.claude/agents/`
 - Skills: `.claude/skills/`
-- Docs site (Astro Starlight): **not created yet.** Record its folder and production URL here when it exists; component pages go in `<folder>/src/content/docs/components/<name>.mdx`
+- Docs site (Astro Starlight): **not created yet.** Pages are committed to the `astro` branch, and a Vercel project whose production branch is `astro` deploys each push. When it exists, record here the site folder, the Vercel project, and the production URL. Component pages go in `<folder>/src/content/docs/components/<name>.mdx`
 
 ## Dependency rules
 

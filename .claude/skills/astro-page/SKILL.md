@@ -1,6 +1,6 @@
 ---
 name: astro-page
-description: Build one component's page in the Astro Starlight docs site from its intent file, source, stories, and built tokens — a header and five tabs (Design, Code, Usage, Examples, Changelog) — deploy it, confirm the live page, and only then write Astro Link to the registry.
+description: Build one component's page in the Astro Starlight docs site from its intent file, source, stories, and built tokens — a header and five tabs (Design, Code, Usage, Examples, Changelog) — commit it to the astro branch that Vercel deploys, confirm the live page, and only then write Astro Link to the registry.
 ---
 
 # Build a component's docs page
@@ -18,9 +18,9 @@ site, or to document several components at once.
 section is left out and the page says so. A section filled from somewhere else,
 or from memory, is invented.
 
-**Writing `Astro Link` is DevOps's column** (`registry`). Anyone may draft the
-page in steps 1–4. Steps 5–7 — deploy, verify, write the link — are done by
-DevOps, or the draft is handed to DevOps at step 4.
+**Run by the Doc Generator** (`.claude/agents/doc-generator.md`), which owns
+`Astro Link` in the registry. It runs this skill for components reading
+`Completed` or `Released` whose `Release Verdict` is `Cleared`.
 
 ## Inputs
 One component, and from one pinned commit:
@@ -35,10 +35,11 @@ One component, and from one pinned commit:
 ## Steps
 
 ### 1 · Find the site, pin the commit
-`tools.md` names the framework — Astro Starlight — and, under Paths, the site's
-folder and production URL. **It says the site is not created yet.** Until a human
-records the folder and URL there, stop here and report it. Do not scaffold a
-Starlight site, and do not guess a folder or URL from another repo.
+`tools.md` names the framework — Astro Starlight — and the branch that deploys it,
+`astro`. Under Paths it records the site's folder, the Vercel project linked to
+`astro`, and the production URL. **It says the site is not created yet.** Until a
+human records those there, stop here and report it. Do not scaffold a Starlight
+site, create a Vercel project, or guess a folder or URL from another repo.
 
 The page goes in `<folder>/src/content/docs/components/<name>.mdx`, Starlight's
 content collection. If the site already keeps component pages somewhere else,
@@ -142,13 +143,22 @@ already has a component page, match its structure.
 Build the site locally with its own build command, recorded in `tools.md` once the
 site exists. It must build with no errors and no broken internal links.
 
-Commit the page and its assets on `docs/<name>` and open a PR into `staging`.
+Commit the page and its assets to the `astro` branch — every page from this run in
+one commit — and push. That commit is the deploy.
 
 **Check:** the site builds, and the built HTML for this page has five tab labels
 in order.
 
-### 5 · Deploy
-Through the docs site's own production pipeline, from `main`. DevOps only.
+### 5 · Wait for Vercel
+The Vercel project linked to `astro` deploys each push to production by itself.
+**Never deploy by hand** (`vercel deploy`, a dashboard redeploy): the live site
+must always trace to a commit on `astro`.
+
+Wait for the deployment of the commit you pushed, not the latest one. Vercel
+reports it on that commit in GitHub
+(`gh api repos/<owner>/<repo>/deployments?sha=<sha>`, then that deployment's
+statuses). Go on only when it reads `success`. If it fails, is cancelled, or does
+not finish, every page in the commit fails verification.
 
 ### 6 · Verify the live page — before anything touches the board
 Fetch the live page URL, not the deploy log:
@@ -195,7 +205,7 @@ Try: <one next step>
 ## References
 - The intent file and what its fields mean: `.claude/skills/component-intent/SKILL.md`
 - Who writes `Astro Link`, and the board's flags: `.claude/skills/registry/SKILL.md`
-- DevOps's rules for evidence columns: `.claude/agents/devops.md`
+- The agent that runs this skill, and its boundaries: `.claude/agents/doc-generator.md`
 - The public surface and built output: `src/index.ts`, `dist/`
 - Stack facts, including where the docs site lives: `tools.md`
 

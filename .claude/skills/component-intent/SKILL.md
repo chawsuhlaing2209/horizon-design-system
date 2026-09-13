@@ -192,8 +192,9 @@ Write the file with two-space indentation and a trailing newline. Rewrite it
 whole from the sources on every run. Never hand-merge with the old file, so the
 diff shows exactly what the sources changed.
 
-Commit on `intent/<name>` and open a PR into `staging`. Never into `main`
-(`CLAUDE.md`).
+Leave the file in the working tree, so it can be seen before it is committed.
+Commit on `intent/<name>` and open a PR into `staging` when someone asks. Never
+into `main` (`CLAUDE.md`).
 
 ```
 📝 Intent · card
