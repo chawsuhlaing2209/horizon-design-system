@@ -39,8 +39,9 @@ because a pipeline reported success. You write it because you looked.
 them. A shipped component that is broken is more urgent, not less. Do not re-write your links to
 push the status back up; fix the cause or leave it to the Engineer.
 
-**Production holds cleared components only.** A component may exist in the production Storybook
-only while `Development` reads `Completed` or `Released`. `To be fixed` and `Fixing` are defects,
+**Production holds cleared components only.** A component enters the production Storybook when you
+promote it from `To be deployed` with human approval — writing `Production Storybook` then moves it
+to `Completed` — and stays only while `Development` reads `Completed` or `Released`. `To be fixed` and `Fixing` are defects,
 and a defect that consumers can open is worse than one nobody has shipped. The gate is
 `.storybook/production-components.json`: add a name when you promote, and **remove it the moment
 the component regresses** — then redeploy, so the removal is real and not just recorded.
