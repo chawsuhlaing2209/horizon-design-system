@@ -64,11 +64,11 @@ describe('button', () => {
   const matrix: Array<[ButtonVariant, ButtonState]> = [
     ['filled', 'enable'],
     ['filled', 'hover'],
-    ['filled', 'pressed'],
+    ['filled', 'focused'],
     ['filled', 'disabled'],
     ['outlined', 'enable'],
     ['outlined', 'hover'],
-    ['outlined', 'pressed'],
+    ['outlined', 'focused'],
     ['outlined', 'disabled'],
   ];
 
@@ -92,7 +92,7 @@ describe('button', () => {
     });
   });
 
-  it.each(['enable', 'hover', 'pressed'] as const)('state=%s stays enabled and fires onClick', (state) => {
+  it.each(['enable', 'hover', 'focused'] as const)('state=%s stays enabled and fires onClick', (state) => {
     const onClick = vi.fn();
     render(<Button state={state} onClick={onClick}>Sign in</Button>);
     expect(button().disabled).toBe(false);
@@ -162,7 +162,7 @@ describe('button', () => {
   // consumer cannot desynchronise the rendered state from the props.
   it('does not let a consumer override the derived attributes', () => {
     render(
-      <Button variant="filled" state="enable" {...({ 'data-variant': 'outlined', 'data-state': 'pressed' } as object)}>
+      <Button variant="filled" state="enable" {...({ 'data-variant': 'outlined', 'data-state': 'focused' } as object)}>
         Sign in
       </Button>
     );

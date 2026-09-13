@@ -1,4 +1,7 @@
-/* cardContainer — 8:804 (state = enable | hover) */
+/* card — 34:317 (state = enable | hover)
+ *
+ * The Card set is its own container: padding, surface, radius and the hover
+ * elevation all sit on the set's variants (12:1343 enable, 34:318 hover). */
 
 .hds-card,
 .hds-card *,
@@ -29,7 +32,7 @@
   .hds-card { transition: none; }
 }
 
-/* cardItems — 8:810 */
+/* cardItems — 34:375 (enable), 34:357 (hover) */
 .hds-card__items {
   width: 100%;
 }

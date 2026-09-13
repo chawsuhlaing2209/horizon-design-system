@@ -1,4 +1,4 @@
-/* cardImage — 8:1186 (ratio = 3:2 | 1:1, state = idle | hover)
+/* cardImage — 8:1186 (ratio = 4:3 | 1:1, state = idle | hover)
  *
  * Every value resolves to a token from build/tokens/css/tokens.css. Where the
  * design bound a property to the CORE layer instead of the semantic layer, this
@@ -22,15 +22,11 @@
   overflow: hidden;
   width: 100%;
   border: var(--border-width-default) solid var(--color-border-default);
-  /* DESIGN GAP: Figma binds this to the core token `border/radius/8`. No
-   * semantic radius carries 8px (--border-radius-surface is 12px). */
-  border-radius: var(--border-radius-4);
+  /* Every variant of 8:1186 binds the frame's radius to `border/radius/control`. */
+  border-radius: var(--border-radius-control);
 }
 
-/* DESIGN GAP: the variant is named `ratio=3:2` but the node geometry is 4:3
- * (363.5 x 272.625, image frame 256/192). Geometry wins so the build matches
- * the node; the variant name needs correcting in Figma. */
-.hds-card-image[data-ratio='3:2'] { aspect-ratio: 4 / 3; }
+.hds-card-image[data-ratio='4:3'] { aspect-ratio: 4 / 3; }
 .hds-card-image[data-ratio='1:1'] { aspect-ratio: 1 / 1; }
 
 .hds-card-image__photo {
@@ -82,7 +78,7 @@
  * QA finding 4: this was previously `.hds-card:hover`, an ancestor rule. That
  * tinted the image whenever the pointer was anywhere on the card — including
  * over the text — which no design calls for, and which beat the prop so
- * `state='idle'` could not be held. cardContainer keeps its own hover rule;
+ * `state='idle'` could not be held. Card keeps its own hover rule;
  * this one must not reach across the subcomponent boundary. */
 .hds-card-image[data-state='hover'] .hds-card-image__overlay,
 .hds-card-image[data-state='auto']:hover .hds-card-image__overlay {
@@ -97,7 +93,10 @@
 .hds-card-image__favorite {
   position: absolute;
   z-index: 3;
-  /* DESIGN GAP: raw sub-pixel offsets in the node, no token behind them. */
+  /* DESIGN GAP: absolutely positioned in the node (y 8, 7.5 from the right in
+   * the 363.5-wide variants). Figma measures from the frame's outer edge, and
+   * CSS offsets start inside the 1px border, so 7 / 6.5 lands at 8 / 7.5.
+   * Figma cannot bind a position to a variable, so no token can carry these. */
   top: 7px;
   right: 6.5px;
   display: flex;

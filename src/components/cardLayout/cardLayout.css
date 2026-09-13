@@ -6,12 +6,9 @@
 }
 
 .hds-card-layout {
-  /* DESIGN GAP: the 10px gap is a raw value in Figma. It is off the 4px spacing
-   * scale, so no token carries it. Held in one variable pending a design
-   * answer — see docs/design-gaps.md. */
-  --hds-card-layout-gap: 10px;
   display: flex;
-  gap: var(--hds-card-layout-gap);
+  /* Both variants (8:1249, 8:1250) bind itemSpacing to `spacing/gap/sm`. */
+  gap: var(--spacing-gap-sm);
   overflow: hidden;
   width: 100%;
 }
@@ -38,11 +35,19 @@
 .hds-card-layout__body {
   display: flex;
   flex-direction: column;
-  gap: var(--hds-card-layout-gap);
+  /* Vertical: in 8:1249 the text and the slot are direct children of the
+   * layout, so the space between them is the layout's `spacing/gap/sm`. */
+  gap: var(--spacing-gap-sm);
   align-items: flex-start;
   justify-content: center;
   width: 100%;
   min-width: 0;
+}
+
+/* Horizontal: the text column is its own frame (8:1318), and its itemSpacing is
+ * still 10, unbound, off the 4px scale. DESIGN GAP — see docs/design-gaps.md. */
+.hds-card-layout[data-orientation='horizontal'] .hds-card-layout__body {
+  gap: 10px;
 }
 
 /* Slot — 8:1315.

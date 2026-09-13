@@ -2,12 +2,12 @@
 // https://www.figma.com/design/r1CpQEYecqROS0oIOMlqAx/2.-Horizon-Component?node-id=26-70
 //
 // The component set is variant (filled | outlined) x state (enable | hover |
-// pressed | disabled) = 8 nodes. There is one story per node, named for the
+// focused | disabled) = 8 nodes. There is one story per node, named for the
 // node, plus a Matrix story that draws all eight at once for a side-by-side
 // against the frame.
 //
 // The per-state stories pin `state`, which beats the pointer. Playground leaves
-// it at `enable` so real hover, press and focus drive the component.
+// it at `enable` so real hover and keyboard focus drive the component.
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from './button';
@@ -32,10 +32,9 @@ const meta: Meta<typeof Button> = {
         component:
           'Button, built from Figma node 26:70. `variant` and `state` are the ' +
           'two Figma variant properties, kept verbatim. `state` pins a visual ' +
-          'state for review; real `:hover` and `:active` render the same tokens, ' +
-          'so an unpinned button behaves normally. The node has no focused ' +
-          'variant — the keyboard ring here is built from the focus tokens the ' +
-          'system already names, and is listed in docs/design-gaps.md.',
+          'state for review; a real `:hover` and a keyboard `:focus-visible` ' +
+          'render the same tokens as `hover` and `focused`, so an unpinned ' +
+          'button behaves normally. The set has no pressed state.',
       },
     },
   },
@@ -50,7 +49,7 @@ const meta: Meta<typeof Button> = {
     state: {
       description:
         'Figma `state`. Pins the visual state and beats the pointer. `disabled` also sets the native `disabled` attribute, so the button stops responding for real.',
-      options: ['enable', 'hover', 'pressed', 'disabled'],
+      options: ['enable', 'hover', 'focused', 'disabled'],
       control: { type: 'radio' },
       table: { defaultValue: { summary: 'enable' } },
     },
@@ -70,8 +69,8 @@ export const FilledEnable: Story = { args: { variant: 'filled', state: 'enable' 
 /** 26:73 — `state=hover, variant=filled` */
 export const FilledHover: Story = { args: { variant: 'filled', state: 'hover' } };
 
-/** 26:82 — `state=pressed, variant=filled` */
-export const FilledPressed: Story = { args: { variant: 'filled', state: 'pressed' } };
+/** 26:82 — `state=focused, variant=filled` */
+export const FilledFocused: Story = { args: { variant: 'filled', state: 'focused' } };
 
 /** 26:87 — `state=disabled, variant=filled` */
 export const FilledDisabled: Story = { args: { variant: 'filled', state: 'disabled' } };
@@ -84,8 +83,8 @@ export const OutlinedEnable: Story = { args: { variant: 'outlined', state: 'enab
 /** 26:100 — `state=hover, variant=outlined` */
 export const OutlinedHover: Story = { args: { variant: 'outlined', state: 'hover' } };
 
-/** 26:102 — `state=pressed, variant=outlined` */
-export const OutlinedPressed: Story = { args: { variant: 'outlined', state: 'pressed' } };
+/** 26:102 — `state=focused, variant=outlined` */
+export const OutlinedFocused: Story = { args: { variant: 'outlined', state: 'focused' } };
 
 /** 26:104 — `state=disabled, variant=outlined` */
 export const OutlinedDisabled: Story = { args: { variant: 'outlined', state: 'disabled' } };
@@ -102,7 +101,7 @@ export const Matrix: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-gap-md)', padding: 'var(--spacing-padding-lg)' }}>
       {(['filled', 'outlined'] as const).map((variant) => (
         <div key={variant} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-gap-xs)', alignItems: 'flex-start' }}>
-          {(['enable', 'hover', 'pressed', 'disabled'] as const).map((state) => (
+          {(['enable', 'hover', 'focused', 'disabled'] as const).map((state) => (
             <Button key={state} variant={variant} state={state}>{LABEL}</Button>
           ))}
         </div>
@@ -112,8 +111,8 @@ export const Matrix: Story = {
 };
 
 /**
- * Unpinned. Hover it, hold it down, and tab to it — the pointer and the
- * keyboard drive the states rather than the `state` prop.
+ * Unpinned. Hover it and tab to it — the pointer and the keyboard drive the
+ * states rather than the `state` prop.
  */
 export const Playground: Story = {
   args: { variant: 'filled', state: 'enable' },
