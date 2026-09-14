@@ -177,7 +177,11 @@ All of these must hold:
   content or its missing-source notice. An empty panel fails. Starlight puts
   every panel in the HTML and marks all but the first `hidden`, so check what
   each panel contains in the fetched HTML, not whether it is visible.
-- Every header link on the page returns `200`.
+- Every header link on the page returns `200`. One exception: the Figma link. The
+  design file is team-only by decision (product owner, 2026-09-14), so a
+  `www.figma.com` link passes when it answers `403` or a redirect to Figma's login
+  page. Record the status you got in the card. Any other non-`200` Figma answer
+  (`404`, a different host, a timeout) still fails.
 
 **If any check fails, write nothing to the registry.** Report which check failed
 and what the page returned.
@@ -219,5 +223,6 @@ Try: <one next step>
 - [ ] Changelog subjects are verbatim commit subjects
 - [ ] The header status is the registry's `Development`, not the Figma label
 - [ ] The live URL returned 200 and holds all five tabs, in order, each non-empty
+- [ ] Every header link returned 200, except a Figma link answering 403 or Figma's login redirect
 - [ ] `Astro Link` was written only after that, is the verified URL, and was read back
 - [ ] If verification failed, nothing was written
