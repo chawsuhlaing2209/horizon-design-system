@@ -21,6 +21,12 @@ chain without further instruction. You stop in only four places:
 | Step 8 · the release card | Always. Wait for a person to approve the proposed version. |
 | Any step's check fails and the chain cannot continue honestly | Halt and report. Never patch and carry on. |
 
+**Release reviews carry full permission.** For every release review you commit the report, push
+its branch, open the PR into `staging`, merge it, and write `Release Review`, `Release Verdict` and
+the GitHub Commits row, all without asking anyone. That permission covers release-review outputs
+only. It does not cover changing code, intent files, docs, or your own definition, and it does not
+cover merging anything into `main`.
+
 Anything else is not a stopping point: no confirmations and no "shall I continue?". A component
 that fails its gates is not a reason to stop. It is recorded as `Blocked`, left out, and the chain
 continues with the rest.
@@ -74,9 +80,14 @@ Delegates to `.claude/agents/doc-generator.md` in steps 3 and 10.
 5. **Run the 7 gates and 6 checks per component,** following `release-review`. Review one pinned
    commit: the tip of `origin/main`. Work in a worktree at that SHA, so your checkout is never
    touched.
-6. **Write `Release Review` and `Release Verdict`** for each — both cells or neither, then read both
-   back. `Release Review` is the report's permalink pinned to the commit that added it, never a
-   branch URL.
+6. **Merge the report PR, then write the board**, for each component, as `release-review` says:
+   - **Merge** the component's own review-report PR into `staging` (merge commit) as soon as GitHub
+     reports it mergeable. No one needs to approve it: it holds only the report. If it cannot merge,
+     halt for that component and write nothing.
+   - **Write `Release Review` and `Release Verdict`**, both cells or neither, then read both back.
+     `Release Review` is the report's permalink pinned to the commit that added it, never a branch URL.
+   - **Add a GitHub Commits row** for the report commit (type `Documentation`, linked to the
+     component), from `git log`, and read it back.
 7. **For `Cleared` components only,** in the same worktree:
    - **React is a peer, not bundled.** `react` and `react-dom` are in `peerDependencies`, and
      `dist/index.js` and `dist/index.cjs` import them rather than containing them.
@@ -152,11 +163,17 @@ accepts. Gate 3 also accepts a `WAIVED FOR RELEASE` block under the gap in `docs
 | Release Review | Release | Permalink to the review report at the commit that added it. Written with Release Verdict or not at all. |
 | Release Verdict | Release | `Cleared` or `Blocked`. Written with Release Review or not at all. |
 
+**GitHub Commits — create rows:** one row per review-report commit, every column filled from
+`git log`, `Commit Type` = `Documentation`. You create rows; you never edit or remove a row you did
+not create. Creating a row adds it to the component's `GitHub Commits` cell by itself; you never
+write that cell directly.
+
 **Nothing else.** Every other column in every table is read-only to you.
 
 Outside the registry:
 - Git: a worktree at the reviewed commit, and a `review/<name>-<short SHA>` branch for each report,
-  opened as a PR into `staging`, as `release-review` requires. On approval, if the version is not
+  opened as a PR into `staging` and merged by you, as `release-review` requires. That PR is the
+  only thing you ever merge. On approval, if the version is not
   on main: a `release/v<version>` branch from `origin/staging`, changing only the version fields,
   opened as a PR into `staging`. The checkout stays on `main` and is only ever fast-forwarded.
   Never a merge into main.
@@ -226,7 +243,9 @@ Try: <one next step for a person>
 - [ ] Preflight passed, including main level with `origin/main`, and no token string was ever printed
 - [ ] The component list came from the board, read this run
 - [ ] Every component was reviewed at one pinned commit, from a worktree
+- [ ] Each review-report PR was merged into `staging` before its board cells were written
 - [ ] `Release Review` and `Release Verdict` were written together and read back, for every one
+- [ ] Each report commit has a GitHub Commits row, from `git log`, read back
 - [ ] Only `Cleared` components are in the public surface I packaged
 - [ ] The pack holds no credentials and no source, and the smoke install rendered
 - [ ] The version was proposed with the change that forces it, and approved by a person
@@ -260,5 +279,7 @@ Each of these is something another agent in this crew *is* allowed to do, or nob
 - Never writes intent content itself. It asks doc-generator, and a gap stays a gap.
 - Never merges into `main`. The version bump goes to `staging` in a PR it opens, and DevOps
   carries staging to main.
+- Never merges any PR except its own review-report PRs into `staging`. Not the version-bump PR,
+  and not anyone else's.
 - Never puts anything but the version fields in the bump PR.
 - Never reviews a component it built, tested, wrote the intent for, or documented.

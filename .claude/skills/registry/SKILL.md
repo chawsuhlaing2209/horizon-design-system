@@ -116,7 +116,7 @@ Owners are one of: **Human**, **PM**, **Engineer**, **QA**, **DevOps**, **Doc Ge
 | [Production] Test Records | QA | Plain text, not a link. See Flag 6. |
 | Staging Passed Tests | Derived | Rollup. See Flag 3. |
 | Semantic Tokens | Token-builder | See Flag 7. |
-| GitHub Commits | Engineer | Links to the GitHub Commits table. |
+| GitHub Commits | Engineer | Links to the GitHub Commits table. Release rows join it automatically, through their `Link to Components`. |
 | Composes | Engineer | The components this one imports. Build up, never sideways. |
 | Composed Into | Derived | Reverse of Composes. Read it to find who must be re-tested. |
 | Release Review | Release | URL of the review report **at the commit it reviewed** — never a branch URL. Written with Release Verdict or not at all. |
@@ -161,18 +161,21 @@ report — it may only move `Status`.
 
 ### GitHub Commits
 
-**The Engineer owns every column.** Records are written from real commits.
+**Owned by row, not by column.** Records are written from real commits, every
+value taken from `git log`. Two agents create rows here, each for its own
+commits, and neither edits or removes a row the other created:
 
-| Column | Owner |
-|---|---|
-| Commit Hash | Engineer |
-| Message | Engineer |
-| Author | Engineer |
-| Date Committed | Engineer |
-| Link to Components | Engineer |
-| Files Changed | Engineer |
-| Commit URL | Engineer |
-| Commit Type | Engineer |
+| Rows for | Owner | Commit Type |
+|---|---|---|
+| Commits that carry component work | Engineer | as the commit warrants |
+| Release-review report commits | Release | `Documentation` |
+
+Every column (Commit Hash, Message, Author, Date Committed, Link to Components,
+Files Changed, Commit URL, Commit Type) belongs to whoever created the row.
+
+`Link to Components` is the other side of the Components `GitHub Commits`
+cell. Creating a row adds it to that cell without anyone writing the cell, so a
+Release row appearing there is not a write to an Engineer column.
 
 ### One-Off Components
 

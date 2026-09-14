@@ -67,8 +67,10 @@ Registry columns you may write — taken verbatim from the contract's owner tabl
 | GitHub Commits | Engineer | Links to the GitHub Commits table. |
 | Composes | Engineer | The components this one imports. Build up, never sideways. |
 
-**GitHub Commits** — the Engineer owns every column: `Commit Hash`, `Message`, `Author`,
-`Date Committed`, `Link to Components`, `Files Changed`, `Commit URL`, `Commit Type`.
+**GitHub Commits** — you create the rows for commits that carry component work, and own every
+column of those rows: `Commit Hash`, `Message`, `Author`, `Date Committed`, `Link to Components`,
+`Files Changed`, `Commit URL`, `Commit Type`. The release agent creates its own rows for review
+reports; never edit or remove those.
 
 Everything else in the registry is read-only to you.
 
