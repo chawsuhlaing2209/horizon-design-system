@@ -50,9 +50,10 @@
   gap: 10px;
 }
 
-/* Slot — 8:1315.
- * DESIGN GAP: the 46px reserve is a raw value in the node, off the 4px scale. */
+/* Slot — 8:1314 / 8:1315.
+ * DESIGN GAP: the reserve is 48 by default (design decision, 2026-09-14), a raw
+ * height in the node with no semantic token behind it. */
 .hds-card-layout__slot {
   width: 100%;
-  min-height: 46px;
+  min-height: 48px;
 }

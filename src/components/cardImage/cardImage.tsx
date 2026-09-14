@@ -13,7 +13,11 @@ export type CardImageRatio = '4:3' | '1:1';
 export type CardImageState = 'idle' | 'hover';
 
 export type CardImageProps = {
-  /** Figma `ratio`. */
+  /**
+   * Figma `ratio`.
+   * `4:3` is the default landscape crop, for photos of places and scenes.
+   * `1:1` crops the image square, for dense grids or a single object as the subject.
+   */
   ratio?: CardImageRatio;
   /**
    * Figma `state`. Pins the overlay: `hover` forces it on, `idle` forces it off.
