@@ -118,6 +118,14 @@
   cursor: pointer;
 }
 
+/* iconButton state=hover (8:1135): the fill binds to `color/bg/secondary/hovered`
+ * and the effect style is `elevation/level2`. Driven by a real pointer; the Card
+ * API has no property for it. */
+.hds-card-image__favorite:hover {
+  background: var(--color-bg-secondary-hovered);
+  box-shadow: var(--elevation-level2);
+}
+
 /* DESIGN GAP: the unfavourited look has no design. Falls back to the subtle
  * icon colour; needs a design decision (most likely an outlined heart). */
 .hds-card-image__favorite[aria-pressed='false'] {

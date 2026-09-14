@@ -1,495 +1,294 @@
-# 🔍 QA — Card
+# QA: Card, re-test after the Figma change of 2026-09-13
 
 | | |
 |---|---|
-| Build under test | Deployed staging Storybook, read from the registry's `Staging Storybook` cell (`fldOuJpSivewZrGyt`, record `rec1y6kyai6F3FVWv`) |
-| URL | `https://horizon-design-system-ev1k2psuq-chawsuhlaing2209s-projects.vercel.app` |
-| Registry `Development` before this run | `Ready for Testing` |
-| Design reference | Figma `12:1343` + subcomponents `8:804`, `8:1251`, `8:1186`, `8:778`, file `r1CpQEYecqROS0oIOMlqAx` — read live over the Figma MCP |
-| Surface | Claude in Chrome — real Chrome, the real Vercel bundle, real CDN fonts |
-| Cases | 34 (17 cases × light and dark) |
-| Result | **31 Passed · 3 Failed** |
+| Run | Re-test on 2026-09-14. This file replaces the earlier Card runs, which tested the pre-#32 build (cardContainer, `ratio=3:2`, 10px layout gap, 48px metadata reserve). Those runs are still in git history. |
+| Build under test | Deployed staging Storybook, read from the `Staging Storybook` cell on Card's Components row (`rec1y6kyai6F3FVWv`). Base `[Class Demo] Horizon DS`, checked against `baseName` in `.claude/registry.local.json`. |
+| URL | `https://horizon-design-system-6s22ezf3m-chawsuhlaing2209s-projects.vercel.app/?path=/docs/components-card--docs` |
+| Registry `Commit` | `b5f15b9`, which contains the #32 squash `fbf19cf` |
+| Registry `Development` | **Before:** `Completed`. `Production Storybook` is set, so the new staging link did not show as `Ready for Testing`, and this run was requested directly. **After:** `To be fixed`. A `Failed` row outranks `Completed`. |
+| Design reference | Figma file `r1CpQEYecqROS0oIOMlqAx`. I found the sets by walking the file, not by trusting IDs from the repo: page `💠 Card` (7:701) holds **Card** `34:317`, **cardLayout** `8:1251`, **cardImage** `8:1186` and **cardText** `8:778` (a component with boolean properties, not a set). The favourite button inside cardImage is an instance of **iconButton** `8:1134` on page `💠 Icon Button` (34:804). I read them live with read-only `use_figma` scripts and `get_screenshot`. |
+| Surface | Claude in Chrome, real Chrome, the real Vercel bundle, fonts from the CDN. No local Storybook was started. |
+| Local checkout | `66c8e2a`. `git diff b5f15b9 -- src` is empty. I used it only to read source and to run `npm test -- src/components/card`: 28/28 pass. It was never the build under test. |
 
-No local Storybook was started. Every measurement below comes from the deployed
-bundle at the URL above, via `getBoundingClientRect` and `getComputedStyle` in a real
-browser.
-
-The expected matrix was built from `get_metadata` and `get_variable_defs` on the five
-Figma nodes. It was **not** derived from `card.stories.tsx`.
+The expected matrix below comes from the Figma nodes, not from `card.stories.tsx`.
 
 ---
 
-## Font check — done before any width or size was reported
+## 0 · Fonts loaded, checked before any width was read
 
-| Family used to measure `Horizon Design System 12345` at 16px | Width |
+I measured `Horizon Design System 12345` on a canvas:
+
+| Family | Width |
 |---|---|
-| `Inter` | 227.25px |
-| A deliberately bogus family | 196.875px |
-| `serif` | 196.875px |
+| `16px Inter` | 227.25 |
+| `16px sans-serif` | 216.11 |
+| `16px QaBogusFamilyXyz` | 196.875 |
+| `24px "Material Symbols Outlined"` measuring `favorite` | 24 (a single glyph) |
+| `24px QaBogusFamilyXyz` measuring `favorite` | 74.63 |
 
-Two distinct numbers, and `document.fonts` lists `Inter 100 900` and
-`Material Symbols Outlined 100 700` as **loaded**. Inter and the icon font are genuinely
-rendering, so every type size and every box measurement below is the component, not a
-fallback.
+`document.fonts` lists Inter 500, Inter 600, Inter 100–900 and Material Symbols Outlined 100–700 as `loaded`. Every size below comes from the component, not from a fallback font.
 
-The icon glyph was checked structurally too: the heart is an inner
-`span.material-symbols-outlined` at `24px` with a real `font-variation-settings`, nested
-inside `span.hds-icon-container`. The outer span computes to Arial/13.33px, which is
-inherited button default and carries no glyph — worth knowing so nobody reads the outer
-span and reports a missing icon font.
+## 1 · Is the deployed build the #32 build?
+
+- The deployed story index lists `figma-node`, `state-enable`, `state-hover`, `orientation-vertical`, `orientation-horizontal`, `has-slot`, `ratio-4-x-3`, `ratio-1-x-1`, `image-state-idle`, `image-state-hover`, `image-state-hover-ratio-1-x-1`, `overlay-action-off`, `metadata-off`, `review-off`, `price-off`, `favourite-toggle` and `long-content`. None of them is a cardContainer story, and there is no `3-x-2`.
+- The served CSS matches the #32 source rule for rule:
+  - `.hds-card` has padding and radius `--border-radius-control`.
+  - `.hds-card:hover, [data-state=hover]` uses `--elevation-level2`.
+  - `.hds-card-layout` and `__body` use `gap: var(--spacing-gap-sm)`, and horizontal `__body` uses `gap: 10px`.
+  - `.hds-card-image` has radius `--border-radius-control`.
+  - `.hds-card-text__meta` has no `min-height`.
+- **This is the #32 build.**
 
 ---
 
-## The expected matrix, from Figma
+## 2 · The expected matrix, from Figma
 
-`get_metadata` on the four subcomponent sets:
+### Card `34:317`: `state` = enable | hover
 
-| Set | Node | Published values |
+| Variant | Frame | Bindings |
 |---|---|---|
-| cardContainer | `8:804` | `state` = enable (`8:800`) \| hover (`8:805`) |
-| cardLayout | `8:1251` | `orientation` = vertical (`8:1249`) \| horizontal (`8:1250`), plus `hasSlot` |
-| cardImage | `8:1186` | `state` = idle \| hover × `ratio` = 3:2 \| 1:1 → `8:1184`, `8:1187`, `8:1185`, `8:1196`; plus `overlayAction` |
-| cardText | `8:778` | booleans `metadata`, `review`, `price` |
+| `12:1343` state=enable | 227 × 298.25, vertical, hug height | fill `color/bg/surface/primary`, radius `border/radius/control` (12), padding `spacing/padding/sm` (12) × `spacing/padding/md` (16), no effect |
+| `34:318` state=hover | 227 × 298.25 | same, plus effect style `elevation/level2` = `#1B27330F (0,2) r4` + `#1B27331A (0,4) r8` |
 
-Instance geometry the build has to hit (`12:1343`):
+Both variants nest `cardItems` (195 wide) → `cardLayout` vertical, `hasSlot=false`, gap `spacing/gap/sm` (12). That holds `cardImage` state=**hover** ratio=4:3 (195 × 146.25) and `cardText` metadata=true, **review=false, price=false** (195 × 116). The 116 is heading 60 + gap 8 + container `8:770` at **48 with no visible rows**, although `8:770` is set to HUG.
 
-```
-Card            227    × 296.25
-  cardItems     195    × 272.25   at 16, 12
-    cardImage   195    × 146.25   (4:3)
-    cardText    195    × 116      at y 156.25
-    Slot        269    × 46       hidden — hasSlot=false on the instance
-```
+### cardLayout `8:1251`: `orientation` = horizontal | vertical, `hasSlot` (default true), `Slot`
 
-Token bindings returned by `get_variable_defs` on `12:1343` and `8:778`:
+| Variant | Frame | Children |
+|---|---|---|
+| `8:1249` vertical | 269 × 371.75, gap `spacing/gap/sm` (12) | cardImage 269 × 201.75 · cardText 100 at y 213.75 · Slot `8:1314` 46 at y 325.75 |
+| `8:1250` horizontal | 269 × 172, gap `spacing/gap/sm` (12) | cardImage `8:1213` 128.5 × 96.375 at x 0 · column `8:1318` 128.5 at x 140.5, itemSpacing **10 raw** · cardText 116 · Slot `8:1315` 46 at y 126 |
 
-`color/bg/surfacePrimary` #ffffff · `border/radius/control` 12 · `spacing/padding/sm` 12 ·
-`spacing/padding/md` 16 · `spacing/gap/xs` 8 · `spacing/gap/2xs` 4 ·
-`border-width-default` 1 · `color/border/default` #eaeff4 · `color/bg/secondary` #ffffff ·
-`color/icon/negative` #a5261d · `border-radius-full` 999 · `color/bg/overlay` #1b27338c ·
-`color/text/primary` #1b2733 · `color/text/secondary` #5a6b7e ·
-`color/text/accent` **#f0932b** · `title/md` Inter Medium 16/24/0.15 ·
-`body/sm` Inter Regular 12/16/0.4 · `label/lg/bold` Inter Semi Bold 14/20/0.1 ·
-`body/lg/bold` Inter Semi Bold 16/24/0.5 · `elevation/level2` (on `8:805`)
-#1B27330F 0,2,4 + #1B27331A 0,4,8
+### cardImage `8:1186`: `state` = idle | hover × `ratio` = 4:3 | 1:1, `overlayAction` (default true)
 
-And, mixed in among them as bare core paths rather than `var(--horizon-semantic-*)`:
-`border/radius/8`, `border/radius/4`, `spacing/8`, `spacing/sm`, `spacing/4`.
+| Variant | Frame | Notes |
+|---|---|---|
+| `8:1184` idle, 4:3 | 363.5 × 272.625 | frame radius `border/radius/control` (12), clips; inner Slide Image radius `border/radius/8`, 1px INSIDE stroke `color/border/default` |
+| `8:1187` idle, 1:1 | 363.5 × 363.5 | same |
+| `8:1185` hover, 4:3 | 363.5 × 272.625 | + Overlay `8:1182`: radius 8, gradient `color/bg/overlay` 0.55 → 0, fill opacity 20% |
+| `8:1196` hover, 1:1 | 363.5 × 363.5 | + Overlay `8:1203` |
+
+In every variant the favourite button is an iconButton instance (state=idle), absolute, constrained right/top, **8 from the top and 7.5 from the right**.
+
+### iconButton `8:1134`: `state` = idle | hover
+
+| Variant | Fill | Shared |
+|---|---|---|
+| `8:1133` idle | `color/bg/secondary` (#ffffff) | 40 × 40 (min 40), radius `border/radius/full`, padding `spacing/8`/`spacing/sm` (8), gap `spacing/4` (4); Icon Container radius `border/radius/4` holding `favorite`, vector `color/icon/negative` |
+| `8:1135` **hover** | **`color/bg/secondary/hovered` (#f1f4f7)** | same |
+
+### cardText `8:778`: booleans `metadata`, `review`, `price` (all default true)
+
+- Block gap `spacing/gap/xs` (8).
+- Heading `8:767`, gap `spacing/gap/2xs` (4):
+  - Title: `title/md`, `color/text/primary`.
+  - Location: `body/sm`, `color/text/secondary`.
+- Metadata `8:770`, HUG, gap 4:
+  - Rating row `8:771`: Rating Score `label/lg/bold` in `color/text/accent`, Review Count `body/sm`.
+  - Price row `8:774`: Price Amount `body/lg/bold` in `color/text/primary`, Price Info `body/sm`.
+
+**Dark mode.** The variables live in a library, so the plugin API cannot resolve them per mode. I took the dark expectations from `tokens/semantic-color.dark.tokens.json`, which is the committed Figma export. Every light value read from Figma matches the light token file, with one exception: the known gap 7 on `color/text/accent`.
 
 ### Reconciliation against the stories
 
-Five Figma property axes, sixteen pinned stories, plus `--long-content` as a resilience
-case that has no node. Every published variant value has a story; no story invents a
-variant the node does not publish. `--docs` and `--figma-node` are reference pages, not
-variants.
-
----
-
-## The matrix — passes and failures
-
-Light and dark are separate rows because `Expected Results` carries the token
-resolution and the two themes resolve to different primitives — the same split Button's
-run used.
-
-| # | Subcomponent | Case | Light | Dark |
-|---|---|---|---|---|
-| 1 | cardContainer | `state=enable` | ✅ | ✅ |
-| 2 | cardContainer | `state=hover` | ✅ | ❌ **F2** |
-| 3 | cardLayout | `orientation=vertical` | ✅ | ✅ |
-| 4 | cardLayout | `orientation=horizontal` | ❌ **F1** | ❌ **F1** |
-| 5 | cardLayout | `hasSlot=true` | ✅ | ✅ |
-| 6 | cardImage | `ratio=3:2` | ✅ | ✅ |
-| 7 | cardImage | `ratio=1:1` | ✅ | ✅ |
-| 8 | cardImage | `state=idle` | ✅ | ✅ |
-| 9 | cardImage | `state=hover, ratio=3:2` | ✅ | ✅ |
-| 10 | cardImage | `state=hover, ratio=1:1` | ✅ | ✅ |
-| 11 | cardImage | `overlayAction=false` | ✅ | ✅ |
-| 12 | cardImage | favourite button, pressed / unpressed / focus | ✅ | ✅ |
-| 13 | cardText | baseline type and colour | ✅ | ✅ |
-| 14 | cardText | `metadata=false` | ✅ | ✅ |
-| 15 | cardText | `review=false` | ✅ | ✅ |
-| 16 | cardText | `price=false` | ✅ | ✅ |
-| 17 | Card | long content | ✅ | ✅ |
-
-Measured geometry, every case, light and dark identical:
-
-| Case | Card | Layout | Image |
-|---|---|---|---|
-| default | 227 × 296.25 | 195 × 272.25 | 195 × 146.25 (4:3) |
-| `ratio=1:1` | 227 × 345 | 195 × 321 | 195 × 195 (1:1) |
-| `hasSlot` | 227 × 352.25 | 195 × 328.25 | 195 × 146.25 |
-| `horizontal` | 301 × 196 | 269 × 172 | 129.5 × 97.13 (4:3) |
-| `metadata=false` | 227 × 240.25 | 195 × 216.25 | 195 × 146.25 |
-| `review=false` | 227 × 296.25 | 195 × 272.25 | 195 × 146.25 |
-| `price=false` | 227 × 296.25 | 195 × 272.25 | 195 × 146.25 |
-| long content | 227 × 336.25 | 195 × 312.25 | 195 × 146.25 |
-
-`227 × 296.25`, `195 × 272.25` and `195 × 146.25` are the instance's own numbers to the
-hundredth. The vertical card matches `12:1343` exactly.
-
----
-
-## Findings
-
-### F1 · `cardLayout · orientation=horizontal` — the row is split evenly, the node splits it unevenly
-
-```
-Card · cardLayout · orientation=horizontal · light and dark
-Expected  node 8:1250, 269 wide: cardImage 8:1213 is 130.5 at x=0,
-          text column 8:1318 is 128.5 at x=140.5, gap 10
-Saw       grid-template-columns: 1fr 1fr → 129.5px / 129.5px
-Where     src/components/cardLayout/cardLayout.css line 30
-Evidence  reports/card/figma-cardLayout-horizontal-8-1250.png
-```
-
-The layout box itself (269 × 172) and the image's 4:3 ratio are both correct. Only the
-split is off, by one pixel each way.
-
-This is the same phenomenon as `docs/design-gaps.md` Button #6: `cardImage` carries a
-1px stroke aligned outside or centre, so Figma grows its hug width by 1px and the
-sibling column loses 1px. The build normalised the tracks deliberately — the reasoning
-is in a CSS comment — but that reasoning lives **only** in the comment. It is not in
-`docs/design-gaps.md`, so nothing in the design record says the node and the code
-disagree here.
-
-**Needed — a decision, not a patch.** Either set the `cardImage` stroke to **inside** in
-Figma (the node then reports 129.5 / 129.5 and the current code is already right), or
-accept 130.5 / 128.5 and change the grid. Either way it belongs in
-`docs/design-gaps.md` rather than a comment.
-
-### F2 · `cardContainer · state=hover` in dark mode does nothing
-
-```
-Card · cardContainer · state=hover · dark
-Expected  a distinguishable raised state — node 8:805 binds elevation/level2
-Saw       --elevation-level2 resolves to the SAME value in dark as in light:
-          #1b27330f 0 2px 4px, #1b27331a 0 4px 8px
-Where     the token set, not the component — cardContainer.css line 25
-          applies var(--elevation-level2) correctly
-```
-
-The shadow colour `#1b2733` is *exactly* `--color-bg-surface-primary` in dark, painted
-over a `#12181f` backdrop. Composite at the strongest stop:
-
-```
-0.10 × (27,39,51) + 0.90 × (18,24,31) = (18.9, 25.5, 33.0)   vs (18, 24, 31)
-```
-
-A delta of about two parts in 255 — roughly 0.6%, below any perceptual threshold. The
-same arithmetic in light gives a delta of about 21, which is why light hover reads
-clearly. Confirmed visually: `--state-enable` and `--state-hover` rendered side by side
-in dark at 2× zoom are indistinguishable.
-
-**Marked Failed on observable grounds, not on the node.** There is no dark node to
-compare against — `elevation/level2` is a single Figma effect style with no mode
-variants — so this is not a case of the build getting a value wrong. It is a case of a
-published interaction state producing no observable change in a theme the system ships.
-A consumer shipping dark mode gets a card with no hover affordance at all.
-
-**Needed:** a dark mode on `elevation/level2` (a lighter or higher-alpha shadow, or a
-surface/border lift instead of a shadow), or an explicit decision that dark cards raise
-by some other means, with a node to review it against. This is a designer's call —
-**it should not be patched in the component.**
-
-### F3 · Not a failure, but the most urgent thing in this report — the `--color-text-accent` fix is still one re-export from being lost
-
-`docs/design-gaps.md` #7 records this as RESOLVED. On the deployed build it *is* still
-resolved:
-
-| | Rating score renders | On surface | Contrast | AA |
-|---|---|---|---|---|
-| Light | `#9c601c` | `#ffffff` | **5.12:1** | pass |
-| Dark | `#f0932b` | `#1b2733` | **6.44:1** | pass |
-
-But `get_variable_defs` on `8:778` and on `12:1343` still returns
-`--horizon-semantic-color-text-accent` = **`#f0932b`**. The Figma variable has not been
-updated. On the light surface that value is 2.36:1 — the original Serious violation.
-
-The gap doc already says this was reverted exactly this way once: a re-export landed,
-removed `color-orange-700`, and put the alias back. **That has not been prevented. It is
-still true today.** The next `tokens/` re-export silently reintroduces a WCAG AA failure
-on every consumer of `--color-text-accent`, not just this card.
-
-Recorded as **Passed**, deliberately: the component references `--color-text-accent`
-correctly, and the divergence is entirely inside the token layer. Failing it would send
-an engineer to revert an accessibility fix. Add `color-orange-700` (`#9c601c`) as a
-primitive and repoint the light-mode `color-text-accent` alias **in Figma**.
-
----
-
-## The nine known gaps — confirmed or disputed
-
-| # | Gap | Verdict |
+| Figma case | Story | |
 |---|---|---|
-| 1 | `ratio=3:2` renders 4:3 | **Confirmed.** `8:1184` is 363.5 × 272.625 = 4:3; the instance is 195 × 146.25 = 4:3. `8:1187` (`1:1`) is a true 363.5 × 363.5, so only the one name is wrong. Rename the variant value in Figma. |
-| 2 | Values bound to core tokens | **Confirmed at the source.** `get_variable_defs` on `12:1343` returns `border/radius/8`, `border/radius/4`, `spacing/8`, `spacing/sm`, `spacing/4` as bare core paths while everything else comes back as `var(--horizon-semantic-*)`. Rendered: image radius 8px, button padding 8px, icon radius 4px. |
-| 3 | Values with no token | **Confirmed.** Layout gap 10px (node: 140.5 − 130.5 = 10), favourite offset `top 7px / right 6.5px`, slot reserve 46px (node `8:1314` / `8:1315` are both 46). All three render exactly as the node has them. |
-| 4 | Missing interaction states | **Confirmed.** The node publishes `enable` and `hover` only. Nothing renders for pressed, disabled or loading. The only focus treatment is the generic ring on the favourite button — 2px `--color-border-focused` at 1px offset, `#1547d5` light and `#3b82f6` dark. Undesigned, as the gap says. |
-| 5 | Unfavourited heart has no design | **Confirmed, with a correction.** It is a placeholder using `--color-icon-subtle` and still needs a design decision. But the gap entry says the placeholder is *"a recoloured filled one"* and proposes an outlined heart as the likely remedy — the build **already renders it outlined**, `font-variation-settings: "FILL" 0`, as well as recoloured. The entry understates what shipped; the proposed remedy is half done. |
-| 6 | The photo is an empty placeholder | **Confirmed.** With no `image` the component renders `.hds-card-image__photo--empty` on `--color-bg-surface-secondary`. Not a defect. |
-| 7 | `--color-text-accent` contrast RESOLVED | **Confirmed held in the build — and confirmed still unfixed in Figma.** See F3. |
-| 8 | Image tint has no strength token | **Confirmed.** Overlay opacity `0.2` on a `--color-bg-overlay` gradient = 0.55 × 0.2 = 0.11 effective, exactly the node's `rgba(27,39,51,0.11)`. The `0.2` is held as `--hds-card-image-overlay-strength` with no token behind it. |
-| 9 | Metadata block reserves its own height | **Confirmed, and the stated consequence measured.** `review=false` → 296.25. `price=false` → 296.25. Both hold the 48px reserve rather than shrinking to 272.25 / 268.25. `metadata=false` correctly drops the reserve entirely → 240.25. Still needs a yes or no from the designer. |
+| Card enable / hover | `state-enable`, `state-hover` | ✓ |
+| Card 12:1343 as placed | `figma-node` | ✓ |
+| cardLayout vertical / hasSlot / horizontal | `orientation-vertical`, `has-slot`, `orientation-horizontal` | ✓ |
+| cardImage idle 4:3, idle 1:1, hover 4:3, hover 1:1 | `ratio-4-x-3`, `ratio-1-x-1`, `image-state-idle`, `image-state-hover`, `image-state-hover-ratio-1-x-1` | ✓ (`image-state-idle` pins idle on 4:3) |
+| cardImage overlayAction=false | `overlay-action-off` | ✓ |
+| cardText metadata / review / price off | `metadata-off`, `review-off`, `price-off` | ✓ |
+| **iconButton state=hover** | **none** | **Missing case.** No story, and nothing in the build renders it. See F1. |
+| n/a | `favourite-toggle`, `long-content` | Behaviour and resilience views, not Figma variants. Kept and tested. |
 
 ---
 
-## Two earlier findings re-checked, both still fixed
+## 3 · Results
 
-**The image overlay no longer follows an ancestor hover.** With transitions disabled and
-a paint forced between each trusted pointer move and each `getComputedStyle` read:
+Every value is a computed style or a `getBoundingClientRect` read from the deployed build. Each story was loaded as `iframe.html?id=…&viewMode=story`, once plain and once with `&globals=theme:dark`. I confirmed `data-theme=dark` and `--color-bg-surface-primary` = `#1b2733` at the card before reading dark values.
 
-| Pointer | `.hds-card` box-shadow | `.hds-card-image` `:hover` | Overlay opacity |
+### 3.1 Card
+
+| Case | Theme | Saw | Result |
 |---|---|---|---|
-| off the card | `none` | false | 0 |
-| over the image | `elevation-level2` | true | **0.2** |
-| over the text | `elevation-level2` | false | **0** |
-| off the card again | `none` | false | 0 |
+| state=enable | light | `<article>` 227 × 298.25, bg rgb(255,255,255), radius 12, padding 12/16, shadow none, layout gap 12 | **Pass** |
+| state=enable | dark | 227 × 298.25, bg rgb(27,39,51), same geometry | **Pass** |
+| state=hover | light | pinned: shadow `rgba(27,39,51,.06) 0 2px 4px, rgba(27,39,51,.1) 0 4px 8px`. Real pointer over the text: card raises, image overlay stays 0. Over the image: raises, overlay 0.2. Off: none. | **Pass** |
+| state=hover | dark | shadow value identical to light; `#1b2733` shadow on a `#12181f` backdrop, composite delta ≈ (1,2,2)/255; zoomed enable and a real hover are indistinguishable | **Pass (waived, not measured)** · gap 11 |
+| 12:1343 as placed | light | 227 × **250.25**; image data-state=hover, overlay 0.2; heading 60, empty metadata 0 tall, 8px gap kept → text 68 | **Pass** on the gap 9 decision · see §4 |
+| 12:1343 as placed | dark | 227 × 250.25, bg rgb(27,39,51), same | **Pass** on the gap 9 decision |
+| Long content | light | 227 × 338.25, text 195 × 156 (title 48, location 48), scrollWidth 227 = clientWidth | **Pass** |
+| Long content | dark | same | **Pass** |
 
-Hovering the text raises the card and leaves the image untinted, which is the correct
-separation. The regression has not returned.
+### 3.2 cardLayout
 
-**The favourite button really toggles.** Driven with real trusted clicks, not by
-changing the arg:
+| Case | Theme | Saw | Result |
+|---|---|---|---|
+| vertical, hasSlot=false | light / dark | flex column, gap 12, layout 195 × 274.25, image 195 × 146.25, text starts at 158.25 | **Pass** / **Pass** |
+| vertical, hasSlot=true | light / dark | at 195: body gap 12, slot 195 × 46, layout 332.25 = 146.25+12+116+12+46. **At the node's 269** (wrapper widened for measurement): layout 269 × 371.75, image 201.75, text 100, slot at y 325.75, exact | **Pass** / **Pass** |
+| horizontal, hasSlot=true | light / dark | grid `128.5px 128.5px`, gap 12; layout 269 × 172; image 128.5 × 96.38 at 0; body at 140.5, gap 10; text 116; slot 46 at y 126. Delta 0.00 | **Pass** / **Pass** |
 
-```
-aria-pressed  false → true → false        (light)
-aria-pressed  true  → false               (dark)
-glyph         FILL 0 ↔ FILL 1
-colour        --color-icon-subtle ↔ --color-icon-negative
-              light  #8a94a6 ↔ #a5261d
-              dark   #b9c7d6 ↔ #e02b2b
-focus         outline 2px solid --color-border-focused, offset 1px
-```
+### 3.3 cardImage and the favourite button
+
+| Case | Theme | Saw | Result |
+|---|---|---|---|
+| ratio=4:3, idle | light | aspect 4/3, 195 × 146.25, border 1px rgb(234,239,244), radius 12, overflow hidden | **Pass** |
+| ratio=4:3, idle | dark | border rgb(58,69,83), radius 12. The border equals surface-secondary, so it is invisible on the empty placeholder (observation) | **Pass** |
+| ratio=1:1, idle | light / dark | aspect 1/1, 195 × 195, card 227 × 347 | **Pass** / **Pass** |
+| state=idle pinned | light | overlay 0; a real pointer over the image does not raise it | **Pass** |
+| state=idle pinned | dark | overlay 0 | **Pass** |
+| state=hover, 4:3 | light | overlay opacity 0.2 over `linear-gradient(rgba(27,39,51,.55), transparent)` = 0.11; radius 8; inset −1px covers the border. Unpinned, a real pointer over the image → 0.2; over the text → 0 | **Pass** |
+| state=hover, 4:3 | dark | overlay 0.2; a real pointer over the image → 0.2 | **Pass** |
+| state=hover, 1:1 | light / dark | 195 × 195, overlay 0.2 | **Pass** / **Pass** |
+| overlayAction=false | light / dark | no favourite element, zero buttons in the card | **Pass** / **Pass** |
+| Favourite, idle look, toggle, focus | light | 40 × 40, radius 999, bg rgb(255,255,255), padding 8, gap 4, top 8 / right 7.5 from the image edge, icon container radius 4, Material Symbols 24px. Real clicks: aria-pressed false→true→false, FILL 0→1→0, rgb(138,148,166)→rgb(165,38,29). Tab → `:focus-visible`, outline 2px solid rgb(21,71,213) at 1px. Enter and Space each → one click (isTrusted, detail 0), toggles | **Pass** |
+| Favourite, same | dark | bg rgb(27,39,51); pressed rgb(224,43,43) FILL 1; unpressed rgb(185,199,214); ring 2px rgb(59,130,246); Space toggles | **Pass** |
+| **Favourite, iconButton state=hover** | **light** | real pointer on the button: **bg stays rgb(255,255,255)**, expected `#f1f4f7` | **Fail** · F1 |
+| **Favourite, iconButton state=hover** | **dark** | real pointer on the button: **bg stays rgb(27,39,51)**, expected `#3a4553` | **Fail** · F1 |
+
+### 3.4 cardText
+
+| Case | Theme | Saw | Result |
+|---|---|---|---|
+| all on | light | title Inter 16/500/24, 0.15px, rgb(27,39,51) · location 12/400/16, 0.4px, rgb(90,107,126), 32 tall · rating 14/600/20, 0.1px, **rgb(156,96,28)** · review count 12/400 rgb(90,107,126) · price 16/600/24, 0.5px, rgb(27,39,51) · gaps 8/4/4 · heading 60, metadata 48 (min-height auto), block 116 | **Pass** · gap 7 noted |
+| all on | dark | rgb(255,255,255) / rgb(215,222,231) / rating rgb(240,147,43) / price rgb(255,255,255); block 116 | **Pass** |
+| metadata=false | light / dark | metadata absent, text 60, card 242.25 | **Pass** / **Pass** |
+| review=false | light / dark | metadata **24** (hugs the price row), text 92, card 274.25 | **Pass** / **Pass** |
+| price=false | light / dark | metadata **20** (hugs the rating row), text 88, card 270.25 | **Pass** / **Pass** |
 
 ---
 
-## Three dark-mode token collisions worth a designer's eye
+## 4 · Findings
 
-None is a build defect — the component references the right token in every case — but
-all three are places where two roles resolve to the same value in dark and something
-stops being visible.
+### F1 · The favourite button has no hover state (light and dark), **Fail**
 
-| Roles | Dark value | What disappears |
+```
+Card / cardImage · iconButton state=hover · light and dark
+Expected  background uses --color-bg-secondary-hovered   (iconButton 8:1135: color/bg/secondary/hovered, #f1f4f7 light / #3a4553 dark)
+Saw       background stays --color-bg-secondary          (rgb(255,255,255) light / rgb(27,39,51) dark) under a real pointer
+Where     src/components/cardImage/cardImage.css, the .hds-card-image__favorite block has no :hover rule
+```
+
+- **Evidence.** Figma: `reports/card/figma-8-1134-iconButton-set.png` shows idle above and hover below. Build: with a real pointer on the button (`:hover` confirmed on `.hds-icon` inside it, transitions disabled, a frame forced before the read), the computed `background-color` does not change. Of the deployed stylesheet's rules for `.hds-card-image__favorite`, only `[aria-pressed='false']` and `:focus-visible` are state rules.
+- **Suggested fix.** `.hds-card-image__favorite:hover { background: var(--color-bg-secondary-hovered); }`. The token exists in both modes.
+- **Related, for engineer and designer.** Figma treats iconButton as its own component set on its own page. The code has no iconButton component, and cardImage re-implements its styles inline. CLAUDE.md's subcomponents method would build and import it, and that is where both states would live.
+- **Why it was missed before.** Earlier runs tested the button at its idle look only and never compared it against the iconButton set.
+
+### Design questions, not engineering defects (rows Passed)
+
+1. **Card 12:1343 as placed is 48px shorter in the build (250.25 against 298.25).** Figma sizes metadata container `8:770` at 48 with no visible rows, although it is set to HUG. The product owner decided on 2026-09-13 that there is no reserve (gap 9, RESOLVED). The build follows that decision, and the rows are Passed on it. Still open:
+   - (a) Reset the instance in Figma so the node agrees with the decision.
+   - (b) With `metadata=true, review=false, price=false`, the build renders an empty metadata element and keeps the 8px gap above it (text 68 rather than 60). Decide whether metadata with no rows should collapse completely.
+   - (c) The `figma-node` story claims to reproduce 12:1343 "exactly". It is 48px shorter, and its description should say why.
+2. **Both Card variants place cardImage at `state=hover`.** In the Figma set, even `state=enable` shows the image tint. The build keeps the two `state` properties independent (the card's hover does not tint the image, and the image is pointer-driven unless pinned), which matches the property model. A consumer can pin `image.state='hover'` to reproduce the placed instance. Confirm whether the tinted image in the enable variant is intended or a leftover sample.
+3. **The image stroke.** Figma draws the 1px stroke on the inner rectangle at radius 8 (core `border/radius/8`), inside a frame that clips at 12, so the stroke is cut at the corners. The build draws a continuous border on the 12px frame. The silhouette is the same. If the continuous edge is the intent, set the inner radius to `border/radius/control` in Figma.
+4. **Dark observations carried forward.**
+   - `--color-border-default` equals `--color-bg-surface-secondary` (#3a4553), so the image border vanishes on the placeholder.
+   - `--color-bg-secondary` equals the card surface (#1b2733), so the favourite pill only reads over a photo.
+   - The F1 hover colour #3a4553 is also that same border and surface-secondary value.
+
+### Waived gaps, re-measured and still open
+
+| Gap | Re-measured on this build | Row |
 |---|---|---|
-| `--elevation-level2` shadow vs `--color-bg-surface-primary` | both `#1b2733` | the whole hover state — **F2** |
-| `--color-border-default` vs `--color-bg-surface-secondary` | both `#3a4553` | the image frame, on a card with no photo |
-| `--color-bg-secondary` vs `--color-bg-surface-primary` | both `#1b2733` | the favourite pill, if it is ever placed outside the image |
+| 11 · `elevation/level2` has no dark variant | Unchanged. The dark shadow is identical to light and is painted in the surface colour, so hover is invisible in dark. The waiver text is kept verbatim in Context, and the row stays `Passed` only because of that human waiver. QA did not grant it. | `recRKWuTGZeXeI8Ce` |
+| 3 · raw values | Horizontal text column `gap: 10px`, slot `min-height: 46px`, favourite `top: 7px; right: 6.5px`. All three are still raw, as instructed. | `recruJ0K6kqgODxAC`, `recLoAXbMvU9miOR2`, `recCweuBWV1GRuDJa` |
+| 2 · core tokens | `--spacing-1`, `--spacing-2` (favourite), `--border-radius-2` (icon container), `--border-radius-4` (overlay radius) | `recCweuBWV1GRuDJa`, `rect81QIt3jfFldaY` |
+| 4 · undesigned focus / pressed / disabled | Generic focus ring only | `recCweuBWV1GRuDJa` |
+| 5 · unfavourited heart | Outlined, `--color-icon-subtle` | `recCweuBWV1GRuDJa` |
+| 7 · accent in Figma | The build renders #9c601c (correct). The Figma Rating Score fill is still #f0932b in light. | `recGLVLkhOY3pETkv` |
+| 8 · overlay strength | `--hds-card-image-overlay-strength: 0.2` | `rect81QIt3jfFldaY` |
+
+What the change list said, confirmed on the deployed build:
+
+- cardContainer is gone. Card renders its own `<article>` and takes `state`.
+- `ratio` is `4:3 | 1:1`.
+- Metadata hugs its rows.
+- The layout gap is `--spacing-gap-sm` in both orientations and between text and slot in vertical.
+- The image frame radius is `--border-radius-control`.
+
+### Token check (step 6)
+
+- `card.css` has no raw colour, space, radius or font value. The one literal is the `120ms` transition.
+- `cardLayout.css` contains `10px` and `46px`, both waived under gap 3.
+- `cardImage.css` contains `7px` / `6.5px` (gap 3), `0.2` (gap 8), and core `--spacing-1`, `--spacing-2`, `--border-radius-4` (gap 2).
+- `iconContainer.css` uses core `--border-radius-2` (gap 2).
+- `cardText.css` is clean.
+- No hex values.
 
 ---
 
-## Screenshots
+## 5 · Keyboard activation: what automation can and cannot say
 
-Figma reference renders are in `reports/card/`:
+- **Tab.** Tab from the page lands on the favourite button, `:focus-visible` is true, and the ring renders: 2px `--color-border-focused` at a 1px offset, in light and dark. The next Tab leaves the story, so the card surface is not a tab stop. The button is the only focusable element.
+- **Enter and Space.** Each press dispatched exactly one `click` (`isTrusted: true`, `detail: 0`, meaning keyboard-originated) and toggled `aria-pressed`: Enter in light, Space in light and dark.
+- **What that does not prove.** Claude in Chrome delivers these as browser-level input events that Chrome marks trusted. This shows the native `<button>` activates from keyboard events in this browser. It is **not** a manual keyboard pass by a person, and it is **not** an assistive-technology test. No row claims more than that. The observation sits in the Context of `recCweuBWV1GRuDJa` and `recI1Q9tGZ2ZpvssA`.
 
-- `figma-cardLayout-horizontal-8-1250.png` — the paired evidence for **F1**
-- `figma-cardContainer-hover.png`
-- `figma-cardImage-hover-3x2.png`
+## 6 · Screenshots
 
-Live renders were captured in the browser during the run — light and dark
-`state-enable`/`state-hover` at 2× zoom for F2, and the favourite button pressed and
-unpressed. The harness could not persist them to disk, so they are not filed here. Every
-claim in this report is backed by a computed value or a node measurement rather than by
-an image, which is the stronger record in any case.
+Saved beside this report, all Figma renders from `get_screenshot`, read live on 2026-09-14:
 
----
-
-## Registry
-
-34 rows written to `Staging Testing`, every one linked to `rec1y6kyai6F3FVWv` through
-`Composed In`. Passes as well as failures.
-
-| Cell | After this run |
+| File | Node |
 |---|---|
-| `Development` | **To be fixed** (formula — not written by hand) |
-| `Total Staging Tests` | 34 |
-| `Staging Passed Count` | 31 |
-| `Synchronization %` | 91.18% |
-| `Staging Testing Results Summary` | Passed, Failed |
+| `reports/card/figma-34-317-card-set.png` | Card set: enable and hover |
+| `reports/card/figma-8-1134-iconButton-set.png` | iconButton set: idle and **hover** (F1 expected) |
+| `reports/card/figma-8-1186-cardImage-set.png` | cardImage: 4 variants |
+| `reports/card/figma-8-1251-cardLayout-set.png` | cardLayout: horizontal and vertical |
+| `reports/card/figma-8-778-cardText.png` | cardText |
 
-**One registry anomaly to hand to the PM, not a Card issue.** `Staging Passed Tests`
-(`fldlUuOcmKdDULk5q`) reads **0** while `Staging Passed Count` reads 31 and
-`Synchronization %` correctly computes 91.18%. Its own field description says it
-*"Counts only test rows marked Passed. Feeds Synchronization %."* Either it is lagging or
-its rollup condition is wrong. Left untouched — QA does not repair the base.
+**I could not write the browser captures to disk.** I captured the deployed build in Chrome for every interactive state:
 
-### Vocabulary substitutions — recorded, nothing invented
+- light and dark enable
+- real card hover
+- real image hover
+- real favourite hover (the F1 evidence)
+- pressed and unpressed
+- keyboard focus in light and dark
 
-`State` and `Size` are fixed option lists and **no option was created**.
+The Chrome tool's `save_to_disk` returned no file path, and nothing new appeared on disk. macOS `screencapture` is refused ("could not create image from display"). I did not try to get around either. The computed values above are the primary evidence for every row.
 
-| Needed | Logged as | Why |
-|---|---|---|
-| `state=enable` | `idle` | No `enable` option. Same substitution Button's run used. |
-| `state=hover` | `hovered` | Exact match in the list. |
-| favourite `aria-pressed=true` | `selected` | No `pressed` option. |
-| no size property | `null` | The `null` option exists and is the honest value — the Card set publishes no `size`. |
+The two F1 rows and the two 12:1343 rows carry the matching Figma render in `Attachment`. The other rows have no attachment.
 
-`orientation`, `ratio`, `hasSlot`, `overlayAction`, `metadata`, `review` and `price` are
-variant properties rather than states, so they are carried verbatim in `Variants`, which
-is free text and loses nothing.
-
-**Missing option to report:** the `State` list has no `enable` and no `pressed`. Both are
-real values in this system — `enable` is published by two Figma sets and `pressed` is a
-published Button variant — and both are currently being recorded under near-enough
-names. Adding them is a schema change and belongs to whoever owns the base.
+Older files in `reports/card/` (`figma-cardContainer-hover.png`, `figma-cardImage-hover-3x2.png`, `figma-cardLayout-horizontal-8-1250.png`, `report.md`, `release-review-5e52483.md`) are from earlier runs, show nodes or values that no longer exist, and were left untouched.
 
 ---
 
-## Verdict
+## 7 · Registry writes
 
-**Back to the engineer.** 31 of 34 cases pass, and the component's fidelity to
-`12:1343` is otherwise exact to the hundredth of a pixel across every variant.
+`Staging Testing`: **38 rows linked to Card. 36 `Passed`, 2 `Failed`.**
 
-Two things must be decided before this ships:
+- **34 existing rows updated in place.** They had been measured on the previous build, and several described things that no longer exist: cardContainer, `ratio=3:2`, the 10px gap, the 48px reserve. Leaving them would have kept stale passes in the rollup. Each was re-measured on this deployment, its Expected re-baselined from today's Figma, and its Context says so.
+  - The four former cardContainer rows now record Card `state` and `Component/Sub Component` = `Card`.
+  - The waived row `recRKWuTGZeXeI8Ce` keeps its waiver text verbatim, and its `Passed` stays on that waiver.
+- **4 new rows:**
+  - iconButton hover in light and dark (`Failed`)
+  - Card 12:1343 as placed in light and dark (`Passed`)
+- **No row for Enter/Space as a verified activation.** See §5.
+- `Size` is `null` on every row, because no set publishes a size property. `State` uses existing options only:
+  - `idle` stands in for `enable` and for variant-only rows.
+  - `hovered` for hover.
+  - `selected` + `focus` for the pressed and focused favourite, because there is no `pressed` option.
+  - No option was created.
+- `Composed In` → Card on the new rows, which adds them to Card's `[Staging] Test Records`. `Development` was not written.
 
-1. **F1** — the horizontal split disagrees with the node by 1px each way. Most likely
-   fixed in Figma by setting the `cardImage` stroke to inside; whatever is decided
-   belongs in `docs/design-gaps.md`.
-2. **F2** — `state=hover` is invisible in dark. Needs a dark `elevation/level2`, or an
-   explicit decision that dark cards raise some other way.
+After the writes, Card's row reads:
 
-And one thing is more urgent than either, though it is recorded as a pass:
+- `Staging Testing Results Summary` = Passed, Failed
+- `Total Staging Tests` = 38
+- `Staging Passed Count` = 36
+- `Synchronization %` = 94.74%
+- **`Development` = `To be fixed`**
 
-3. **F3** — the `--color-text-accent` accessibility fix exists only in `tokens/` and not
-   in the Figma variable collection. It has already been silently reverted once by a
-   re-export. Until `color-orange-700` and the light-mode alias exist in Figma, every
-   re-export reopens a WCAG AA failure across the whole system.
+The passed count differing from the total also answers registry Flag 4: `Staging Passed Count` does filter to passes.
 
-No verdict here is final until a human reads it, and no finding above is marked
-resolved by me.
+## 8 · Verdict
 
----
+**Back to the engineer.** 36 of 38 cases pass on the deployed #32 build. Everything the 2026-09-13 restructure changed is correct.
 
-## Re-test — 2026-09-12
+One thing must be fixed:
 
-Re-run against the same deployed staging build (`ev1k2psuq`), which was first
-confirmed current: the build serves `--color-text-accent: #9c601c` in light and
-`#f0932b` in dark, so it already carries the contrast fix and is not a stale
-artifact from before the repairs.
+- **F1:** the favourite button's hover state (`iconButton` `8:1135`, `--color-bg-secondary-hovered`) is not implemented, in light or dark.
 
-Gates on the staging branch at this commit: `npm run lint` clean, `npm test`
-**58/58**.
-
-### The six earlier findings — all still fixed
-
-| Finding | Expected | Measured on staging | Result |
-|---|---|---|---|
-| 1 · card 48px short | `.hds-card` 227 × 296.25 | 227 × 296.25; chain 146.25 + 10 + 116 = 272.25 | Holds |
-| 2 · overlay ~5× too dark | effective top alpha 0.11 | gradient stop `rgba(27,39,51,0.55)` × layer opacity `0.2` = **0.11** | Holds |
-| 3 · favourite never toggles | `aria-pressed` flips, colour moves | `false` → `true` → `false`; `rgb(138,148,166)` → `rgb(165,38,29)` | Holds |
-| 4 · card hover overrode `cardImage.state` | state pinned by prop, not ancestor | `data-state="hover"` set from the prop; rule is `.hds-card-image[data-state=…]`, not `.hds-card:hover` | Holds |
-| 5 · `state=hover, ratio=1:1` had no story | story exists | `components-card--image-state-hover-ratio-1-x-1` served | Holds |
-| contrast · `--color-text-accent` 2.36:1 | AA pass | `#9c601c` in light | Holds |
-
-Finding 2 was initially mis-read this run as a regression: `backgroundColor`
-returns `rgba(0,0,0,0)` because the tint is painted through `background-image`,
-not `background-color`. Read from the gradient stop it resolves exactly as
-designed. Recorded because the wrong probe, not the component, produced the
-scare.
-
-### The three failures — all three reproduce, none is a code defect
-
-| Row | Case | Measured now | Why no fix was made |
-|---|---|---|---|
-| `recruJ0K6kqgODxAC` | horizontal split, light | `grid-template-columns: 129.5px 129.5px`; total 269, gap 10 both correct | Design gap 10 |
-| `reccHjcAahTTrHUit` | horizontal split, dark | identical to light | Design gap 10 |
-| `recRKWuTGZeXeI8Ce` | `cardContainer state=hover`, dark | `--elevation-level2` byte-identical in both modes: `0px 2px 4px 0px #1b27330f, 0px 4px 8px 0px #1b27331a`, and `--color-bg-surface-primary` in dark is `#1b2733` — the same colour | Design gap 11 |
-
-Only the **split** differs on the first two; the row's total width (269) and gap
-(10) match the node exactly. The node declares `layoutGrow: 1` / `FILL` on both
-children — an instruction to share evenly — and only its *rendered* geometry is
-uneven. The build follows the declared intent.
-
-**Superseded 2026-09-13.** This paragraph first blamed an outside stroke, then an
-aspect-ratio lock. Both were wrong. Tested directly in Figma: the 1px border on
-the cardImage auto-layout frame adds to its fill basis even when `INSIDE` —
-removing it gave 129.5 / 129.5. The border has since been moved to the inner
-image rectangle in all four variants; see design gap 10 for the change and its
-verification.
-
-Encoding the node's 130.5 / 128.5 would mean writing two raw px values into a
-component file to reproduce a stroke artifact. `CLAUDE.md` lists raw px inside a
-component as a failure to avoid, so that route is closed without a design
-decision to open it.
-
-On the third, the component applies `--elevation-level2` correctly and there is
-no dark node to build against. `CLAUDE.md`: *a token that exists in one mode and
-not another is a design gap; report it rather than filling it in.*
-
-### Board
-
-No row changed status. Nothing was repaired, so nothing earned
-`Fixed (To re-test)` — 48 Passed · 3 Failed stands, and `Development` stays
-`To be fixed`. Two designer decisions unblock it:
-
-1. Set the cardImage stroke to **inside** in Figma (gap 10) — closes two rows,
-   no code change.
-2. Give `elevation/level2` a **dark-mode value** (gap 11) — closes the third.
-
-## QA re-test of the two horizontal rows — 2026-09-13
-
-Scope: `recruJ0K6kqgODxAC` (light) and `reccHjcAahTTrHUit` (dark), both
-`Fixed (To re-test)` after the Figma change that moved the cardImage 1px border
-from the auto-layout frame to the inner Slide Image rectangle. No code changed.
-`recRKWuTGZeXeI8Ce` (dark hover elevation) was not touched and stays `Failed`.
-
-Build: the Card record's `Staging Storybook` cell, read from the registry —
-`https://horizon-design-system-ev1k2psuq-chawsuhlaing2209s-projects.vercel.app`,
-story `components-card--orientation-horizontal` via `iframe.html`, in Claude in Chrome.
-
-### Font check (canvas measureText, declared family vs bogus family)
-
-| Family | Declared | Bogus | Loaded |
-|---|---|---|---|
-| Inter 16px | 238.81 | 269.72 | yes |
-| Material Symbols Outlined 24px (`arrow_forward`) | 24.00 | 187.84 | yes |
-
-Identical numbers in the light and dark loads. `document.fonts` also lists Inter
-500/600/100–900 and Material Symbols Outlined 100–700 as `loaded`.
-
-### Figma expected — node 8:1250, read live (get_metadata + read-only use_figma)
-
-| Property | Value |
-|---|---|
-| Row | HORIZONTAL auto-layout, 269 x 172, itemSpacing 10, padding 0 |
-| cardImage 8:1213 | 129.5 wide at x 0 — `layoutGrow 1`, `FILL` |
-| Text column 8:1318 | 129.5 wide at x 139.5 — `layoutGrow 1`, `FILL` |
-| Strokes | none on either child frame; 1px `INSIDE` on the Slide Image rectangle in all four cardImage variants (8:1175, 8:1189, 8:1150, 8:1198) |
-
-The node's rendered geometry now agrees with its declared even share.
-
-### Staging measured (getBoundingClientRect)
-
-| Theme | Theme proof | Layout | Gap | grid-template-columns | Image | Body (offset) |
-|---|---|---|---|---|---|---|
-| Light | no data-theme wrapper, `--color-bg-surface-primary` `#fff` | 269 x 172 | 10px | 129.5px 129.5px | 129.5 | 129.5 (139.5) |
-| Dark (`globals=theme:dark`) | `DIV data-theme=dark`, `--color-bg-surface-primary` `#1b2733` at the layout | 269 x 172 | 10px | 129.5px 129.5px | 129.5 | 129.5 (139.5) |
-
-Delta against the node: 0.00px on every value, both themes. Screenshots of both
-were taken in the browser session and inspected; the render shows the image,
-heart iconButton, text column and slot as expected in each theme.
-
-### Verdicts written
-
-| Row | Case | Result |
-|---|---|---|
-| `recruJ0K6kqgODxAC` | cardLayout horizontal, hasSlot=true, light | **Passed** |
-| `reccHjcAahTTrHUit` | cardLayout horizontal, hasSlot=true, dark | **Passed** |
-
-`Suggestion for Improvement` cleared on both. Design gap 10 is closed by the
-Figma change; the build already matched the declared intent.
-
-### Board after the writes
-
-`Development` read back as **To be fixed** (Synchronization 97.06%) — the one
-remaining `Failed` row, `recRKWuTGZeXeI8Ce` (design gap 11, `elevation/level2`
-has no dark value), holds it there. A human still has to read this verdict.
-
----
-
-## Release decision — 2026-09-13
-
-The one remaining failure, `cardContainer state=hover` in dark
-(`recRKWuTGZeXeI8Ce`, design gap 11), was **waived by the product owner** and
-the row set to `Passed` with the waiver written into its Context. The defect
-is unchanged. With every row passing, `Development` moved to `To be deployed`
-and Card was approved for production.
+The design questions in §4 and the waived gaps are for the designer and product owner, not the engineer. None of this is final until a human reads it.
