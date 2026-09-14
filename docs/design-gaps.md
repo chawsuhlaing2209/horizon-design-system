@@ -33,6 +33,11 @@ name is wrong in Figma and should be renamed to `4:3`.**
 > (`--spacing-1`, `--spacing-2`). They render as designed. The semantic tokens
 > above still do not exist.
 
+> **Scope, 2026-09-14.** Under release-review gate 3 as changed on 2026-09-14, the
+> waiver above covers exactly `--border-radius-4` (overlay radius,
+> `cardImage.css`), `--spacing-1` and `--spacing-2` (favourite gap and padding,
+> `cardImage.css`). `--border-radius-2` is no longer used.
+
 **Update, 2026-09-13 — partly resolved in Figma.** The cardImage frame's radius
 is now bound to `border/radius/control` (12px) in every variant of 8:1186, and
 `cardImage.css` follows with `--border-radius-control`. Still core in Figma: the
@@ -75,6 +80,13 @@ the existing semantic spacing tokens.
 > offset, and the 46px reserve. This waives the open gap only. Release-review
 > gate 3's separate rule against raw px in component CSS still fails until the
 > values move onto the scale or get tokens.
+
+> **WAIVED FOR RELEASE, 2026-09-14 — still open.** The product owner chose to
+> ship Card with the current raw values: `10px` (horizontal text column gap,
+> `cardLayout.css`), `7px` top and `7px` right (favourite offset, 8 / 8 from the
+> outer edge, `cardImage.css`), and `48px` (slot reserve, `cardLayout.css`). Under
+> release-review gate 3 as changed on 2026-09-14, this waiver covers exactly
+> these values. It supersedes the 2026-09-13 values above.
 
 **Update, 2026-09-13 — partly resolved in Figma.** The layout gap is now bound
 to `spacing/gap/sm` (12px) in both orientations of 8:1251, and
@@ -492,6 +504,10 @@ variable would silently miss the outlined button.
 
 ### 4. No `size` property, no `loading` state, no icon slot
 
+> **WAIVED FOR RELEASE, 2026-09-14 — still open.** The product owner chose to
+> ship Button with no `size` property, no `loading` or `error` state, and no icon
+> slot. None of them is designed, so none is built.
+
 CLAUDE.md asks that a component cover *"every interaction state the product
 uses: default, hover, pressed, focus, disabled, loading, error, as applicable."*
 The set publishes no `size`, no `loading` and no `error`, so none was built —
@@ -595,6 +611,11 @@ set, so there is no dark node to compare any of this against.
 
 ### 9. Coverage gap: Enter / Space activation is unverified by anyone
 
+> **WAIVED FOR RELEASE, 2026-09-14 — still open.** The product owner chose to
+> ship Button without a manual keyboard pass. Activation on Enter and Space is
+> the native `<button>`'s, and the unit suite asserts nothing blocks it, but no
+> person or browser driver has confirmed it.
+
 Raised by QA. No one has actually confirmed that the button activates on Enter
 or Space. The automation harness cannot deliver a trusted keypress — QA proved
 this with a control: a bare native `<button>` injected into the same page also
@@ -611,6 +632,10 @@ platform's, and structurally nothing is in its way.
 browser-driver test. Not a defect — an untested path.
 
 ### 8. Observation: the disabled filled label is effectively illegible
+
+> **WAIVED FOR RELEASE, 2026-09-14 — still open.** The product owner chose to
+> ship Button with the disabled filled label at about 1.27:1 (`#b9c7d6` on
+> `#d7dee7`), as node 26:87 draws it.
 
 `#b9c7d6` on `#d7dee7` is about **1.27:1**. Both values come straight from node
 26:87, so this is faithful and not a build defect, and axe passes it because
