@@ -12,6 +12,17 @@ a human decision.
 
 ## Card — `state` collides with itself
 
+> **Restructured, 2026-09-13.** Figma removed the cardContainer subcomponent
+> (8:804). The Card set 34:317 now carries `state` (enable | hover) itself, so
+> the code has `state` as a prop on Card, and cardImage keeps its own `state` on
+> the image group. Both names stay verbatim:
+>
+> ```tsx
+> <Card state="hover" image={{ state: 'idle', ratio: '4:3' }} />
+> ```
+>
+> The history below describes the earlier structure.
+
 **Figma:** node 12:1343, subcomponents `cardContainer` (8:804) and `cardImage` (8:1186).
 
 Two subcomponents of the same parent both publish a property called `state`:
@@ -87,7 +98,7 @@ in Figma, which would build to `--color-border-primary-pressed` and put the name
 back in step with the usage. Alternatively, confirm that pressed and focused are
 deliberately one value and say so in the token description.
 
-**Status:** open — needs a designer's decision. Also in `docs/design-gaps.md`.
+**Status:** resolved, 2026-09-13. Figma removed the pressed state and renamed that variant `state=focused`, so the token `color/border/primary/focused` now carries focus, as its name says.
 
 ---
 
@@ -100,4 +111,4 @@ in English next to `disabled`.
 Kept verbatim. **Suggested rename in Figma:** `enable` → `enabled`, at which
 point the code follows.
 
-**Status:** open — cosmetic, low priority.
+**Status:** resolved, 2026-09-13. The product owner keeps `enable`, as Figma names it.

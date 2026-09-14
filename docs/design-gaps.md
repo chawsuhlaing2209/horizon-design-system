@@ -10,9 +10,14 @@ changed the rendering.
 
 ---
 
-## Card — Figma node 12:1343
+## Card — Figma node 12:1343 (now component set 34:317)
 
-### 1. `ratio=3:2` renders 4:3
+### 1. `ratio=3:2` renders 4:3 — RESOLVED in Figma, 2026-09-13
+
+> **Resolved.** cardImage 8:1186 now names the variant `ratio=4:3`, matching its
+> geometry. The code follows: `CardImageRatio` is `'4:3' | '1:1'`, defaulting to
+> `'4:3'`. This renames a public prop value; no version has been published, so
+> nobody depends on `'3:2'` yet.
 
 `cardImage` (8:1186) publishes `ratio` with values `3:2` and `1:1`. The `3:2`
 variant is 363.5 × 272.625 and its image frame is 256 × 192 — both 4:3, not 3:2.
@@ -21,6 +26,18 @@ Built to the geometry (4:3), because the node is the reference. **The variant
 name is wrong in Figma and should be renamed to `4:3`.**
 
 ### 2. Values bound to core tokens instead of semantic ones
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card with these values on core tokens: the image and icon-container radii
+> (`--border-radius-4`, `--border-radius-2`) and the favourite-button insets
+> (`--spacing-1`, `--spacing-2`). They render as designed. The semantic tokens
+> above still do not exist.
+
+**Update, 2026-09-13 — partly resolved in Figma.** The cardImage frame's radius
+is now bound to `border/radius/control` (12px) in every variant of 8:1186, and
+`cardImage.css` follows with `--border-radius-control`. Still core in Figma: the
+icon-container radius (`border/radius/4`) and the iconButton insets (`spacing/8`,
+`spacing/sm`, `spacing/4`).
 
 CLAUDE.md: *"Components use semantic tokens only."* These properties are bound in
 Figma to the core layer, so honouring the design and honouring the rule are in
@@ -40,6 +57,20 @@ the existing semantic spacing tokens.
 
 ### 3. Values with no token at all
 
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card with these raw values: the 10px layout gap, the 7px / 6.5px favourite
+> offset, and the 46px reserve. This waives the open gap only. Release-review
+> gate 3's separate rule against raw px in component CSS still fails until the
+> values move onto the scale or get tokens.
+
+**Update, 2026-09-13 — partly resolved in Figma.** The layout gap is now bound
+to `spacing/gap/sm` (12px) in both orientations of 8:1251, and
+`cardLayout.css` follows with `--spacing-gap-sm`. In vertical that also sets
+the text-to-slot space, since both sit directly in the layout. Still raw in
+Figma: the horizontal text column's itemSpacing (frame 8:1318, 10px), the
+slot height (46px), and the favourite button's position (8 / 7.5, which Figma
+cannot bind to a variable).
+
 | Property | Value | Note |
 |---|---|---|
 | `cardLayout` gap | 10px | off the 4px scale; no token can carry it |
@@ -51,6 +82,11 @@ slot) or add tokens for them. Until then they are raw values in `card.css`, each
 marked in a comment.
 
 ### 4. Interaction states missing from the design
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card without designed pressed, focus or disabled states. The system's
+> generic focus ring stands in for focus, and it has not been reviewed against a
+> design.
 
 CLAUDE.md: *"Every component covers every interaction state the product uses:
 default, hover, pressed, focus, disabled, loading, error, as applicable."*
@@ -74,6 +110,10 @@ shipping a keyboard-operable button with no visible focus is an accessibility
 failure, but it needs a design decision.
 
 ### 5. The unfavourited heart has no design
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card with the unfavourited heart in `--color-icon-subtle`, which has no
+> design behind it.
 
 `favorite` (8:1107) appears only in its filled, negative-coloured form. There is
 no design for the button before it is pressed.
@@ -100,6 +140,11 @@ Not a defect, recorded so nobody hunts for a missing asset.
 ---
 
 ### 7. HALF RESOLVED — `--color-text-accent` failed contrast as text
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card while the Figma variable `color/text/accent` still returns `#f0932b`
+> in light mode. The shipped token (`#9c601c`, 5.12:1) is unaffected; only the
+> design file disagrees with it.
 
 The rating score (8:772) used `--color-text-accent`, which aliased
 `color-orange-500` (#f0932b). On the light surface that is **2.36:1**, where
@@ -169,6 +214,10 @@ durable fix; the code-side change is a stopgap.
 
 ### 8. The image tint has no strength token
 
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Card with the tint strength held as the private value
+> `--hds-card-image-overlay-strength: 0.2` rather than a token.
+
 `cardImage`'s overlay (8:1182) paints `--color-bg-overlay` through a gradient
 stop whose own opacity is 20%, so the node resolves to `rgba(27,39,51,0.11)`.
 The component reproduces that by applying the token unchanged and carrying the
@@ -182,7 +231,13 @@ token for the strength. `--color-bg-overlay` should not be repurposed — it is
 documented as *"Scrim behind modals and drawers"*, and an image tint is a
 different job at a different strength.
 
-### 9. Assumption recorded: the metadata block reserves its own height
+### 9. Assumption recorded: the metadata block reserves its own height — RESOLVED, 2026-09-13
+
+> **Resolved: no reserve.** The product owner answered no, and Figma sets the
+> metadata container 8:770 to hug its content. `cardText.css` no longer sets a
+> `min-height` on `.hds-card-text__meta`, so a card with review or price hidden
+> is shorter. Note: Figma still reports the container inside the Card instance
+> as 48px tall with both rows hidden, although it is set to hug.
 
 Instance 12:1343 keeps the metadata container (8:770) at 48px with both its rows
 hidden, while the standalone `cardText` component (8:778) leaves that height on
@@ -310,7 +365,16 @@ The set publishes `variant` (filled | outlined) x `state` (enable | hover |
 pressed | disabled) = 8 nodes. All eight were built and all eight match. The
 gaps below are about what the set does **not** publish.
 
-### 1. There is no `focused` variant
+### 1. There is no `focused` variant — RESOLVED in Figma, 2026-09-13
+
+> **Resolved.** The set now has `state=focused` (26:82 filled, 26:102 outlined),
+> made from the former pressed variants, and no pressed state. The code follows:
+> `state="focused"` and a real keyboard `:focus-visible` render
+> `color/bg/primary/pressed` on filled and `color/border/primary/focused` on
+> outlined, and the generic focus ring is removed because the node draws none.
+>
+> **Still worth reviewing:** on outlined, focus now changes only the 1px stroke,
+> from `#1547d5` to `#13338f`, with no ring. That may be hard to see.
 
 The set has no `state=focused` node, so there is no design for what a Horizon
 button looks like under keyboard focus. A button that cannot be seen when
@@ -334,7 +398,16 @@ than inferred — and specifically a decision about the outlined case, where the
 current tokens make focus nearly invisible. Until it exists, the ring is
 unverified against a design.
 
-### 2. The pressed stroke is bound to a token named `focused`
+### 2. The pressed stroke is bound to a token named `focused` — RESOLVED in Figma, 2026-09-13
+
+> **Resolved.** The pressed state is gone, and the variant that uses
+> `color/border/primary/focused` is now `state=focused`, so the name and the use
+> agree.
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Button with the outlined pressed stroke on the token named
+> `color/border/primary/focused`. The matching entry in
+> `docs/naming-conflicts.md` is a separate decision, and it stays open.
 
 The outlined pressed node (26:102) binds its stroke to the style
 `color/border/primary/focused` — `#13338f`. So the token that carries the
@@ -349,6 +422,10 @@ name and the usage disagree, and a reader of the CSS cannot tell which is
 intended. Also logged in `docs/naming-conflicts.md`.
 
 ### 3. The outlined strokes are styles, not variables
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Button with the outlined strokes bound to styles. A change to the primary
+> variable would still not reach them in Figma.
 
 `color/border/primary`, `color/border/primary/hover` and
 `color/border/primary/focused` come back from the Figma connection as raw style
@@ -383,7 +460,11 @@ Two related observations:
 - The label "Sign in" sits on the node as sample content, not as a text
   property, so there is no design-named prop for it. It is `children`.
 
-### 5. Observation: outlined hover changes only the 1px stroke
+### 5. Observation: outlined hover changes only the 1px stroke — RESOLVED in Figma, 2026-09-13
+
+> **Resolved.** Outlined hover (26:100) now also binds its label to
+> `color/text/link/hovered`, and `button.css` follows with
+> `--color-text-link-hovered`.
 
 Across outlined enable, hover and pressed, the label stays
 `--color-text-link` (#1547d5) and only the stroke colour moves — #1547d5 to
@@ -391,7 +472,17 @@ Across outlined enable, hover and pressed, the label stays
 entire hover affordance on the outlined button is a one-pixel border shifting by
 a small amount of blue. Worth a designer's second look; not a build defect.
 
-### 6. The outlined stroke is aligned outside, and the frame hides it
+### 6. The outlined stroke is aligned outside, and the frame hides it — RESOLVED, 2026-09-13
+
+> **Resolved.** Figma now draws the outlined stroke inside a fixed 94px width,
+> with the stroke counted in the layout, so the node is 94 x 46. Outlined takes
+> `--border-width-default` off its inline padding, so filled and outlined are
+> the same width for any label (94 for "Sign in"). The height stays 46, as in
+> the node.
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Button with filled at 94 x 44 and outlined at 96 x 46, so a filled and an
+> outlined button side by side in a row do not align.
 
 Corrected after QA disputed the first version of this entry, which claimed the
 node makes outlined *"2px taller and 2px wider."* The node does not say that
@@ -429,6 +520,13 @@ in one line. Until that call is made, the code matches the node as the node
 currently stands and this misalignment is real.
 
 ### 7. Dark mode presses in opposite directions
+
+> **Update, 2026-09-13.** Pressed is now `focused`, so this describes focus: in
+> dark mode, focused filled darkens and focused outlined lightens.
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Button with dark-mode presses as built: filled darkens to `#2e7cc4`, and
+> outlined lightens to `#7fa8ee`.
 
 Found by QA. In light mode both variants darken under press. In dark mode they
 do not:
@@ -475,6 +573,11 @@ cannot really be read.
 ---
 
 ### 10. The usage column headings on the Button page say "card"
+
+> **WAIVED FOR RELEASE, 2026-09-13 — still open.** The product owner chose to
+> ship Button while the Figma usage headings on the Button page still read
+> `Use a card` and `Do not use a card`. `button.intent.json` carries the lines,
+> not the headings, so it is unaffected.
 
 On page `💠 Button`, the `Usage` frame (65:750) heads its first two columns
 `Use a card` (65:754) and `Do not use a card` (65:763). The lines under them are

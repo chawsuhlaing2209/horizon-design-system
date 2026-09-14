@@ -25,17 +25,8 @@
 
 .hds-card-text__meta {
   white-space: nowrap;
-  /* QA finding 1. Instance 12:1343 keeps this container at 48px with both its
-   * rows hidden, so the card holds its height whichever rows have data. 48px is
-   * not a magic number — it is exactly the space the two rows occupy, so it is
-   * composed from their own tokens rather than written as a literal:
-   *   review row  --lineheight-label-lg  20
-   *   row gap     --spacing-gap-2xs       4
-   *   price row   --lineheight-body-lg   24
-   * Change a row's type scale and the reserve follows it. */
-  min-height: calc(
-    var(--lineheight-label-lg) + var(--spacing-gap-2xs) + var(--lineheight-body-lg)
-  );
+  /* No reserved height: container 8:770 hugs its rows, so a card with review or
+   * price hidden is shorter. */
 }
 
 .hds-card-text__row {

@@ -1,6 +1,6 @@
 {
   "$component": "button",
-  "$commit": "108e8b09d0958769f40bbde5d2ae67b50c0140b8",
+  "$commit": "5a692e152a2b81f525acd62a312df43a60e2a63b",
   "$figma": {
     "file": "r1CpQEYecqROS0oIOMlqAx",
     "page": "25:65",
@@ -40,7 +40,7 @@
     "state": {
       "enable": null,
       "hover": null,
-      "pressed": null,
+      "focused": null,
       "disabled": "`disabled` also sets the native `disabled` attribute."
     }
   },
@@ -49,19 +49,18 @@
   "required_tokens": [
     "--border-radius-control",
     "--border-width-default",
-    "--border-width-focused",
     "--color-bg-primary",
     "--color-bg-primary-disabled",
     "--color-bg-primary-hovered",
     "--color-bg-primary-pressed",
     "--color-border-disabled",
-    "--color-border-focused",
     "--color-border-primary",
     "--color-border-primary-focused",
     "--color-border-primary-hover",
     "--color-text-disabled",
     "--color-text-inverse",
     "--color-text-link",
+    "--color-text-link-hovered",
     "--label-lg",
     "--spacing-gap-xs",
     "--spacing-padding-lg",
@@ -78,48 +77,52 @@
       "source": "src/components/button/button.test.tsx:113"
     },
     {
-      "text": "type defaults to \"button\"",
+      "text": "`type` defaults to \"button\"",
       "source": "src/components/button/button.test.tsx:43"
     },
     {
-      "text": "state=\"disabled\" sets the native disabled attribute",
+      "text": "`children` is the label and is required; there is no default label",
+      "source": "src/components/button/button.tsx:30"
+    },
+    {
+      "text": "`state=\"disabled\"` sets the native `disabled` attribute",
       "source": "src/components/button/button.test.tsx:84"
     },
     {
-      "text": "A button with state=\"disabled\" does not fire onClick",
+      "text": "A button with `state=\"disabled\"` does not fire `onClick`",
       "source": "src/components/button/button.test.tsx:91"
     },
     {
-      "text": "state=\"enable\", \"hover\" and \"pressed\" leave the native disabled attribute unset",
-      "source": "src/components/button/button.test.tsx:98"
-    },
-    {
-      "text": "The button is in the tab order (tabIndex 0)",
+      "text": "tabIndex is 0, so the button is in the tab order",
       "source": "src/components/button/button.test.tsx:118"
     },
     {
-      "text": "No tabindex attribute is set on the button",
+      "text": "The component sets no `tabindex` attribute",
       "source": "src/components/button/button.test.tsx:119"
     },
     {
-      "text": "A keydown event is passed to onKeyDown and is not default-prevented",
+      "text": "A keydown event passes through with `defaultPrevented` false",
       "source": "src/components/button/button.test.tsx:130"
     },
     {
-      "text": "aria-label passed as a prop reaches the rendered button",
+      "text": "`aria-label` passed by a consumer reaches the rendered button",
       "source": "src/components/button/button.test.tsx:175"
     },
     {
-      "text": ":focus-visible draws an outline of --border-width-focused in --color-border-focused",
+      "text": "`:focus-visible` on `filled` draws the background `--color-bg-primary-pressed`",
+      "source": "src/components/button/button.css:54"
+    },
+    {
+      "text": "`:focus-visible` on `outlined` draws the border colour `--color-border-primary-focused`",
+      "source": "src/components/button/button.css:82"
+    },
+    {
+      "text": "`:focus-visible` sets `outline: none`, so no focus ring is drawn",
       "source": "src/components/button/button.css:104"
     },
     {
-      "text": "The :focus-visible outline is offset by --border-width-default",
-      "source": "src/components/button/button.css:105"
-    },
-    {
-      "text": "The background and border transition is removed under prefers-reduced-motion: reduce",
-      "source": "src/components/button/button.css:109"
+      "text": "Colour transitions are removed under `prefers-reduced-motion: reduce`",
+      "source": "src/components/button/button.css:108"
     }
   ]
 }

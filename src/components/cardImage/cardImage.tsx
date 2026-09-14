@@ -4,16 +4,16 @@
 // Figma description: "Subcomponent of the card. Use to configure card image
 // ratio and state."
 //
-// Variants: state = idle | hover, ratio = 3:2 | 1:1, plus overlayAction.
+// Variants: state = idle | hover, ratio = 4:3 | 1:1, plus overlayAction.
 
 import { useState } from 'react';
 import { IconContainer } from '../iconContainer/iconContainer';
 
-export type CardImageRatio = '3:2' | '1:1';
+export type CardImageRatio = '4:3' | '1:1';
 export type CardImageState = 'idle' | 'hover';
 
 export type CardImageProps = {
-  /** Figma `ratio`. Note: the `3:2` variant renders 4:3 — see docs/design-gaps.md. */
+  /** Figma `ratio`. */
   ratio?: CardImageRatio;
   /**
    * Figma `state`. Pins the overlay: `hover` forces it on, `idle` forces it off.
@@ -48,7 +48,7 @@ export type CardImageProps = {
 };
 
 export const CardImage = ({
-  ratio = '3:2',
+  ratio = '4:3',
   state,
   overlayAction = true,
   image,
