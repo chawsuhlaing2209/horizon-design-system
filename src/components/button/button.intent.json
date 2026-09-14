@@ -1,6 +1,6 @@
 {
   "$component": "button",
-  "$commit": "108e8b09d0958769f40bbde5d2ae67b50c0140b8",
+  "$commit": "fbf19cfa2facff5d5b8994c1a3d3608ea092f753",
   "$figma": {
     "file": "r1CpQEYecqROS0oIOMlqAx",
     "page": "25:65",
@@ -40,7 +40,7 @@
     "state": {
       "enable": null,
       "hover": null,
-      "pressed": null,
+      "focused": null,
       "disabled": "`disabled` also sets the native `disabled` attribute."
     }
   },
@@ -49,19 +49,18 @@
   "required_tokens": [
     "--border-radius-control",
     "--border-width-default",
-    "--border-width-focused",
     "--color-bg-primary",
     "--color-bg-primary-disabled",
     "--color-bg-primary-hovered",
     "--color-bg-primary-pressed",
     "--color-border-disabled",
-    "--color-border-focused",
     "--color-border-primary",
     "--color-border-primary-focused",
     "--color-border-primary-hover",
     "--color-text-disabled",
     "--color-text-inverse",
     "--color-text-link",
+    "--color-text-link-hovered",
     "--label-lg",
     "--spacing-gap-xs",
     "--spacing-padding-lg",
@@ -70,56 +69,60 @@
   ],
   "a11y": [
     {
-      "text": "Renders a native <button> element",
-      "source": "src/components/button/button.test.tsx:38"
+      "text": "Renders a native `<button>` element",
+      "source": "src/components/button/button.test.tsx:112"
     },
     {
-      "text": "Sets no role attribute on the button",
+      "text": "Sets no `role` attribute",
       "source": "src/components/button/button.test.tsx:113"
     },
     {
-      "text": "type defaults to \"button\"",
+      "text": "`type` defaults to `button`",
       "source": "src/components/button/button.test.tsx:43"
     },
     {
-      "text": "state=\"disabled\" sets the native disabled attribute",
+      "text": "`state=\"disabled\"` sets the native `disabled` attribute",
       "source": "src/components/button/button.test.tsx:84"
     },
     {
-      "text": "A button with state=\"disabled\" does not fire onClick",
+      "text": "With `state=\"disabled\"`, `onClick` does not fire",
       "source": "src/components/button/button.test.tsx:91"
     },
     {
-      "text": "state=\"enable\", \"hover\" and \"pressed\" leave the native disabled attribute unset",
+      "text": "`state` values `enable`, `hover` and `focused` leave the native `disabled` attribute off",
       "source": "src/components/button/button.test.tsx:98"
     },
     {
-      "text": "The button is in the tab order (tabIndex 0)",
+      "text": "Is in the tab order: `tabIndex` is 0",
       "source": "src/components/button/button.test.tsx:118"
     },
     {
-      "text": "No tabindex attribute is set on the button",
+      "text": "Sets no `tabindex` attribute",
       "source": "src/components/button/button.test.tsx:119"
     },
     {
-      "text": "A keydown event is passed to onKeyDown and is not default-prevented",
+      "text": "Does not call `preventDefault` on a keydown event",
       "source": "src/components/button/button.test.tsx:130"
     },
     {
-      "text": "aria-label passed as a prop reaches the rendered button",
+      "text": "Native attributes such as `aria-label` pass through to the `<button>`",
       "source": "src/components/button/button.test.tsx:175"
     },
     {
-      "text": ":focus-visible draws an outline of --border-width-focused in --color-border-focused",
+      "text": "On keyboard `:focus-visible`, a filled button renders the `focused` fill, `--color-bg-primary-pressed`",
+      "source": "src/components/button/button.css:54"
+    },
+    {
+      "text": "On keyboard `:focus-visible`, an outlined button renders the `focused` stroke, `--color-border-primary-focused`",
+      "source": "src/components/button/button.css:82"
+    },
+    {
+      "text": "`:focus-visible` sets `outline: none`, so no separate focus ring is drawn",
       "source": "src/components/button/button.css:104"
     },
     {
-      "text": "The :focus-visible outline is offset by --border-width-default",
-      "source": "src/components/button/button.css:105"
-    },
-    {
-      "text": "The background and border transition is removed under prefers-reduced-motion: reduce",
-      "source": "src/components/button/button.css:109"
+      "text": "Colour transitions are removed under `prefers-reduced-motion: reduce`",
+      "source": "src/components/button/button.css:108"
     }
   ]
 }
