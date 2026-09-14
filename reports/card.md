@@ -1,5 +1,156 @@
 # QA: Card, re-test after the Figma change of 2026-09-13
 
+This file holds two runs on 2026-09-14:
+
+- **Run 2 (below, first):** re-test of the F1 repair on staging `5a692e1`.
+- **Run 1 (after it):** the full re-test on `b5f15b9` that raised F1. It is left as written, with notes where Run 2 changes something.
+
+---
+
+# Run 2: re-test after the favourite-hover repair
+
+| | |
+|---|---|
+| Run | Re-test on 2026-09-14, after repair `21140e1` (merged in PR #34 as `5a692e1`). Scope: the two F1 rows, plus every Card case the repair can reach. |
+| Build under test | Deployed staging Storybook from the `Staging Storybook` cell on Card's Components row (`rec1y6kyai6F3FVWv`). I read the cell myself, in base `appTH3itfUmsuyeUm` = `[Class Demo] Horizon DS`, which matches `baseName` in `.claude/registry.local.json`. I identified the cell as `Staging Storybook` from the `Development` formula (precedence 7). |
+| URL | `https://horizon-design-system-bvjwd078e-chawsuhlaing2209s-projects.vercel.app/?path=/docs/components-card--docs` (it was `6s22ezf3m` in Run 1) |
+| Registry `Commit` | `5a692e1` |
+| Registry `Development` | **Before:** `To be fixed`. **After:** `Fixed`. |
+| Is this the repaired build? | Yes. The deployed stylesheet has `.hds-card-image__favorite:hover { background: var(--color-bg-secondary-hovered); box-shadow: var(--elevation-level2); }`. The story index is unchanged from Run 1 (18 Card entries). |
+| What changed | `git diff --stat b5f15b9 origin/staging` shows one source file, `src/components/cardImage/cardImage.css` (+8), plus `reports/`. The local checkout (`6027b2a` on `fix/card-favourite-hover`) has no `src` diff against `origin/staging`. |
+| Local checks | `npm test -- src/components/card`: 28/28 pass. The checkout was used only for that and to read source. It was never the build under test. |
+| Design reference | Figma file `r1CpQEYecqROS0oIOMlqAx`, read with read-only `use_figma` and `get_screenshot`. `8:1134` is a `COMPONENT_SET` named `iconButton` on page `💠 Icon Button` (34:804), with one property, `state` = idle \| hover. `8:1135` is `state=hover`. |
+| Surface | Claude in Chrome, the real Vercel bundle. No local Storybook was started. |
+
+## R2.0 · Fonts
+
+| Check | Result |
+|---|---|
+| `16px Inter` vs `16px QaBogusFamilyXyz` | 227.25 vs 196.875 |
+| `24px "Material Symbols Outlined"` measuring `favorite` vs bogus | 24 vs 74.625 |
+| `document.fonts` status `loaded` | Inter 500, Inter 600, Inter 100–900, Material Symbols Outlined 100–700 |
+
+The fonts loaded, so the sizes below are real.
+
+## R2.1 · The design, re-read from Figma
+
+| Property | `8:1133` state=idle | `8:1135` state=hover |
+|---|---|---|
+| Fill | `color/bg/secondary` #ffffff | **`color/bg/secondary/hovered` #f1f4f7** |
+| Effects | none | **effect style `elevation/level2`:** DROP_SHADOW #1b27330f (0,2) r4 s0 + DROP_SHADOW #1b27331a (0,4) r8 s0 |
+| Size, radius | 40 × 40, `border/radius/full` | same |
+| Padding, gap | `spacing/8` and `spacing/sm` (8), `spacing/4` (4) | same |
+| Icon | Icon Container radius `border/radius/4`, vector `color/icon/negative` #a5261d | same |
+
+**Correction to Run 1.** Run 1's F1 named the fill only, and its §2 table said the hover variant was otherwise "same". That was incomplete: `8:1135` also carries `elevation/level2`, and the idle variant has no effect. The Engineer's repair includes the shadow. Run 2 measured both.
+
+In dark, the fill resolves to #3a4553 (from `tokens/semantic-color.dark.tokens.json`, because the library variable cannot be resolved per mode through the plugin API). `elevation/level2` has no dark variant (gap 11).
+
+Render: `reports/card/figma-8-1135-iconButton-hover.png`.
+
+## R2.2 · Results
+
+Method, for every read below:
+
+- The pointer was a real Claude in Chrome hover.
+- The button's `transition-duration` is `0s`, so its reads are never taken mid-transition.
+- Overlay and card-shadow reads waited out their 120ms transition. One card-shadow read was taken mid-transition and then re-read settled.
+- Dark was loaded with `&globals=theme:dark`, and `data-theme=dark` was confirmed.
+
+`elevation/level2` in the table means `rgba(27,39,51,.06) 0 2px 4px 0, rgba(27,39,51,.1) 0 4px 8px 0`.
+
+| Case | Theme | Saw | Result | Row |
+|---|---|---|---|---|
+| **iconButton state=hover** (favourite) | light | `:hover` true. bg rgb(241,244,247) = `--color-bg-secondary-hovered`, box-shadow `elevation/level2`, 40 × 40, radius 999, padding 8. Same result when unpressed, when pressed, when focus-visible (ring kept), and inside pinned `image-state-idle` and `image-state-hover`. Pointer on the image off the button, or off the card: rgb(255,255,255), shadow none. | **Fixed (To re-test)**: repair confirmed | `recrT754NpeLNHUz4` |
+| **iconButton state=hover** (favourite) | dark | bg rgb(58,69,83) = `--color-bg-secondary-hovered`, box-shadow `elevation/level2` (the light value, see gap 11). Same across pressed, focus and pinned stories. Off: rgb(27,39,51), shadow none. | **Fixed (To re-test)**: fill and token confirmed; dark shadow visibility is gap 11 | `recc7rjrjF5ZL3S57` |
+| Favourite idle, pressed/unpressed, focus | light | Pointer off: rgb(255,255,255), shadow none, 8 / 7.5 from the image edge. Click false→true, FILL 0→1, rgb(138,148,166)→rgb(165,38,29). Tab: `:focus-visible`, 2px solid rgb(21,71,213) at 1px, bg stays idle. Space true→false, Enter false→true. Hover does not leak into focus-only or image-only states. | **Passed** | `recCweuBWV1GRuDJa` |
+| Favourite idle, pressed/unpressed, focus | dark | Pointer off: rgb(27,39,51), shadow none. Click → rgb(224,43,43), FILL 1. Tab: ring 2px rgb(59,130,246), bg stays idle. Space → rgb(185,199,214), FILL 0. No hover leak. | **Passed** | `recI1Q9tGZ2ZpvssA` |
+| cardImage state=idle (pinned), button present | light | overlay 0. Pointer on the image: overlay 0, button idle. Pointer on the button: overlay 0, button hover. | **Passed** | `recjvt7lKEh0s8bDG` |
+| cardImage state=idle (pinned), button present | dark | overlay 0, border rgb(58,69,83). Pointer on the image: overlay 0, button idle. Pointer on the button: overlay 0, button rgb(58,69,83) + shadow. | **Passed** | `rec3n4Hh5TUekjpAy` |
+| cardImage state=hover 4:3, button present | light | overlay 0.2, gradient rgba(27,39,51,.55)→0, radius 8. Button z-index 3 and idle with the pointer off. Pointer on the button: `elementFromPoint` is the button, overlay stays 0.2, button hover. | **Passed** | `rect81QIt3jfFldaY` |
+| cardImage state=hover 4:3, button present | dark | overlay 0.2, radius 8. Pointer on the button: overlay 0.2, button rgb(58,69,83) + shadow. | **Passed** | `recdoLaNDFR1xuX1d` |
+| overlayAction=false | light | 0 favourite elements, 0 buttons, image 195 × 146.25, card 227 × 298.25 | **Passed** | `recTDUgkULc0RgiLJ` |
+| overlayAction=false | dark | 0 buttons, border rgb(58,69,83), card 227 × 298.25 | **Passed** | `rec1sHqIvuIu99lxq` |
+
+Observations, not findings:
+
+- **Card hover still works.** With the pointer on the favourite button, the card also reads `:hover` and carries its own `elevation/level2`. The card's hover and the button's hover now show together.
+- **Clipping.** The button sits inside `.hds-card-image` (`overflow: hidden`), 7.5px from the right edge, so the outer fringe of the 8px-blur shadow is clipped there. The Figma cardImage frame clips its content the same way. The shadow's alpha at that distance is near zero.
+- **Dark shadow.** The hover shadow is #1b2733-based on a dark surface and is practically invisible. On dark, the hover reads through the fill change alone. This is gap 11, a design gap. The gap 11 waiver was granted for the Card hover row only, and QA does not extend it to the favourite row. The row is `Fixed (To re-test)` on the fill and the token reference, and the gap is written in its Context.
+
+## R2.3 · Cases not re-run in Run 2, relying on Run 1 (`b5f15b9`)
+
+The repair adds one `:hover` rule scoped to `.hds-card-image__favorite`. It cannot reach the cases below. Their rows were not changed and still carry Run 1's measurements on build `6s22ezf3m`.
+
+| Rows | Cases |
+|---|---|
+| `recPkzD0DiT6dfqo2`, `reckWADjP56XXUmy8`, `recQfAZfxyT19rS2W`, `recRKWuTGZeXeI8Ce` (gap 11 waiver, kept as is and not re-measured), `recoyeS31iIhl20eI`, `recM32QHS23rru6dI`, `recPFNpA76432oysU`, `recYgLks4BD343ZIT` | Card state, 12:1343 as placed, long content |
+| `rec2H5ftc2XFYyLGr`, `rec5K6pYPU0e8boHd`, `recruJ0K6kqgODxAC`, `reccHjcAahTTrHUit`, `recLoAXbMvU9miOR2`, `recO8NTJm4DwMtJya` | cardLayout |
+| `recxBwxGQ0aixdQAv`, `recisNldJMxTS7P8O`, `recxvC0teYOg6Ya5w`, `recH73iwIstwR85ZL`, `rec3pKutD0LviH0gC`, `recB9VN48Qpz46MBi` | cardImage ratio rows and hover 1:1. The button is present in these, but they measure frame geometry and overlay, which the rule does not touch. The button's own hover was measured in the pinned idle and hover 4:3 stories above. |
+| `recGLVLkhOY3pETkv`, `recXp0k2lsuUHBGhq`, `recoG8aYaMjb4eKmn`, `recYq075WcOqAtYDm`, `rectPrdzUuFbrE8wh`, `recM93O3MB3s6tmkS`, `reccgmXgsWSxAvi5Z`, `recM5vbPlm6Jg1SdP` | cardText |
+
+## R2.4 · Screenshots
+
+- **Saved:** `reports/card/figma-8-1135-iconButton-hover.png`, the Figma render of the hover variant (56 × 56).
+- **Not saved:** the browser captures. I captured the deployed build in Chrome for light idle, light hover (unpressed and pressed), light focus+hover, and dark hover. As in Run 1, `save_to_disk` returned no path, so none of these reached disk. The computed values above are the evidence.
+- **Attachments:** the two F1 rows keep their existing attachment, the 8:1134 set render.
+
+## R2.5 · Registry writes
+
+Staging Testing, **10 rows updated in place, 0 created.**
+
+- `recrT754NpeLNHUz4`, `recc7rjrjF5ZL3S57`: `Failed` → **`Fixed (To re-test)`**. Expected, Suggestion and Context were rewritten for this build, and Expected now names the effect style.
+- Stayed **`Passed`**, with Expected and Context re-measured on `bvjwd078e`: `recCweuBWV1GRuDJa`, `recI1Q9tGZ2ZpvssA`, `recjvt7lKEh0s8bDG`, `rec3n4Hh5TUekjpAy`, `rect81QIt3jfFldaY`, `recdoLaNDFR1xuX1d`, `recTDUgkULc0RgiLJ`, `rec1sHqIvuIu99lxq`.
+- `Size` and `State` are unchanged, and no option was created. `Composed In` is unchanged, so `[Staging] Test Records` still links the same 38 rows. `Development` was not written.
+
+Card's row after the writes:
+
+| Field | Value |
+|---|---|
+| `Staging Testing Results Summary` | Passed, Fixed (To re-test) |
+| `Total Staging Tests` | 38 |
+| `Staging Passed Count` | 36 |
+| `Synchronization %` | 94.74% |
+| **`Development`** | **`Fixed`** |
+
+`Synchronization %` did not move, because it counts `Passed` rows only and the two repaired rows are `Fixed (To re-test)`.
+
+## R2.6 · Verdict (Run 2)
+
+**The F1 repair is confirmed on the deployed staging build.** In light and dark, the favourite button now takes `--color-bg-secondary-hovered` and `--elevation-level2` under a real pointer, matching `8:1135`. Nothing the repair can reach regressed: idle, pressed/unpressed, focus-visible, keyboard activation, the pinned image states and overlayAction=false.
+
+- **Engineering:** nothing left to fix from this run.
+- **Design, still open:** gap 11, since the hover shadow has no dark value. The other design questions and waived gaps are listed in Run 1 §4.
+- **Next step:** a human reads the two `Fixed (To re-test)` rows. QA does not mark its own finding closed, and no verdict here is final.
+
+## Run 2 · outcome
+
+**Approval.** On 2026-09-14 the designer read `recrT754NpeLNHUz4` and `recc7rjrjF5ZL3S57` and approved them as Passed. The coordinator relayed the approval, and QA did not see the designer's message directly.
+
+**What QA wrote.** Nothing was re-tested and no other row was touched.
+
+- Both rows: `Testing Results` set from `Fixed (To re-test)` to **`Passed`**.
+- Both rows: one line appended to `Context`, "2026-09-14: repair re-tested on 5a692e1 and confirmed; set Passed on the designer's approval." Existing Context was kept, including the gap 11 dark-shadow note on `recc7rjrjF5ZL3S57`.
+- Read back: both rows show `Passed` and are linked to Card.
+
+**Board state now** (Card `rec1y6kyai6F3FVWv`):
+
+| Field | Value |
+|---|---|
+| `Staging Testing Results Summary` | Passed |
+| `Total Staging Tests` | 38 |
+| `Staging Passed Count` | 38 |
+| `Synchronization %` | 100% |
+| **`Development`** | **`Completed`** |
+
+**Why `Completed` and not `To be deployed`.** With no failing and no re-test rows left, the formula falls through to precedence 5. `Production Storybook` was already set by an earlier promotion, so `Completed` wins. The production build comes from that earlier promotion and does not contain `5a692e1`. The board therefore reads `Completed` while the favourite-hover repair exists only on staging. Promotion is for DevOps and a human. QA did not write `Development`.
+
+**Still open, for design:** gap 11. `elevation/level2` has no dark variant.
+
+---
+
+# Run 1: full re-test on `b5f15b9`
+
 | | |
 |---|---|
 | Run | Re-test on 2026-09-14. This file replaces the earlier Card runs, which tested the pre-#32 build (cardContainer, `ratio=3:2`, 10px layout gap, 48px metadata reserve). Those runs are still in git history. |
@@ -76,7 +227,7 @@ In every variant the favourite button is an iconButton instance (state=idle), ab
 | Variant | Fill | Shared |
 |---|---|---|
 | `8:1133` idle | `color/bg/secondary` (#ffffff) | 40 × 40 (min 40), radius `border/radius/full`, padding `spacing/8`/`spacing/sm` (8), gap `spacing/4` (4); Icon Container radius `border/radius/4` holding `favorite`, vector `color/icon/negative` |
-| `8:1135` **hover** | **`color/bg/secondary/hovered` (#f1f4f7)** | same |
+| `8:1135` **hover** | **`color/bg/secondary/hovered` (#f1f4f7)** | same, **plus effect style `elevation/level2`** (missed in Run 1, added by Run 2) |
 
 ### cardText `8:778`: booleans `metadata`, `review`, `price` (all default true)
 
@@ -162,7 +313,9 @@ Every value is a computed style or a `getBoundingClientRect` read from the deplo
 
 ## 4 · Findings
 
-### F1 · The favourite button has no hover state (light and dark), **Fail**
+### F1 · The favourite button has no hover state (light and dark), **Fail** on `b5f15b9`
+
+> **Run 2 update.** Repaired in `21140e1` and confirmed on `5a692e1`. The rows are now `Fixed (To re-test)`, and closing them is for a human. The expected state was incomplete here: `8:1135` also uses `elevation/level2`, and the repair applies it.
 
 ```
 Card / cardImage · iconButton state=hover · light and dark
