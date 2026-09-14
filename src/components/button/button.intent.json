@@ -1,6 +1,6 @@
 {
   "$component": "button",
-  "$commit": "fbf19cfa2facff5d5b8994c1a3d3608ea092f753",
+  "$commit": "5a692e152a2b81f525acd62a312df43a60e2a63b",
   "$figma": {
     "file": "r1CpQEYecqROS0oIOMlqAx",
     "page": "25:65",
@@ -69,55 +69,55 @@
   ],
   "a11y": [
     {
-      "text": "Renders a native `<button>` element",
-      "source": "src/components/button/button.test.tsx:112"
+      "text": "Renders a native <button> element",
+      "source": "src/components/button/button.test.tsx:38"
     },
     {
-      "text": "Sets no `role` attribute",
+      "text": "Sets no role attribute on the button",
       "source": "src/components/button/button.test.tsx:113"
     },
     {
-      "text": "`type` defaults to `button`",
+      "text": "`type` defaults to \"button\"",
       "source": "src/components/button/button.test.tsx:43"
+    },
+    {
+      "text": "`children` is the label and is required; there is no default label",
+      "source": "src/components/button/button.tsx:30"
     },
     {
       "text": "`state=\"disabled\"` sets the native `disabled` attribute",
       "source": "src/components/button/button.test.tsx:84"
     },
     {
-      "text": "With `state=\"disabled\"`, `onClick` does not fire",
+      "text": "A button with `state=\"disabled\"` does not fire `onClick`",
       "source": "src/components/button/button.test.tsx:91"
     },
     {
-      "text": "`state` values `enable`, `hover` and `focused` leave the native `disabled` attribute off",
-      "source": "src/components/button/button.test.tsx:98"
-    },
-    {
-      "text": "Is in the tab order: `tabIndex` is 0",
+      "text": "tabIndex is 0, so the button is in the tab order",
       "source": "src/components/button/button.test.tsx:118"
     },
     {
-      "text": "Sets no `tabindex` attribute",
+      "text": "The component sets no `tabindex` attribute",
       "source": "src/components/button/button.test.tsx:119"
     },
     {
-      "text": "Does not call `preventDefault` on a keydown event",
+      "text": "A keydown event passes through with `defaultPrevented` false",
       "source": "src/components/button/button.test.tsx:130"
     },
     {
-      "text": "Native attributes such as `aria-label` pass through to the `<button>`",
+      "text": "`aria-label` passed by a consumer reaches the rendered button",
       "source": "src/components/button/button.test.tsx:175"
     },
     {
-      "text": "On keyboard `:focus-visible`, a filled button renders the `focused` fill, `--color-bg-primary-pressed`",
+      "text": "`:focus-visible` on `filled` draws the background `--color-bg-primary-pressed`",
       "source": "src/components/button/button.css:54"
     },
     {
-      "text": "On keyboard `:focus-visible`, an outlined button renders the `focused` stroke, `--color-border-primary-focused`",
+      "text": "`:focus-visible` on `outlined` draws the border colour `--color-border-primary-focused`",
       "source": "src/components/button/button.css:82"
     },
     {
-      "text": "`:focus-visible` sets `outline: none`, so no separate focus ring is drawn",
+      "text": "`:focus-visible` sets `outline: none`, so no focus ring is drawn",
       "source": "src/components/button/button.css:104"
     },
     {
