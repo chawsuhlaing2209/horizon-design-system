@@ -52,7 +52,7 @@ missing, not what was probably true.
 |---|---|---|
 | 1 | **Intent written** | `src/components/<name>/<name>.intent.json` is committed at the SHA and parses. Its sources are no newer than its `$commit`: the last commit that changed the component's source — its folder and the folder of every component it composes, **leaving out intent files** — is `$commit` itself or an ancestor of it. `git log -1 --format=%H <sha> -- src/components/<name> <composed folders> ':(exclude)*.intent.json'`, then `git merge-base --is-ancestor <that> <$commit>`. Intent files are left out because committing one is a commit to the folder: counted, it would make every intent file stale the moment it lands. An intent file behind its code describes a component that no longer exists. |
 | 2 | **Development status `Completed`** | The registry's `Development` for this component reads exactly `Completed`. Resolve the base through `.claude/registry.local.json` and confirm `baseName` first (see `registry` — sibling bases share table IDs). `Released` is not `Completed`: it was reviewed already, so find out why you were asked again. |
-| 3 | **Tokens clean** | No raw hex, px, or font value in the component's TSX or CSS, nor in the subcomponents it composes (`CLAUDE.md`). Every `var(--…)` is a semantic token, not a core one (`--spacing-1`, `--border-radius-4`, `--color-blue-600`). Every open entry for the component in `docs/design-gaps.md` has a **human-recorded waiver**, in one of two places: a `WAIVED FOR RELEASE` block directly under the gap's heading in `docs/design-gaps.md`, committed at the reviewed SHA; or the product-owner decision written into a Staging Testing row's Context, as Card's gap 11 has. A waiver can also cover a raw value or core token, but only one it names: the waived gap must quote that exact value or token (`10px`, `--spacing-1`), and the CSS or TSX line must be marked `DESIGN GAP` in its comment. Cite both the waiver and the line. A raw value or core token that no waiver names still fails, and so does one a waiver names under a different value (a waiver for `46px` does not cover `48px`). An open gap with no waiver fails. You never grant a waiver. |
+| 3 | **Tokens clean** | No raw hex, px, or font value in the component's TSX or CSS, nor in the subcomponents it composes (`CLAUDE.md`). Every `var(--…)` is a semantic token, not a core one (`--spacing-1`, `--border-radius-4`, `--color-blue-600`). Every open entry for the component in `docs/design-gaps.md` has a **human-recorded waiver**, in one of two places: a `WAIVED FOR RELEASE` block directly under the gap's heading in `docs/design-gaps.md`, committed at the reviewed SHA; or the product-owner decision written into a Staging Testing row's Context, as Card's gap 11 has. A waiver can also cover a raw value or core token, but only one it names: the waived gap must quote that exact value or token (`10px`, `--spacing-1`), and the CSS or TSX line must be marked `DESIGN GAP` in its comment. Cite both the waiver and the line. A raw value or core token that no waiver names still fails, and so does one a waiver names under a different value (a waiver for `46px` does not cover `48px`). An open gap with no waiver fails — including a gap whose entry records a decision in a paragraph but has no `RESOLVED` heading and no `WAIVED FOR RELEASE` block; name that one-line fix in the finding. You never grant a waiver. |
 | 4 | **Public surface decided** | The component is exported from `src/index.ts` with its prop types. The types its props are built from are exported too. `dist/index.d.ts` exposes the same names. |
 | 5 | **Names final** | Every property in the Figma component set (`get_metadata` on the node, or `componentPropertyDefinitions` on the set) has a prop of the same name. `docs/naming-conflicts.md` holds no entry for the component that is not marked resolved. |
 | 6 | **States complete** | Every variant × state row in the Figma component set has a story, and every Staging Testing row for the component reads `Passed`. A waived row counts only with its waiver recorded. |
@@ -193,6 +193,19 @@ GitHub Commits → row for <short SHA> written, read back
   waiver names it exactly. Cite the waiver and the line.
 - **The Figma status labels are not the registry.** The documentation frame's
   "Development Completed" is typed by a person. Gate 2 reads the board.
+
+## Beyond the verdict — what a release must also ship
+A `Cleared` verdict clears one component. It does not make a release. The release
+agent (`.claude/agents/release.md`) owns the rest, and a release is complete only
+with all of it:
+- **`README.md`** at the repo root on `main`, and inside the published tarball. The
+  release halts at preflight without it.
+- **The Astro docs site**, built by doc-generator after the publish: its nine
+  sections (Home, Components, Tokens, Start designing, Start coding, Changelog,
+  Roadmap, News, Help) and a verified page with `Astro Link` for every component
+  reading `Completed` + `Cleared` (`.claude/skills/astro-page/SKILL.md`).
+
+None of these is a gate or a check in this review, and none changes a verdict.
 
 ## References
 - The board contract, owners, and flags: `.claude/skills/registry/SKILL.md`
