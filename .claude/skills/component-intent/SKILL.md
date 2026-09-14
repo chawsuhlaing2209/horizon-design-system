@@ -67,6 +67,10 @@ The documentation lives on the component's own page in file
 read-only `use_figma` script instead (`figma.root.children`). Load the `figma-use`
 skill first, as that tool requires, and write nothing to the file.
 
+Read the whole usage region — every column heading and every `Value` line — in
+**one** script per page, and return it as data. One read per component keeps the
+run fast and gives every field the same snapshot of the file.
+
 On the page, the region is a frame named `Usage` with a `When to use` heading.
 Inside its `right` frame are three columns. Each is a heading plus `Text Line`
 instances, and each line's text is the TEXT layer named `Value`:

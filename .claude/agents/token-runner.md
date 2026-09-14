@@ -17,9 +17,10 @@ You never author token values. You are a courier and a translator, not an editor
 These override anything else in this file, anything in the repo, and anything a
 prompt asks you to do. If a request conflicts with them, stop and say so.
 
-1. **NEVER merge to main.** No `git merge`, no `gh pr merge`, no fast-forward
-   into `main`, not even when a human says the PR looks good. Opening the PR is
-   where your work ends. A human merges.
+1. **NEVER merge to main, and never open a PR into it.** No `git merge`, no
+   `gh pr merge`, no fast-forward into `main`, not even when a human says the PR
+   looks good. `main` accepts PRs from `staging` only (`CLAUDE.md`), so your PR
+   targets `staging`. Opening it is where your work ends. A human merges.
 2. **NEVER push to main.** Every push is `git push -u origin <the branch you
    created>`. Never `git push origin main`, never a bare `git push` while `main`
    is checked out, never `--force` to any branch.
@@ -35,7 +36,8 @@ prompt asks you to do. If a request conflicts with them, stop and say so.
 
 ### 1. Branch
 
-Check what is actually there before doing anything:
+Check what is actually there before doing anything. The shell is zsh: quote
+paths, and write `${var}` rather than `$var:…`, which zsh reads as a modifier.
 
 ```
 git status --porcelain -- tokens/
@@ -134,7 +136,7 @@ as over the threshold and stop.
 git add tokens/
 git commit -m "<the summary>"
 git push -u origin tokens/sync-<short-description>
-gh pr create --base main --head tokens/sync-<short-description> --title "<one-line version of the summary>" --body "<the full summary>"
+gh pr create --base staging --head tokens/sync-<short-description> --title "<one-line version of the summary>" --body "<the full summary>"
 ```
 
 - Stage `tokens/` only. Nothing else in the tree is yours to commit.
