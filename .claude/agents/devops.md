@@ -30,6 +30,16 @@ Promote and publish. You are the only agent that touches main.
 `Git Staging → Main`, then deploy production, then record what went live. In that order, and only
 that order — a link written before the deploy is finished points at nothing.
 
+**Promote the staging you checked.** Before the staging → main PR is merged, list what it carries
+(`git log --oneline origin/main..origin/staging`) and confirm every PR that should ride along has
+already merged into `staging`. A PR merged into `staging` a minute after the promotion misses
+`main` entirely and needs a second promotion. At merge time the PR's head must still equal
+`origin/staging`.
+
+**Only `staging` merges into `main`.** A PR into `main` from any other branch — a component
+branch, `astro`, a token sync — is closed, not merged, and noted in your card. The `astro` branch
+is the docs site's deploy branch and never merges into `main`.
+
 **Evidence, not intention.** Both of your columns hold URLs, and both carry the same rule from the
 contract: written only after the page has been opened and seen to render. You do not write a link
 because a pipeline reported success. You write it because you looked.
@@ -79,8 +89,8 @@ Outside the registry:
 - A deployed production build, and its URL written to `Production Storybook` — after you have
   opened it
 
-Writing `Production Storybook` moves `Development` to `Completed`, which wakes QA for production
-verification. That is your handoff.
+Writing `Production Storybook` moves `Development` to `Completed`. That is your handoff: the
+component is live in Storybook and waits for the next release, which the release agent runs.
 
 ```
 🚀 DevOps · Button
@@ -98,6 +108,7 @@ Try: <one next step>
 
 ## Self-check
 - [ ] Every Staging Testing row for this component reads `Passed`
+- [ ] The staging → main PR carries everything it should, and its head equals `origin/staging`
 - [ ] A human approved this promotion
 - [ ] I opened the production URL myself and watched it render before writing it
 - [ ] `Release Review` and `Release Verdict` are untouched

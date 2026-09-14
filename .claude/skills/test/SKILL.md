@@ -43,8 +43,13 @@ report it, do not quietly drop it.
 **Check:** the two lists are reconciled, and every difference is written down.
 
 ### 3 · Load the component and measure — do not eyeball
-Start Storybook (`tools.md` has the command) and open each story at
-`/iframe.html?id=<story-id>&viewMode=story`.
+Open the **deployed staging Storybook** named in the registry's `Staging Storybook`
+cell, in Claude in Chrome. Never a local Storybook: it is a different bundle with
+different font loading, so a result from it says nothing about what shipped. Open
+each story at `<staging origin>/iframe.html?id=<story-id>&viewMode=story`.
+
+Collect every value a case needs in one script per story, not one call per
+property.
 
 Read the numbers out of the browser rather than judging them by eye. Computed
 style against the Figma dimension is a fact; "looks about right" is not. For each
@@ -74,6 +79,8 @@ A state that only changes colour has not been tested. Confirm behaviour:
 ### 5 · Capture the visual states
 Screenshot each state, including hover, disabled, and loading. Save them to
 `reports/<name>/`, lowercase. Where a case fails, capture the Figma render beside it.
+If the browser tool cannot write screenshots to disk, record that once in the report
+and rely on the measurements; do not retry.
 
 ### 6 · Check the tokens
 Confirm no raw hex, px, or font value appears in the component or its CSS. The
@@ -83,9 +90,15 @@ read it, never edit it.
 A value the design left unbound is a design gap, not an engineering defect.
 Report it as a gap and say so; do not log it against the engineer.
 
-### 7 · Write the report
-One row per case. For each failure: what failed, where, and the specific token or
-prop that looks wrong.
+### 7 · Write the rows and the report
+One `Staging Testing` row per case, updated in place when the case already has one;
+read the component's existing rows first. Every row ends the run as `Passed` or
+`Failed`, never `Fixed (To re-test)`.
+
+The report is `reports/<name>.md`, lowercase. For each failure: what failed, where,
+and the specific token or prop that looks wrong. A recorded design decision (a
+`RESOLVED` or `WAIVED FOR RELEASE` entry in `docs/design-gaps.md`) is the expected
+result for that property; cite it rather than failing the case.
 
 ## Judgement — what is and is not a defect
 Do not burn a finding on these:
@@ -101,7 +114,8 @@ Do not burn a finding on these:
   add to the frame size; an inset ring in CSS is a faithful translation, not a bug.
 
 ## References
-- The component under test: `src/components/<Name>/`
+- The component under test: `src/components/<name>/`
+- Recorded design decisions and waivers: `docs/design-gaps.md`
 - The generated tokens: `build/tokens/css/tokens.css` (read-only, never hand-edited)
 - Commands and stack: `tools.md`
 - What a component must satisfy: `CLAUDE.md`
@@ -114,4 +128,6 @@ Do not burn a finding on these:
 - [ ] Every failure has a screenshot and names a specific fix
 - [ ] Design gaps are reported as gaps, not as engineering defects
 - [ ] The report says pass or fail per case, with no summary judgement
+- [ ] Every number came from the deployed staging build, never a local server
+- [ ] Existing rows were updated in place, and none ends the run as `Fixed (To re-test)`
 - [ ] You changed nothing in `src/components/`

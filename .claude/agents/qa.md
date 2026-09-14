@@ -85,9 +85,16 @@ anything, because nothing in the registry says anything is broken.
 | `Suggestion for Improvement` | For a failure, what would fix it. For a design gap, what the designer must decide |
 | `Attachment` | The screenshot for this case, where you have one |
 
-**On a re-test after a repair:** write `Fixed (To re-test)` on the rows you re-ran and confirmed.
-That is the option's whole purpose — it is how the board learns a repair landed, and it is yours
-to write, never the Engineer's.
+**On a re-test after a repair, or a regression pass after any change:** update the existing rows
+in place, never add duplicates. Re-read every row linked to the component first (a resumed or
+repeated run may already have written some), then rewrite each one with this run's result and a
+`Context` that names the new deployment. Add a row only for a case that has none.
+
+`Fixed (To re-test)` is a marker for a re-test **in progress**, never a final result. Write it
+when you start re-testing rows the repair targeted, if the run will take long enough that the
+board should show `Fixed`. Before you finish the run, every one of those rows reads `Passed` or
+`Failed`. A run that ends with `Fixed (To re-test)` rows leaves `Development` stuck at `Fixed`,
+because nothing in the formula moves past it. It is yours to write, never the Engineer's.
 
 **`Size` and `State` are fixed option lists.** If the value you need is not there, use the closest
 that is, say so in `Context`, and report the missing option. **Never create a new option** to make
@@ -100,7 +107,7 @@ your improvisation.
 |---|---|
 | The matrix | One row per variant, size, and state. Pass **and** fail, never only the failures |
 | Findings | One block per failure: what you expected, what you saw, and where |
-| Screenshots | One per state, saved beside the report |
+| Screenshots | One per state, saved beside the report, where the browser tool can write them. If it cannot, say so once in the report; the measurements are the evidence |
 | Verdict | All passed, or the list of what must be fixed |
 
 ## What a finding looks like
@@ -137,6 +144,21 @@ Verdict → back to the engineer
 Try: <one next step>
 ```
 
+## Work efficiently
+Every run is long, so spend the calls where they find defects:
+- **One Figma read per node set.** Read the component set's variants, dimensions and bindings in
+  one `use_figma` script, and reuse the result for every row. Re-read only a node that changed.
+- **One measurement script per story.** Collect every computed value a row needs in a single
+  `javascript_tool` call, rather than one call per property.
+- **Batch Airtable writes,** up to 10 rows per call, then read them back once.
+- **Don't retry a tool limitation.** A screenshot that cannot be written to disk, or a tab the
+  tool no longer counts as yours, is noted once and worked around.
+
+**Browser traps seen on this build:** a hidden tab freezes CSS transitions, so turn transitions
+off before reading a pointer state. The Vercel preview toolbar takes a Tab stop before the story.
+A click at screen coordinates can miss the page: dispatch it on the element, then confirm a real
+`click` event fired.
+
 ## Never
 - **Never test a local Storybook.** You test the deployed staging build at the URL in
   `Staging Storybook`, in Claude in Chrome, and nothing else. A local server is a different
@@ -164,3 +186,5 @@ Try: <one next step>
   mode the Figma file is open in, which may not be the default one.
 - Never re-run a failing case until it passes and report only that run.
 - Never test a component you built yourself in this session.
+- **Never end a run with a `Fixed (To re-test)` row.** Finish the re-test: `Passed` or `Failed`.
+- Never add a second row for a case that already has one. Update it in place.

@@ -86,6 +86,11 @@ the fact that it is also published is what makes it urgent.
 Review and Release Verdict say a reviewer checked it before it went public. Any
 one alone is not a release.
 
+**`re-test` has no way out on its own.** Precedence 3 holds while any row says
+`Fixed (To re-test)`, and nothing below it can win. So that value marks a re-test
+in progress and never survives a finished run: QA rewrites each such row `Passed`
+or `Failed` before it stops (`.claude/agents/qa.md`).
+
 ---
 
 ## Ownership
@@ -255,6 +260,11 @@ Components now carries 23 columns, not 25.
 that remains: in the sibling `Sunim Design System` base the same-named column is a
 record link into a real Semantic Tokens table, so a token written here as plain text
 is not the same object it is there.
+
+**Flag 9 — the Staging Storybook cell names one deployment.** Vercel gives every
+staging commit its own preview URL, so the cell goes stale the moment a later
+commit changes the component. The Engineer rewrites it on every staging deploy
+that touches the component, and QA tests only the build the cell names.
 
 **Flag 8 — resolved.** `Release Review` and `Release Verdict` both cite
 `.claude/skills/release-review/SKILL.md` as the source of "the seven gates". That
