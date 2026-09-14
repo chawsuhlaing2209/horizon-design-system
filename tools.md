@@ -27,6 +27,8 @@ Stack facts and commands only. Rules about how we work live in `CLAUDE.md`.
 | Type check | `npm run lint` |
 | Build the npm package | `npm run build:package` (tokens → `build:lib` → `build:css`) |
 | Release to npm | `npm run release:publish -- <version> [--dry-run]` |
+| Build the docs site | `npm ci && npm run build` in `docs-site/` on the `astro` branch |
+| Run the docs site | `npm run dev` in `docs-site/` |
 
 ## Paths
 
@@ -37,7 +39,10 @@ Stack facts and commands only. Rules about how we work live in `CLAUDE.md`.
 - Components: `src/components/<Name>/`
 - Agents: `.claude/agents/`
 - Skills: `.claude/skills/`
-- Docs site (Astro Starlight): **not created yet.** Pages are committed to the `astro` branch, and a Vercel project whose production branch is `astro` deploys each push. When it exists, record here the site folder, the Vercel project, and the production URL. Component pages go in `<folder>/src/content/docs/components/<name>.mdx`
+- Docs site (Astro Starlight): folder `docs-site/`, which exists only on the `astro` branch. Astro 7 with Starlight 0.42, its own `package.json` and lockfile.
+  - Vercel project: `horizon-docs` (root directory `docs-site`, production branch `astro`; builds on any other branch are skipped). Each push to `astro` deploys production; never deploy by hand.
+  - Production URL: https://horizon-docs-alpha.vercel.app
+  - Component pages: `docs-site/src/content/docs/components/<name>.mdx`, served at `https://horizon-docs-alpha.vercel.app/components/<name>/`
 
 ## Dependency rules
 
