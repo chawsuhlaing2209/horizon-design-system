@@ -39,6 +39,19 @@ is now bound to `border/radius/control` (12px) in every variant of 8:1186, and
 icon-container radius (`border/radius/4`) and the iconButton insets (`spacing/8`,
 `spacing/sm`, `spacing/4`).
 
+**Update, 2026-09-14 — read live after the product owner's Figma pass.**
+- `Icon Container` radius: **resolved.** Node 8:895 is gone. The icon inside
+  iconButton is now the library `favorite` instance (108:477) with radius 0 and no
+  bound variable, so `iconContainer.css` no longer sets a radius.
+- Still core in Figma, unchanged: the iconButton insets on both variants of set
+  8:1134 (`state=idle` 8:1133, `state=hover` 8:1135) — padding `spacing/8` and
+  `spacing/sm`, gap `spacing/4`. Every instance inside cardImage and cardLayout
+  inherits them.
+- Still core in Figma, unchanged: `Slide Image` (8:1175, 8:1189, 8:1150, 8:1198)
+  radius `border/radius/8`; the `Overlay` frames (8:1182, 8:1203) have a raw 8 with
+  no variable. The outer cardImage frame is 12 (`border/radius/control`) and clips
+  both, so the corner a person sees is 12, but the layers themselves say 8.
+
 CLAUDE.md: *"Components use semantic tokens only."* These properties are bound in
 Figma to the core layer, so honouring the design and honouring the rule are in
 conflict. The design's binding was mirrored and flagged rather than silently
@@ -70,6 +83,20 @@ the text-to-slot space, since both sit directly in the layout. Still raw in
 Figma: the horizontal text column's itemSpacing (frame 8:1318, 10px), the
 slot height (46px), and the favourite button's position (8 / 7.5, which Figma
 cannot bind to a variable).
+
+**Update, 2026-09-14 — decisions from the product owner.**
+- `iconButton` offset: **8 from the top and 8 from the right** in every variant, kept
+  as a raw value on purpose (Figma cannot bind a position). `cardImage.css` now uses
+  `top: 7px; right: 7px`, which lands at 8 / 8 from the outer edge once the 1px
+  border is counted. Figma still reads x 316 / right **7.5** on the iconButton in
+  all four 8:1186 variants, so the file needs the same move.
+- `Slot` reserve: **48px by default**. `cardLayout.css` now uses `min-height: 48px`.
+  Figma: vertical `8:1314` reads 48, but horizontal `8:1315` still reads **46**.
+  48 is on the 4px scale but has no semantic token; it stays raw.
+- Horizontal text column gap: **not changed.** Read live on 2026-09-14, frame
+  `8:1318` still has `itemSpacing` 10 with no variable bound. The outer layout gap
+  (`8:1249`, `8:1250`) was already `spacing/gap/sm`. `cardLayout.css` keeps `10px`
+  until 8:1318 carries a token.
 
 | Property | Value | Note |
 |---|---|---|
@@ -136,6 +163,12 @@ no image asset to export. The component takes an `image` src; with none supplied
 it renders a quiet `--color-bg-surface-secondary` surface.
 
 Not a defect, recorded so nobody hunts for a missing asset.
+
+**Update, 2026-09-14 — product owner's decision.** Figma may stay an empty
+placeholder. Storybook shows an image instead: every Card story now passes the
+stand-in photo, and one story, `image = empty`, keeps the fallback surface so
+it stays reviewable. The component itself is unchanged: with no `image` it still
+renders `--color-bg-surface-secondary`.
 
 ---
 
@@ -356,6 +389,20 @@ surface colour.
 
 This affects levels 1 through 5, not only level 2. Level 2 is simply the one a
 component happened to use in dark and fail on.
+
+---
+
+### 12. Raw font-family fallbacks in cardText — RESOLVED, 2026-09-14
+
+Found by release review at `c0d3af5`, gate 3. `cardText.css` lines 44, 55, 65 and
+73 appended `system-ui, sans-serif` to each `font:` token, for example
+`font: var(--title-md), system-ui, sans-serif`. That is a raw font value in a
+component file, and no token or design decision stood behind it.
+
+**Decision (product owner):** the tokens' font family only. The four
+declarations are now `font: var(--title-md)`, `var(--body-sm)`,
+`var(--label-lg-bold)` and `var(--body-lg-bold)`, each of which resolves to
+Inter. **Owner:** Engineer.
 
 ---
 

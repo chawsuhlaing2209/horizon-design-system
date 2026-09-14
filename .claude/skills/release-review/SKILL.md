@@ -65,10 +65,14 @@ output, a file and line, or a registry value read back.
 Run these on the intent file. They find problems; the report records them. The
 intent file stays exactly as it was.
 
+Check 2 is the one **warning**: its result is `Pass` or `Warning`, never `Fail`, so
+it never blocks. Some things have no alternative to name, and an honest "don't"
+with nothing after it is still guidance. Every other check is `Pass` or `Fail`.
+
 | # | Check | Fails when |
 |---|---|---|
-| 1 | **Fields present** | Any of `use_when`, `dont_use_when`, `best_practice`, `variant_intent`, `placement`, `pairs_with`, `required_tokens`, `a11y` is missing. An empty `use_when` or `dont_use_when` also fails unless `docs/design-gaps.md` records the missing usage region. |
-| 2 | **Every `dont_use_when` names an alternative** | Any entry's `alternative` is `null`, or is not a verbatim substring of its `text`. The fix is in Figma, never in the intent file. |
+| 1 | **Fields present and sourced** | A non-null `alternative` is not a verbatim substring of its `text`. Any of `use_when`, `dont_use_when`, `best_practice`, `variant_intent`, `placement`, `pairs_with`, `required_tokens`, `a11y` is missing. An empty `use_when` or `dont_use_when` also fails unless `docs/design-gaps.md` records the missing usage region. |
+| 2 | **Every `dont_use_when` names an alternative** *(warning)* | **Warning** when any entry's `alternative` is `null`: list each one, and name the Figma usage frame where the Designer can add one if it exists. Never blocks. A non-null `alternative` that is not a verbatim substring of its `text` is a different problem, invented content, and that is a **Fail** of check 1. The fix is in Figma, never in the intent file. |
 | 3 | **`a11y` is specific, not generic** | An entry names no concrete element, attribute, label, key, or focus rule. Or its cited `file:line` does not say what the entry says — open every citation. |
 | 4 | **`required_tokens` resolve in the built output** | A name in the list is not declared in `dist/tokens.css`. Or a `var(--…)` in the component's CSS is missing from the list, leaving `--hds-*` private properties aside. A colour token declared in `:root` but not in `[data-theme="dark"]` is not a failure: the dark block holds only the colours that change. |
 | 5 | **All variants covered** | A value of a Figma variant property has no key in `variant_intent`, or its value is `null`. The code's union types are the second list: a value in one list and not the other is also a failure. |
@@ -78,9 +82,11 @@ intent file stays exactly as it was.
 the entry.
 
 ### 4 · The verdict
-**Cleared** only when all seven gates and all six checks pass. Anything else is
-**Blocked**. There is no "Cleared with notes" and no "Cleared pending": a condition
-on a clearance is a block.
+**Cleared** only when all seven gates pass and checks 1, 3, 4, 5 and 6 pass. Check 2
+may read `Warning` on a Cleared review; its warnings are listed in the report and
+the card. Anything else is **Blocked**. There is no "Cleared pending": a
+condition on a clearance is a block. A check 2 warning is not a condition, and
+nothing has to happen before the component ships.
 
 ### 5 · Write the report
 `reports/<name>/release-review-<short SHA>.md`, written from the worktree's
@@ -106,6 +112,10 @@ findings.
 ## Findings
 One per failure: what, where (file:line, node, record), and who can clear it
 (Designer, Engineer, Human). No fix is described as done, and none is applied.
+
+## Warnings
+Check 2 only: each `dont_use_when` entry with no alternative, quoted. These do not
+affect the verdict.
 
 ## Staleness
 This review holds only for the commit above. It is stale once anything in
@@ -164,15 +174,17 @@ Then remove the worktree.
 🧾 Release review · <name> · <Cleared | Blocked>  @ <short SHA>
 gates  <n>/7  (<# gate>: <the evidence that failed it>)
 checks <n>/6  (<# check>: <the entry that failed it>)
+warnings <n>  (check 2: <n> dont_use_when with no alternative)
 report → <permalink> · PR #<n> merged into staging (<merge SHA>)
 Release Review, Release Verdict → written, read back
 GitHub Commits → row for <short SHA> written, read back
 ```
 
 ## Judgement — what is and is not a finding
-- **A faithfully copied line that is weak guidance is still a finding.** "Don’t
-  scroll within a card to reveal information" names no alternative. That fails
-  check 2, and the fix goes to Figma. The intent file did its job by copying it.
+- **A "don't" with no alternative is a warning, not a block.** "Don’t scroll
+  within a card to reveal information" names no alternative. Check 2 reports it
+  as a warning, and the verdict ignores it. If the Designer adds an alternative,
+  it goes in Figma. The intent file did its job by copying it.
 - **An empty field with a recorded gap is honest, but it still blocks.** Check 1
   passes, because the field is present and the gap is on record. The gates and the
   other checks do not treat empty as covered.
@@ -192,8 +204,9 @@ GitHub Commits → row for <short SHA> written, read back
 - [ ] I did not build, test, document, or write the intent for this component
 - [ ] Everything was read from a worktree at one pinned SHA
 - [ ] Each of the seven gates has a result and evidence
-- [ ] Each of the six checks has a result, and each failure quotes the entry
-- [ ] The verdict is `Cleared` only if all thirteen passed
+- [ ] Each of the six checks has a result, and each failure or warning quotes the entry
+- [ ] Check 2 reads `Pass` or `Warning`, never `Fail`
+- [ ] The verdict is `Cleared` only if all seven gates and checks 1, 3, 4, 5, 6 passed
 - [ ] The report is at `reports/<name>/release-review-<short SHA>.md` and names the SHA
 - [ ] `Release Review` is a commit permalink, not a branch URL
 - [ ] `Release Review` and `Release Verdict` were written together and read back

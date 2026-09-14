@@ -38,10 +38,14 @@
   width: 100%;
 }
 
+/* Typography comes from the composite type tokens alone. Each carries its own
+ * family (Inter, loaded from Google Fonts in src/styles.css); no fallback
+ * stack is appended here. */
+
 /* title/md */
 .hds-card-text__title {
   margin: 0;
-  font: var(--title-md), system-ui, sans-serif;
+  font: var(--title-md);
   letter-spacing: var(--tracking-title-md);
   color: var(--color-text-primary);
   width: 100%;
@@ -52,7 +56,7 @@
 .hds-card-text__review-count,
 .hds-card-text__price-info {
   margin: 0;
-  font: var(--body-sm), system-ui, sans-serif;
+  font: var(--body-sm);
   letter-spacing: var(--tracking-body-sm);
   color: var(--color-text-secondary);
 }
@@ -62,7 +66,7 @@
 /* label/lg/bold */
 .hds-card-text__rating {
   margin: 0;
-  font: var(--label-lg-bold), system-ui, sans-serif;
+  font: var(--label-lg-bold);
   letter-spacing: var(--tracking-label-lg);
   color: var(--color-text-accent);
 }
@@ -70,7 +74,7 @@
 /* body/lg/bold */
 .hds-card-text__price {
   margin: 0;
-  font: var(--body-lg-bold), system-ui, sans-serif;
+  font: var(--body-lg-bold);
   letter-spacing: var(--tracking-body-lg);
   color: var(--color-text-primary);
 }

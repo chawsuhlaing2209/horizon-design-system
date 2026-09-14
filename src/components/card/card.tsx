@@ -23,7 +23,7 @@ import { CardText, type CardTextProps } from '../cardText/cardText';
 export type CardState = 'enable' | 'hover';
 
 export type CardProps = {
-  /** Figma `state`. `hover` raises the card on elevation/level2. */
+  /** Figma `state`. `enable` is the resting card, flat on its surface with no elevation. `hover` raises the card on elevation/level2. */
   state?: CardState;
   /** cardLayout 8:1251 — `orientation`, `hasSlot`. */
   layout?: Omit<CardLayoutProps, 'image' | 'text'>;
