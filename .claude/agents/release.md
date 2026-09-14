@@ -76,7 +76,8 @@ Delegates to `.claude/agents/doc-generator.md` in steps 3 and 10.
    - A gap from Figma is an empty `use_when`, `dont_use_when` or `best_practice`: Figma has no usage
      region, or the region has no such column.
    - A `null` alternative, or an empty `placement` or `pairs_with`, is not a Figma sourcing gap.
-     Those are check failures for step 5.
+     Empty `placement` or `pairs_with` is a check failure for step 5. A `null` alternative is a
+     check 2 warning: report it, never block on it.
 5. **Run the 7 gates and 6 checks per component,** following `release-review`. Review one pinned
    commit: the tip of `origin/main`. Work in a worktree at that SHA, so your checkout is never
    touched.
