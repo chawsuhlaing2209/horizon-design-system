@@ -5,6 +5,7 @@ import starlight from '@astrojs/starlight';
 // Horizon Design System documentation. One page per component under
 // src/content/docs/components/, written by the astro-page skill.
 export default defineConfig({
+  site: 'https://horizon-docs-alpha.vercel.app',
   integrations: [
     starlight({
       title: 'Horizon Design System',
