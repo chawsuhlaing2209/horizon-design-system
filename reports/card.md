@@ -1,9 +1,187 @@
 # QA: Card, re-test after the Figma change of 2026-09-13
 
-This file holds two runs on 2026-09-14:
+This file holds three runs on 2026-09-14:
 
-- **Run 2 (below, first):** re-test of the F1 repair on staging `5a692e1`.
-- **Run 1 (after it):** the full re-test on `b5f15b9` that raised F1. It is left as written, with notes where Run 2 changes something.
+- **Run 3 (below, first):** full regression re-test on staging `9253042`, before the npm release.
+- **Run 2:** re-test of the F1 repair on staging `5a692e1`.
+- **Run 1:** the full re-test on `b5f15b9` that raised F1. It is left as written, with notes where Run 2 changes something.
+
+---
+
+# Run 3: regression re-test on `9253042`, before the npm release
+
+| | |
+|---|---|
+| Run | Full regression re-test on 2026-09-14 after commits `d095822` and `76f2a37`. Every existing row was re-measured in light and dark, and the three new stories were added. The run was cut off once by an API usage limit and resumed. No row had been written before the cut-off, and all 38 rows were re-read before writing. |
+| Build under test | Deployed staging Storybook from the `Staging Storybook` cell on Card's Components row (`rec1y6kyai6F3FVWv`). I read the cell myself in base `appTH3itfUmsuyeUm`, which is named `[Class Demo] Horizon DS` and matches `baseName` in `.claude/registry.local.json`. |
+| URL | `https://horizon-design-system-hfz7ywk7s-chawsuhlaing2209s-projects.vercel.app/?path=/docs/components-card--docs` |
+| Is this `9253042`? | Yes. The deployed stylesheet has `.hds-card-layout__slot { min-height: 48px }`, `.hds-card-image__favorite` at `top: 7px; right: 7px`, no radius on `.hds-icon-container`, and cardText `font: var(--title-md)` etc. with no fallback stack. The story index lists 20 Card stories, including `image-empty`, `in-results-grid` and `in-list-with-button`. |
+| Registry `Commit` | **Still `5a692e1`**, not `9253042`. That cell belongs to the Engineer, so I did not write it. See observation O1. |
+| Registry `Development` | **Before:** `Completed` (38 rows, all Passed). **After:** `Completed` (44 rows, all Passed, 100%). `Production Storybook` is set, so the formula stays at precedence 5. |
+| Design reference | Figma file `r1CpQEYecqROS0oIOMlqAx`, read live: `get_metadata` on `34:317`, `8:1251`, `8:1249`, `8:1250`, `8:1186`, `8:1184`, `12:1343`, `8:778`, and `get_design_context` on `34:317`, `8:1251`, `8:1186`, `8:778`. |
+| Surface | Claude in Chrome, the real Vercel bundle, fonts from the CDN. No local Storybook was started and no git operation was run. |
+
+The expected matrix comes from Figma. Where the product owner decided differently, the decision is named in the case and I measured against it.
+
+## R3.0 · Fonts
+
+| Check | Result |
+|---|---|
+| `16px Inter` vs `16px QaBogusFamilyXyz` | 227.25 vs 196.875 (`sans-serif` 216.11, `serif` 196.875) |
+| `24px "Material Symbols Outlined"` measuring `favorite` vs bogus | 24 vs 74.625 |
+| `document.fonts` status `loaded` | Inter 500, Inter 600, Inter 100–900, Material Symbols Outlined 100–700 |
+| Computed `font-family` on every cardText node | `Inter`, with no fallback (light and dark) |
+
+The fonts loaded, so the sizes below are real.
+
+## R3.1 · What changed in Figma since Run 1
+
+| Node | Run 1 | Now |
+|---|---|---|
+| `8:1249` cardLayout vertical | 269 × 371.75, Slot `8:1314` 46 | **269 × 373.75, Slot `8:1314` 48** at y 325.75 |
+| `8:1250` cardLayout horizontal | 269 × 172, Slot `8:1315` 46 | unchanged: **still 46** |
+| iconButton icon | Icon Container `8:895`, radius `border/radius/4` | **Icon `108:477`** (library `favorite`), 24 × 24, radius 0 |
+| iconButton position in `8:1186` | top 8, right 7.5 | unchanged: **still right 7.5** in all four variants |
+| `12:1343` | 298.25, `8:770` 48 with no rows | unchanged |
+| `color/text/accent` on Rating Score | `#f0932b` light | unchanged (gap 7) |
+
+Renders saved today: `reports/card/figma-34-317-card-set-9253042.png`, `reports/card/figma-8-1251-cardLayout-set-9253042.png`, `reports/card/figma-8-1186-cardImage-set-9253042.png`.
+
+## R3.2 · Results
+
+Method:
+
+- Geometry and computed styles for every story were read from `iframe.html?id=…&viewMode=story`, once plain and once with `&globals=theme:dark`.
+- Pointer and keyboard states were driven with real Claude in Chrome input.
+- The automation tab reports `visibilityState: hidden`, which freezes CSS transitions. The first hover reads were stale because of this. All pointer reads were then re-taken with transitions disabled by an injected test style. The component was not changed.
+
+`level2` below means `rgba(27,39,51,.06) 0 2px 4px 0, rgba(27,39,51,.1) 0 4px 8px 0`.
+
+### Card
+
+| Case | Theme | Saw | Result | Row |
+|---|---|---|---|---|
+| state=enable | light | 227 × 298.25, bg rgb(255,255,255), r 12, p 12/16, shadow none, layout gap 12, photo loaded | **Pass** | `recPkzD0DiT6dfqo2` |
+| state=enable | dark | 227 × 298.25, bg rgb(27,39,51) | **Pass** | `reckWADjP56XXUmy8` |
+| state=hover | light | pinned `level2`. Real pointer: over the title the card raises and overlay 0; over the image it raises and overlay 0.2; off, none | **Pass** | `recQfAZfxyT19rS2W` |
+| state=hover | dark | `--elevation-level2` is the same as light, so no visible lift | **Pass (human waiver, gap 11, re-measured)** | `recRKWuTGZeXeI8Ce` |
+| 12:1343 as placed | light / dark | 227 × 250.25, overlay 0.2, text 68, meta 0 | **Pass** / **Pass** on the gap 9 decision | `recPFNpA76432oysU` / `recYgLks4BD343ZIT` |
+| Long content | light / dark | 227 × 338.25, text 195 × 156, scrollWidth 227 = clientWidth | **Pass** / **Pass** | `recoyeS31iIhl20eI` / `recM32QHS23rru6dI` |
+| **New:** InResultsGrid | light / dark | 3 × 227 columns, gap 16, padding 24; each card 227 × 298.25; photos loaded; no error display, no console messages | **Pass** / **Pass** | `recCNB467vYHYAm1Z` / `rec3jibtoKPBDDCK9` |
+| **New:** InListWithButton | light / dark | 2 horizontal cards 301 wide: 198 and 222 tall (second title wraps), layout 269, slot 128.5 × 48, Button "Book" 46 tall inside the slot, no overflow, no errors | **Pass** / **Pass** | `recOMiSsg98sFpvqG` / `rec3ygS0hD1AOxllO` |
+
+### cardLayout
+
+| Case | Theme | Saw | Result | Row |
+|---|---|---|---|---|
+| vertical, hasSlot=false | light / dark | flex column, gap 12, 195 × 274.25, text at 158.25 | **Pass** / **Pass** | `rec2H5ftc2XFYyLGr` / `rec5K6pYPU0e8boHd` |
+| vertical, hasSlot=true | light / dark | At 195 wide: slot 195 × **48**, card 358.25. **At the node's 269:** layout 269 × 373.75, image 201.75, text 100 at 213.75, slot 48 at 325.75. Exact against the new `8:1249`. | **Pass** / **Pass** | `recLoAXbMvU9miOR2` / `recO8NTJm4DwMtJya` |
+| horizontal, hasSlot=true | light / dark | grid 128.5 / 128.5, gap 12; layout 269 × **174**; body gap 10; slot 128.5 × **48** at y 126 | **Pass** / **Pass**, measured against the product owner's 48 (Figma `8:1315` still 46, 172) | `recruJ0K6kqgODxAC` / `reccHjcAahTTrHUit` |
+
+### cardImage and the favourite button
+
+| Case | Theme | Saw | Result | Row |
+|---|---|---|---|---|
+| ratio=4:3, idle | light / dark | 195 × 146.25, aspect 4/3, border rgb(234,239,244) / rgb(58,69,83), r 12; photo `<img>` 193 × 144.25 inside the border | **Pass** / **Pass** | `recxBwxGQ0aixdQAv` / `recisNldJMxTS7P8O` |
+| ratio=1:1, idle | light / dark | 195 × 195, card 347 | **Pass** / **Pass** | `recxvC0teYOg6Ya5w` / `recH73iwIstwR85ZL` |
+| **New:** image = empty | light / dark | no `<img>`; `photo--empty` 193 × 144.25 in rgb(247,249,251) / rgb(58,69,83) = `--color-bg-surface-secondary` | **Pass** / **Pass** | `rec2JjWcAsLJsOf51` / `reczCK9rid2IXW9Vs` |
+| state=idle pinned | light / dark | overlay 0; pointer on image: overlay 0; pointer on button: overlay 0, button hover (rgb(241,244,247) / rgb(58,69,83) + `level2`) | **Pass** / **Pass** | `recjvt7lKEh0s8bDG` / `rec3n4Hh5TUekjpAy` |
+| state=hover, 4:3 | light / dark | overlay 0.2, gradient .55 → 0, r 8, inset −1; button on top (`elementFromPoint`); pointer on button: overlay stays 0.2 | **Pass** / **Pass** | `rect81QIt3jfFldaY` / `recdoLaNDFR1xuX1d` |
+| state=hover, 1:1 | light / dark | 195 × 195, overlay 0.2 | **Pass** / **Pass** | `rec3pKutD0LviH0gC` / `recB9VN48Qpz46MBi` |
+| overlayAction=false | light / dark | 0 buttons, card 227 × 298.25 | **Pass** / **Pass** | `recTDUgkULc0RgiLJ` / `rec1sHqIvuIu99lxq` |
+| Favourite: idle look, toggle, focus | light | 40 × 40, r 999, p 8, gap 4. **Top 8.000, right 8.000** from the image's outer edge. **`.hds-icon-container` radius 0px**, 24 × 24. Clicks false→true→false, FILL 0→1→0, rgb(138,148,166)↔rgb(165,38,29). Tab: `:focus-visible`, 2px rgb(21,71,213) at 1px. Enter false→true and Space true→false, one click each. | **Pass** | `recCweuBWV1GRuDJa` |
+| Favourite: same | dark | bg rgb(27,39,51), 8 / 8, radius 0. Click → rgb(224,43,43) FILL 1 → rgb(185,199,214) FILL 0. Ring 2px rgb(59,130,246). Space false→true, Enter true→false. | **Pass** | `recI1Q9tGZ2ZpvssA` |
+| iconButton state=hover | light | rgb(241,244,247) + `level2` on favourite-toggle (pressed and unpressed), image-state-idle and image-state-hover; off the button: white, none | **Pass** | `recrT754NpeLNHUz4` |
+| iconButton state=hover | dark | rgb(58,69,83) + `level2` (light value, gap 11) | **Pass** | `recc7rjrjF5ZL3S57` |
+
+### cardText
+
+| Case | Theme | Saw | Result | Row |
+|---|---|---|---|---|
+| all on | light | `--title-md` = `500 16px/24px Inter` etc. Title 16/500/24 0.15 rgb(27,39,51); location 12/400/16 0.4 rgb(90,107,126), 32 tall; rating 14/600/20 0.1 rgb(156,96,28); price 16/600/24 0.5; gaps 8/4/4; block 116 | **Pass** (gap 7 noted) | `recGLVLkhOY3pETkv` |
+| all on | dark | rgb(255,255,255) / rgb(215,222,231) / rating rgb(240,147,43); block 116 | **Pass** | `recXp0k2lsuUHBGhq` |
+| metadata=false | light / dark | text 60, card 242.25 | **Pass** / **Pass** | `recoG8aYaMjb4eKmn` / `recYq075WcOqAtYDm` |
+| review=false | light / dark | meta 24, text 92, card 274.25 | **Pass** / **Pass** | `rectPrdzUuFbrE8wh` / `recM93O3MB3s6tmkS` |
+| price=false | light / dark | meta 20, text 88, card 270.25 | **Pass** / **Pass** | `reccgmXgsWSxAvi5Z` / `recM5vbPlm6Jg1SdP` |
+
+### What the change list claimed, confirmed on the deployed build
+
+| Claim | Confirmed |
+|---|---|
+| cardText `font:` uses the type tokens alone (Inter) | Yes. No `system-ui, sans-serif` in the served CSS; computed family `Inter`. Sizes and wrapping unchanged. |
+| Favourite at `top: 7px; right: 7px` lands 8 / 8 from the outer edge | Yes: 8.000 / 8.000 by `getBoundingClientRect`, in every story with the button, light and dark. |
+| Slot `min-height: 48px` | Yes, both orientations. It matches Figma vertical exactly; horizontal is 2px taller than Figma by decision. |
+| iconContainer has no radius | Yes, `0px`. |
+| Stories default to a stand-in image; `ImageEmpty` keeps the fallback | Yes. Every other story loads the data-URI photo (naturalWidth 256), and `image-empty` renders `--color-bg-surface-secondary`. |
+| New `InResultsGrid`, `InListWithButton` render without errors | Yes. There is no Storybook error display, and the console listener attached before navigation logged nothing in light or dark. |
+| Doc comments only in card.tsx, cardLayout.tsx, cardImage.tsx | Yes. `git diff 5a692e1 9253042` in those files touches only comments. Read locally; the checkout was not the build under test. |
+
+## R3.3 · Findings
+
+**No engineering defects.** All 44 cases pass on `9253042`.
+
+Observations. None of them fails a row.
+
+- **O1 · Registry `Commit` is stale.** Card's `Commit` cell still links `5a692e1`, but the staging link points at the `9253042` build. It belongs to the Engineer, and the PM verifies it. QA did not write it.
+- **O2 · Stale node id in code.** `src/components/iconContainer/iconContainer.tsx` still stamps `data-node-id="8:895"`, and `iconContainer.css` line 1 names `8:895`. That node no longer exists; the icon is now `108:477`. This affects documentation and traceability only.
+- **O3 · No font fallback.** The type tokens carry `Inter` with no generic family. If the Google Fonts request fails, Card text renders in the browser's default serif. This was the product owner's choice. If a fallback is wanted, it belongs in the type tokens, not the component.
+- **O4 · Favourited by default.** `InResultsGrid` shows every result already favourited, because `defaultFavorited` is `true` in `cardImage.tsx`. That default is not new, but the grid makes it visible.
+
+Design follow-ups. These are Figma changes, not engineering work.
+
+1. `8:1315` (horizontal slot) still reads 46. Set it to 48 to match the decision.
+2. The iconButton in `8:1184`, `8:1185`, `8:1187`, `8:1196` still sits 7.5 from the right. Move it to 8.
+3. `12:1343` still sizes `8:770` at 48 with no rows (gap 9). The three questions from Run 1 §4 are still open.
+4. `color/text/accent` is still `#f0932b` in light (gap 7).
+5. `elevation/level2` has no dark variant (gap 11).
+6. In dark, `--color-border-default` = `--color-bg-surface-secondary`, so the `image = empty` frame has no visible edge.
+
+Waived gaps, re-checked in source at `9253042`:
+
+| Gap | What is in the CSS |
+|---|---|
+| 2 · core tokens | `--border-radius-4` (overlay), `--spacing-1` / `--spacing-2` (favourite). `--border-radius-2` is gone. |
+| 3 · raw values | `gap: 10px` (horizontal column), `min-height: 48px` (slot), `top: 7px; right: 7px` (favourite) |
+| 8 · overlay strength | `--hds-card-image-overlay-strength: 0.2` |
+| other literals | `120ms` transitions only. No hex values, and no raw font values. |
+
+## R3.4 · Harness notes (not component behaviour)
+
+- The Vercel preview injects a `vercel-live-feedback` toolbar. It takes a Tab stop, so in dark it took up to three Tabs to reach the favourite button. The button is still the card's only focusable element.
+- Some coordinate clicks were never delivered to the page: no `pointerdown` reached `document`. They were re-driven on the element ref, and a later coordinate click also worked. Every toggle reported above has a matching trusted `click` event.
+- Keys were browser-level events from Claude in Chrome. This is not a manual keyboard pass and not an assistive-technology test.
+
+## R3.5 · Screenshots
+
+- **Saved:** the three Figma renders listed in R3.1.
+- **Not saved:** the browser captures. I captured the deployed build in Chrome for image = empty (light), the favourite unpressed and pressed with hover, keyboard focus in light and dark, image-state-hover with hover, dark state=hover, InResultsGrid in light and dark, and InListWithButton in light and dark. As in Runs 1 and 2, `save_to_disk` returned no path. The computed values above are the evidence.
+- **Attachments:** no attachment was added or removed. Existing attachments on the older rows were left in place.
+
+## R3.6 · Registry writes
+
+Staging Testing: **38 rows updated in place, 6 created.** Every row is `Passed`.
+
+- **Updated:** all 38 rows listed in R3.2.
+  - Expected Results were re-baselined from today's Figma, or from the named product-owner decision.
+  - Saw values are from `9253042`.
+  - Context names the build and the method.
+  - Waiver text on `recRKWuTGZeXeI8Ce` is kept verbatim, and the approval history on `recrT754NpeLNHUz4` and `recc7rjrjF5ZL3S57` is kept.
+- **Created:**
+  - `rec2JjWcAsLJsOf51`, `reczCK9rid2IXW9Vs`: image = empty
+  - `recCNB467vYHYAm1Z`, `rec3jibtoKPBDDCK9`: InResultsGrid
+  - `recOMiSsg98sFpvqG`, `rec3ygS0hD1AOxllO`: InListWithButton
+  - All six are linked to Card through `Composed In`, with `Size` `null` and `State` `idle`. No option was created.
+- `Development` was not written.
+
+Card's row after the writes: `Total Staging Tests` 44, `Staging Passed Count` 44, `Synchronization %` 100%, `Staging Testing Results Summary` Passed, **`Development` `Completed`**.
+
+## R3.7 · Verdict (Run 3)
+
+**All 44 cases pass on the deployed `9253042` staging build, in light and dark.** The four CSS changes behave as described. The stand-in image and the three new stories render without errors. Nothing regressed.
+
+- **Engineering:** nothing to fix. O1 and O2 are housekeeping.
+- **Design:** the six Figma follow-ups in R3.3.
+- **Next step:** a human reads this run before the release goes ahead. No verdict here is final.
 
 ---
 
