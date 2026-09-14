@@ -22,9 +22,19 @@ export type ButtonVariant = 'filled' | 'outlined';
 export type ButtonState = 'enable' | 'hover' | 'focused' | 'disabled';
 
 export type ButtonProps = {
-  /** Figma `variant`. */
+  /**
+   * Figma `variant`.
+   * `filled` is the high-emphasis button, for the most important action in a view.
+   * `outlined` is the medium-emphasis button, for a secondary action beside a filled one.
+   */
   variant?: ButtonVariant;
-  /** Figma `state`. `disabled` also sets the native `disabled` attribute. */
+  /**
+   * Figma `state`.
+   * `enable` is the resting button, ready for input.
+   * `hover` is the button under a pointer.
+   * `focused` is the button holding keyboard focus.
+   * `disabled` also sets the native `disabled` attribute.
+   */
   state?: ButtonState;
   /** The label. Compose an icon alongside it and the gap token applies. */
   children: ReactNode;

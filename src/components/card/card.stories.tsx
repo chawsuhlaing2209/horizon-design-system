@@ -15,6 +15,7 @@
 import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Card, type CardState } from './card';
+import { Button } from '../button/button';
 import type { CardImageRatio, CardImageState } from '../cardImage/cardImage';
 import type { CardLayoutOrientation } from '../cardLayout/cardLayout';
 
@@ -285,3 +286,57 @@ export const LongContent: Story = {
     locationInfo: 'Alfama, Lisbon · 1.2 km from centre · close to public transport',
   }),
 };
+
+/* ---- In context -------------------------------------------------------- */
+
+const RESULTS = [
+  { title: 'Casa do Bairro', locationInfo: 'Alfama, Lisbon · 1.2 km from centre', ratingScore: '4.7', reviewCount: '(318 reviews)', priceAmount: '121 EUR' },
+  { title: 'Rua das Flores Loft', locationInfo: 'Porto · 0.4 km from centre', ratingScore: '4.9', reviewCount: '(96 reviews)', priceAmount: '148 EUR' },
+  { title: 'Quinta do Mar', locationInfo: 'Cascais · 3.1 km from centre', ratingScore: '4.5', reviewCount: '(204 reviews)', priceAmount: '189 EUR' },
+];
+
+/** A grid of search results: vertical cards side by side, one per stay. */
+export const InResultsGrid: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 227px)',
+        gap: 'var(--spacing-gap-md)',
+        padding: 'var(--spacing-padding-lg)',
+      }}
+    >
+      {RESULTS.map((r) => (
+        <Card key={r.title} image={{ image: DEMO_PHOTO }} text={{ ...r, priceInfo: 'per night' }} />
+      ))}
+    </div>
+  ),
+};
+
+/** A vertical list of horizontal cards, each with a Button in its slot. */
+export const InListWithButton: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--spacing-gap-sm)',
+        padding: 'var(--spacing-padding-lg)',
+        width: '301px',
+      }}
+    >
+      {RESULTS.slice(0, 2).map((r) => (
+        <Card
+          key={r.title}
+          layout={{ orientation: 'horizontal', hasSlot: true }}
+          image={{ image: DEMO_PHOTO }}
+          text={{ ...r, priceInfo: 'per night' }}
+          slot={<Button variant="outlined">Book</Button>}
+        />
+      ))}
+    </div>
+  ),
+};
+
