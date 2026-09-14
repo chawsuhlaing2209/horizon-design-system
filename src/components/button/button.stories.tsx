@@ -11,6 +11,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from './button';
+import { Card } from '../card/card';
 
 const LABEL = 'Sign in';
 
@@ -117,3 +118,43 @@ export const Matrix: Story = {
 export const Playground: Story = {
   args: { variant: 'filled', state: 'enable' },
 };
+
+/* ---- In context -------------------------------------------------------- */
+
+/**
+ * A form's action row: the filled button submits, the outlined one cancels
+ * beside it.
+ */
+export const InForm: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <form
+      onSubmit={(e) => e.preventDefault()}
+      style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-gap-md)', padding: 'var(--spacing-padding-lg)', maxWidth: '360px' }}
+    >
+      <label style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-gap-2xs)', font: 'var(--label-lg)', color: 'var(--color-text-primary)' }}>
+        Email
+        <input type="email" name="email" style={{ font: 'var(--body-md)', padding: 'var(--spacing-padding-xs)' }} />
+      </label>
+      <div style={{ display: 'flex', gap: 'var(--spacing-gap-xs)' }}>
+        <Button type="submit" variant="filled">{LABEL}</Button>
+        <Button variant="outlined">Cancel</Button>
+      </div>
+    </form>
+  ),
+};
+
+/** Placed in a Card's slot as the card's one action. */
+export const InCard: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <div style={{ padding: 'var(--spacing-padding-lg)', width: '280px' }}>
+      <Card
+        layout={{ orientation: 'vertical', hasSlot: true }}
+        text={{ title: 'Casa do Bairro', locationInfo: 'Alfama, Lisbon', review: false, price: false }}
+        slot={<Button variant="outlined">View details</Button>}
+      />
+    </div>
+  ),
+};
+
