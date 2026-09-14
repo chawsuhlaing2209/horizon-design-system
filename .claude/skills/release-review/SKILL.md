@@ -116,11 +116,16 @@ Commit the report alone on `review/<name>-<short SHA>`, branched from
 `origin/staging`, and open a PR into `staging`. The report is the only file in
 that commit.
 
+Then **merge that PR** with a merge commit, without waiting for anyone. It holds
+nothing but the report, and the report is the record. Merge only your own
+review-report PR, and only after GitHub reports it mergeable. If it cannot merge
+(a conflict, a failed check), stop: write no cells, and say what blocked it.
+
 **Check:** the report names the reviewed SHA in its filename and its header, and
 the verdict matches the tables.
 
 ### 6 · Record it on the board — both cells or neither
-Once the report's commit is pushed:
+Once the report's PR is merged:
 
 1. `Release Review` ← the report's permalink, pinned to the commit that added it:
    `https://github.com/chawsuhlaing2209/horizon-design-system/blob/<report commit SHA>/reports/<name>/release-review-<short>.md`.
@@ -130,6 +135,25 @@ Once the report's commit is pushed:
 3. Read both cells back. If either write failed, clear the one that landed and
    report it. A verdict without its report, or a report without its verdict, is
    the half-record the registry forbids.
+4. **GitHub Commits** ← one new row for the report commit, taken from `git log` on
+   that commit, never typed from memory:
+
+   | Column | Value |
+   |---|---|
+   | Commit Hash | the short SHA |
+   | Message | the commit subject |
+   | Author | the commit author |
+   | Date Committed | the author date, in UTC |
+   | Link to Components | the reviewed component |
+   | Files Changed | `reports/<name>/release-review-<short>.md` |
+   | Commit URL | `https://github.com/chawsuhlaing2209/horizon-design-system/commit/<full SHA>` |
+   | Commit Type | `Documentation` |
+
+   Read the row back. Creating it adds the row to the component's `GitHub
+   Commits` cell by itself, since that cell is the other side of the same link.
+   Never write that cell directly, and never edit or remove a row you did not
+   create. If the row fails, the two cells above still stand: report the missing
+   row, do not clear the verdict.
 
 Nothing computes staleness (registry Flag 5). A stale review looks exactly like a
 fresh one, and the report's header date is the only defence.
@@ -140,8 +164,9 @@ Then remove the worktree.
 🧾 Release review · <name> · <Cleared | Blocked>  @ <short SHA>
 gates  <n>/7  (<# gate>: <the evidence that failed it>)
 checks <n>/6  (<# check>: <the entry that failed it>)
-report → <permalink>
+report → <permalink> · PR #<n> merged into staging (<merge SHA>)
 Release Review, Release Verdict → written, read back
+GitHub Commits → row for <short SHA> written, read back
 ```
 
 ## Judgement — what is and is not a finding
@@ -172,4 +197,6 @@ Release Review, Release Verdict → written, read back
 - [ ] The report is at `reports/<name>/release-review-<short SHA>.md` and names the SHA
 - [ ] `Release Review` is a commit permalink, not a branch URL
 - [ ] `Release Review` and `Release Verdict` were written together and read back
+- [ ] My review-report PR was merged into `staging` before I wrote the board, and I merged nothing else
+- [ ] A GitHub Commits row exists for the report commit, from `git log`, and was read back
 - [ ] I edited no intent file, fixed nothing, and published nothing
