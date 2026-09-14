@@ -11,7 +11,11 @@ import type { ReactNode } from 'react';
 export type CardLayoutOrientation = 'vertical' | 'horizontal';
 
 export type CardLayoutProps = {
-  /** Figma `orientation`. Stacks the image above the text, or beside it. */
+  /**
+   * Figma `orientation`.
+   * `vertical` stacks the image above the text; use it where cards sit side by side, in a grid or carousel.
+   * `horizontal` places the image beside the text, sharing the width evenly; use it in a vertical list where height is limited.
+   */
   orientation?: CardLayoutOrientation;
   /** Figma `hasSlot`. Reserves the slot below the text for extra content. */
   hasSlot?: boolean;

@@ -93,12 +93,12 @@
 .hds-card-image__favorite {
   position: absolute;
   z-index: 3;
-  /* DESIGN GAP: absolutely positioned in the node (y 8, 7.5 from the right in
-   * the 363.5-wide variants). Figma measures from the frame's outer edge, and
-   * CSS offsets start inside the 1px border, so 7 / 6.5 lands at 8 / 7.5.
+  /* DESIGN GAP: a raw position by design decision (2026-09-14): 8 from the top
+   * and 8 from the right, measured from the frame's outer edge as Figma does.
+   * CSS offsets start inside the 1px border, so 7 / 7 lands at 8 / 8.
    * Figma cannot bind a position to a variable, so no token can carry these. */
   top: 7px;
-  right: 6.5px;
+  right: 7px;
   display: flex;
   align-items: center;
   justify-content: center;

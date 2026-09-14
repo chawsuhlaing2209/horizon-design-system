@@ -4,9 +4,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* DESIGN GAP: Figma binds this radius to the core token `border/radius/4`.
-   * No semantic radius carries 4px. See docs/design-gaps.md. */
-  border-radius: var(--border-radius-2);
+  /* No radius: the Icon instance in iconButton (108:477, library `favorite`)
+   * has cornerRadius 0 and no bound variable (read 2026-09-14). */
 }
 
 .hds-icon {

@@ -66,6 +66,19 @@ never in anything a consumer imports.
 
 ---
 
+## Card — Figma `Slot` against prop `slot` — RESOLVED, 2026-09-14
+
+Release review at `c0d3af5`, gate 5, found the cardLayout slot property named
+`Slot` in Figma while the prop is `slot`.
+
+Read live on 2026-09-14: `componentPropertyDefinitions` on cardLayout set 8:1251
+now lists `slot` (type `SLOT`), next to `hasSlot` and `orientation`. The prop
+`slot` on `Card` and `CardLayout` matches it exactly. No code change.
+
+**Status:** resolved. No decision needed.
+
+---
+
 ## Button — `state` names a token `focused` that carries `pressed`
 
 Figma node 26:70. No prop was renamed; both Figma property names are kept

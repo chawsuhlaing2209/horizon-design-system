@@ -18,10 +18,9 @@ import { Card, type CardState } from './card';
 import type { CardImageRatio, CardImageState } from '../cardImage/cardImage';
 import type { CardLayoutOrientation } from '../cardLayout/cardLayout';
 
-// A stand-in photo. The Slide Image in Figma is an empty placeholder, so there
-// is no design asset for it — this only shows that a supplied image crops
-// correctly. Stories without it render the empty-surface fallback, which is
-// what the node itself draws.
+// A stand-in photo. The Slide Image in Figma stays an empty placeholder, so there
+// is no design asset for it. Every story shows this image by default (design gap
+// 6, decided 2026-09-14); `image = empty` keeps the fallback surface reviewable.
 const DEMO_PHOTO =
   'data:image/svg+xml;utf8,' +
   encodeURIComponent(
@@ -162,7 +161,7 @@ const meta: Meta<Flat> = {
       table: { category: FIGMA.layout, defaultValue: { summary: 'vertical' } },
     },
     hasSlot: {
-      description: 'cardLayout `hasSlot`. Reserves the 46px slot below the text.',
+      description: 'cardLayout `hasSlot`. Reserves the 48px slot below the text.',
       control: 'boolean',
       table: { category: FIGMA.layout, defaultValue: { summary: 'false' } },
     },
@@ -194,7 +193,7 @@ const meta: Meta<Flat> = {
     reviewCount: { control: 'text', table: { category: FIGMA.content } },
     priceAmount: { control: 'text', table: { category: FIGMA.content } },
     priceInfo: { control: 'text', table: { category: FIGMA.content } },
-    image: { description: 'Photo src. Empty in the node, so a quiet surface stands in.', control: 'text', table: { category: FIGMA.content } },
+    image: { description: 'Photo src. Stories use a stand-in image; clear it to see the empty fallback surface.', control: 'text', table: { category: FIGMA.content } },
     imageAlt: { description: 'Alt text. Empty means decorative.', control: 'text', table: { category: FIGMA.content } },
 
     favorited: {
@@ -222,7 +221,7 @@ const meta: Meta<Flat> = {
     reviewCount: '(318 reviews)',
     priceAmount: '121 EUR',
     priceInfo: 'per night',
-    image: '',
+    image: DEMO_PHOTO,
     imageAlt: '',
     favorited: true,
     favoriteLabel: 'Save to favourites',
@@ -262,6 +261,9 @@ export const ImageStateHoverRatio1x1: Story = {
   name: 'imageState = hover, ratio = 1:1',
   ...args({ imageState: 'hover', ratio: '1:1', image: DEMO_PHOTO }),
 };
+
+/** No `image` supplied: the component's quiet fallback surface, as the Figma node draws it. */
+export const ImageEmpty: Story = { name: 'image = empty', ...args({ image: '' }) };
 
 export const OverlayActionOff: Story = { name: 'overlayAction = false', ...args({ overlayAction: false }) };
 
