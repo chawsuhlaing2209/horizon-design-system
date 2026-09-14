@@ -1,6 +1,6 @@
 {
   "$component": "card",
-  "$commit": "d095822e4e319d0b153a18cd68a2397a2a765001",
+  "$commit": "76f2a37c5f20fa4420676c0f224756d880aa0536",
   "$figma": {
     "file": "r1CpQEYecqROS0oIOMlqAx",
     "page": "7:701",
@@ -61,8 +61,22 @@
       "hover": "Pins the overlay: `hover` forces it on, `idle` forces it off."
     }
   },
-  "placement": [],
-  "pairs_with": [],
+  "placement": [
+    {
+      "text": "In a three-column grid of search results: three vertical cards side by side, one per stay",
+      "story": "InResultsGrid"
+    },
+    {
+      "text": "In a vertical list: two horizontal cards stacked in a column, each with an outlined \"Book\" Button in its slot",
+      "story": "InListWithButton"
+    }
+  ],
+  "pairs_with": [
+    {
+      "component": "button",
+      "story": "InListWithButton"
+    }
+  ],
   "required_tokens": [
     "--body-lg-bold",
     "--body-sm",
@@ -147,7 +161,7 @@
     },
     {
       "text": "`:focus-visible` on the favourite button draws an outline of `--border-width-focused` in `--color-border-focused`, offset by `--border-width-default`",
-      "source": "src/components/cardImage/cardImage.css:135"
+      "source": "src/components/cardImage/cardImage.css:138"
     },
     {
       "text": "A supplied photo renders as <img> with `alt` taken from `imageAlt`",
@@ -171,7 +185,7 @@
     },
     {
       "text": "The image overlay's opacity transition is removed under `prefers-reduced-motion: reduce`",
-      "source": "src/components/cardImage/cardImage.css:89"
+      "source": "src/components/cardImage/cardImage.css:92"
     }
   ]
 }

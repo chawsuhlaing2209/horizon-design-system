@@ -1,6 +1,6 @@
 {
   "$component": "button",
-  "$commit": "5a692e152a2b81f525acd62a312df43a60e2a63b",
+  "$commit": "76f2a37c5f20fa4420676c0f224756d880aa0536",
   "$figma": {
     "file": "r1CpQEYecqROS0oIOMlqAx",
     "page": "25:65",
@@ -34,18 +34,32 @@
   ],
   "variant_intent": {
     "variant": {
-      "filled": null,
-      "outlined": null
+      "filled": "`filled` is the high-emphasis button, for the most important action in a view.",
+      "outlined": "`outlined` is the medium-emphasis button, for a secondary action beside a filled one."
     },
     "state": {
-      "enable": null,
-      "hover": null,
-      "focused": null,
+      "enable": "`enable` is the resting button, ready for input.",
+      "hover": "`hover` is the button under a pointer.",
+      "focused": "`focused` is the button holding keyboard focus.",
       "disabled": "`disabled` also sets the native `disabled` attribute."
     }
   },
-  "placement": [],
-  "pairs_with": [],
+  "placement": [
+    {
+      "text": "In a form's action row, below an email input: a filled `type=\"submit\"` Button with an outlined \"Cancel\" Button beside it",
+      "story": "InForm"
+    },
+    {
+      "text": "In the slot of a vertical Card, as an outlined \"View details\" Button",
+      "story": "InCard"
+    }
+  ],
+  "pairs_with": [
+    {
+      "component": "card",
+      "story": "InCard"
+    }
+  ],
   "required_tokens": [
     "--border-radius-control",
     "--border-width-default",
@@ -82,7 +96,7 @@
     },
     {
       "text": "`children` is the label and is required; there is no default label",
-      "source": "src/components/button/button.tsx:30"
+      "source": "src/components/button/button.tsx:40"
     },
     {
       "text": "`state=\"disabled\"` sets the native `disabled` attribute",
