@@ -1,6 +1,6 @@
 {
   "$component": "card",
-  "$commit": "5a692e152a2b81f525acd62a312df43a60e2a63b",
+  "$commit": "d095822e4e319d0b153a18cd68a2397a2a765001",
   "$figma": {
     "file": "r1CpQEYecqROS0oIOMlqAx",
     "page": "7:701",
@@ -45,16 +45,16 @@
   ],
   "variant_intent": {
     "state": {
-      "enable": null,
+      "enable": "`enable` is the resting card, flat on its surface with no elevation.",
       "hover": "`hover` raises the card on elevation/level2."
     },
     "layout.orientation": {
-      "vertical": null,
-      "horizontal": null
+      "vertical": "`vertical` stacks the image above the text; use it where cards sit side by side, in a grid or carousel.",
+      "horizontal": "`horizontal` places the image beside the text, sharing the width evenly; use it in a vertical list where height is limited."
     },
     "image.ratio": {
-      "4:3": null,
-      "1:1": null
+      "4:3": "`4:3` is the default landscape crop, for photos of places and scenes.",
+      "1:1": "`1:1` crops the image square, for dense grids or a single object as the subject."
     },
     "image.state": {
       "idle": "Pins the overlay: `hover` forces it on, `idle` forces it off.",
@@ -66,7 +66,6 @@
   "required_tokens": [
     "--body-lg-bold",
     "--body-sm",
-    "--border-radius-2",
     "--border-radius-4",
     "--border-radius-control",
     "--border-radius-full",
@@ -156,11 +155,11 @@
     },
     {
       "text": "`imageAlt` defaults to an empty string",
-      "source": "src/components/cardImage/cardImage.tsx:55"
+      "source": "src/components/cardImage/cardImage.tsx:59"
     },
     {
       "text": "With no photo supplied, an empty <div> renders in its place",
-      "source": "src/components/cardImage/cardImage.tsx:86"
+      "source": "src/components/cardImage/cardImage.tsx:90"
     },
     {
       "text": "The title renders as a <p> element, not a heading element",
