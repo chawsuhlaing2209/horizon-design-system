@@ -168,7 +168,7 @@ FILL flipping 0↔1 on toggle. So the open question is not whether to outline it
 it is whether this outlined, subtle-coloured heart is the design. Still a
 decision, but a narrower one than the entry claimed.
 
-### 6. The photo is an empty placeholder
+### 6. The photo is an empty placeholder — RESOLVED, 2026-09-14 (product owner's decision)
 
 `Slide Image` (8:1150) is a transparent 256 × 256 placeholder in Figma — there is
 no image asset to export. The component takes an `image` src; with none supplied
