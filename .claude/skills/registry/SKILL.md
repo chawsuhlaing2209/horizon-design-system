@@ -108,7 +108,7 @@ Owners are one of: **Human**, **PM**, **Engineer**, **QA**, **DevOps**, **Doc Ge
 | Figma | Human | The design source. Feeds precedence 8. |
 | Staging Storybook | Engineer | Written after the staging build is deployed and seen to render. Feeds precedence 7. |
 | Production Storybook | DevOps | Written on promotion to production. Feeds precedence 5. |
-| Astro Link | Doc Generator | The deep-linked docs page, written only after the live page was fetched and holds all five tabs. Feeds precedence 4. Release never writes this. |
+| Astro Link | Doc Generator | The deep-linked docs page, written only after the live page was fetched and holds all five tabs (Usage, Examples, Code, Design, Changelog), at `/core/components/<name>/`. Feeds precedence 4. Release never writes this. |
 | Design | Human | Sign-off. Blank means not signed off; no agent nudges it along. Feeds precedence 8. |
 | **Development** | **Derived** | **Formula. No agent may write it.** |
 | Synchronization % | Derived | Formula over the two count columns. |

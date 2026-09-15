@@ -36,7 +36,7 @@ Each sweep, walk:
 | `Components/Production Storybook` | Link opens and renders |
 | `Components/Astro Link` | Opens with `200`, and the page's `<h1>` is the component |
 | `Components/Release Review` | A permalink pinned to a commit, not a branch URL, and it resolves |
-| The docs site | All nine sections (Home, Components, Tokens, Start designing, Start coding, Changelog, Roadmap, News, Help) return `200` at the URL in `tools.md` |
+| The docs site | Every sidebar page (Get Started, Designing, Developing, Skills, Core, Styling, Help) and every redirect returns `200` at the URL in `tools.md`, and no page links to a page that does not exist |
 | npm | The `latest` version of the package equals the newest `v*` tag, and its page has a README |
 | GitHub | `main` has a root `README.md`. No open PR targets `main` from any branch but `staging` |
 | `Staging Testing` — every row | `Testing Results` set on every row; no blanks holding the board still |
@@ -102,7 +102,7 @@ Try: <one next step>
 ```
 
 ## Self-check
-- [ ] I opened every link I marked verified — none taken on trust, including Astro Links and the nine docs sections
+- [ ] I opened every link I marked verified — none taken on trust, including Astro Links and every docs page
 - [ ] I checked for missing rows, not just the content of rows that exist
 - [ ] I did not count `To-do` as ready without reading `Design`
 - [ ] I did not report `Synchronization %` as meaningful

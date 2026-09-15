@@ -1,289 +1,220 @@
 ---
 name: astro-page
-description: Build the Astro Starlight docs site from the code repo — its nine sections (Home, Components, Tokens, Start designing, Start coding, Changelog, Roadmap, News, Help) and one page per cleared component with a header and five tabs (Design, Code, Usage, Examples, Changelog) — plus the site's README, commit it to the astro branch that Vercel deploys, confirm every live page, and only then write Astro Link to the registry.
+description: Build and publish the Horizon docs site in the reference-site format — seven sidebar groups (Get Started, Designing, Developing, Skills, Core, Styling, Help), a splash home page, and one five-tab component page (Usage, Examples, Code, Design, Changelog) per cleared component — by running docs-site/scripts/generate.mjs against the pinned repo and keeping the written guides true, then committing to the astro branch that Vercel deploys, verifying every live page, and only then writing Astro Link.
 ---
 
-# Build a component's docs page
+# Build the docs site
 
-The docs site is **Astro Starlight** (`tools.md`). This skill writes the site's
-nine sections, its README, and one page per cleared component, using Starlight's
-own components for structure. It never adds a theme, plugin, or UI library to make
-a page look different.
+The docs site is **Astro Starlight**, in `docs-site/` on the `astro` branch (`tools.md`).
+Its format follows the Sunim reference site (https://sunim-ds-reference.vercel.app):
+same sidebar groups, same home page, same component-page anatomy. Match that site,
+not a simpler page of your own. A site with only component pages, or with a sidebar
+link that goes nowhere, does not meet the standard.
 
 ## When to use this
-Use this whenever the docs site is built: after a publish, when a component's
-page needs creating or updating, or when any site section is out of date. **Every
-run rebuilds all nine site sections and the site's README**, then one page per
-component the board clears. A run that updates only a component page leaves the
-Home, Components, Roadmap and News sections stale, so there is no such run.
-
-It never adds a theme, plugin, or UI library, and it never designs the site: the
-sections, their order and their sources are fixed below.
-
-**Every section on the page has one source.** If the source is missing, that
-section is left out and the page says so. A section filled from somewhere else,
-or from memory, is invented.
+Whenever the site is built: after a publish, when a component page needs creating or
+updating, or when anything the site states has changed in the repo. **Every run
+rebuilds the whole site**: the generated reference, every component page, and a check
+of every written guide. A run that updates one page leaves Home, All components,
+Roadmap and News stale, so there is no such run.
 
 **Run by the Doc Generator** (`.claude/agents/doc-generator.md`), which owns
-`Astro Link` in the registry. It runs this skill for components reading
-`Completed` or `Released` whose `Release Verdict` is `Cleared`.
+`Astro Link`. Components qualify when `Development` reads `Completed` or `Released`,
+`Release Verdict` is `Cleared`, and they are exported from `src/index.ts`.
 
-## The site — nine sections, always
+## The site
 
-The sidebar holds exactly these nine entries, in this order. Each is generated
-from the code repo and the board at the pinned commit, never written freehand.
+### The sidebar — seven groups, in this order, written out in `astro.config.mjs`
 
-| # | Sidebar label | File in `<folder>/src/content/docs/` | Source — and nothing else | Missing when |
-|---|---|---|---|---|
-| 1 | Home | `index.mdx` (`/`) | Root `README.md`: its first heading, first paragraph and install block, verbatim. `package.json` `name` and `version`. A list of the board's `Released` components, each linking to its page. | `README.md` missing: stop the run (see step 1) |
-| 2 | Components | `components/index.mdx` plus one page per component | The board: every component reading `Completed` or `Released` with `Release Verdict = Cleared`, each with its `Development` badge, the Figma one-line description, and a link to its page. The per-component pages follow steps 2–4. | No component qualifies |
-| 3 | Tokens | `tokens.mdx` | `dist/tokens.css` after `npm run build:package`: every custom property, grouped by the first segment of its name (`color`, `spacing`, `border`, `size`, type, `elevation`, …), with its `:root` value, its `[data-theme="dark"]` value or "same as light", and its `/** … */` description verbatim. Where `tokens/` separates core from semantic sets, keep that split and quote `CLAUDE.md`: components use semantic tokens only. | `dist/tokens.css` not built |
-| 4 | Start designing | `start-designing.mdx` | The Figma file URL (`$figma.file` in the intent files). Each component's Figma page name and node, from its intent file. The `CLAUDE.md` sections *The system*, *Naming*, *Components*, *Typography* and *Icon*, quoted verbatim. The token pipeline line from `tools.md`. | No intent file names a Figma file |
-| 5 | Start coding | `start-coding.mdx` | Root `README.md` install and usage sections, verbatim. `package.json` `exports` and `peerDependencies`. The export list of `src/index.ts`. The dark-theme selector as it appears in `dist/tokens.css`. | `README.md` has no usage section: notice, the rest still renders |
-| 6 | Changelog | `changelog.mdx` | Root `CHANGELOG.md` if it exists, verbatim. Otherwise, per `v*` tag, newest first: the tag's date and `git log --format='%h%x09%ad%x09%s' --date=short <previous tag>..<tag>` subjects verbatim, each short SHA linked. Then an **Unreleased** list: commits on `origin/main` since the last tag. | No tag and no `CHANGELOG.md` |
-| 7 | Roadmap | `roadmap.mdx` | The board: every component not `Released`, grouped by its `Development` value, names only. The open headings in `docs/design-gaps.md` and `docs/naming-conflicts.md` (not marked RESOLVED), each linked to the file at the pinned SHA. **No dates, owners or priorities** unless a source states them. | Never empty: an empty board says "Nothing in progress" |
-| 8 | News | `news.mdx` | Dated events, newest first, one line each, the fact and its link: each npm version and its publish time (`npm view <package> time --json`); each component that reached `Released` (its `Release Review` commit date and page link); the first commit on `astro` (the site's launch). No prose beyond the event. | No event yet |
-| 9 | Help | `help.mdx` | Root `README.md` *Help*, *Support* or *Contributing* section, verbatim. The repository's GitHub issues URL. The `Production Storybook` URL and the docs site URL from `tools.md`. | README has no such section: notice, the links still render |
+| Group | Pages (`docs-site/src/content/docs/…`) | Kind |
+|---|---|---|
+| Get Started | `get-started/changelog`, `roadmap`, `news`, `versioning`, `upgrading` | changelog, roadmap, news **generated**; versioning, upgrading **written** |
+| Designing | `designing/introduction` | written |
+| Developing | `developing/introduction`, `react`, `react-router` | written |
+| Skills | `skills/knowledge-skill` | written |
+| Core | Components (`core/components/overview` first, then one page per component, autogenerated) and `core/tokens` | **generated** |
+| Styling | `styling/theming` | written |
+| Help | `help/faq`, `bug-report`, `feature-request`, `contributing`, `embedding` | written |
 
-`astro.config.mjs` lists the sidebar explicitly in this order: a link for Home,
-the Components group (with its index first, then component pages), then a link
-for each of the other seven. Change the config only to keep this order.
+Plus the home page, `index.mdx`, **generated**, with `template: splash`.
 
-**A section whose source is missing still exists** at its place and path. It holds
-one notice naming what is missing and where it would come from, exactly as a
-component tab does.
+The sidebar is written out, not autogenerated, so a missing page fails the build rather
+than vanishing from the navigation. Only `core/components` is autogenerated, because its
+pages are generated too. Moving a page adds its old path to `redirects` in
+`astro.config.mjs`, because `Astro Link` cells and people's bookmarks record URLs.
 
-**The site's README.** `<folder>/README.md` says what the site is, where it
-deploys, and how to run and build it, taken from `tools.md` (docs site paths and
-commands) and `<folder>/package.json` scripts. It is rewritten every run.
+### Generated — `node docs-site/scripts/generate.mjs --repo <pinned worktree>`
 
-## Inputs
-For each component, from one pinned commit:
+Never edit a generated file by hand. If one is wrong, its source is wrong: fix the
+intent file, the prop doc comment, the token, the story, or the generator.
 
-| Input | Where it is |
+| File | Built from |
 |---|---|
-| Intent file | `src/components/<name>/<name>.intent.json` |
-| Source | `src/components/<name>/`, its composed subcomponents, `src/index.ts`, `dist/index.d.ts` |
-| Stories | `src/components/<name>/*.stories.tsx`, and the deployed Storybook's `index.json` |
-| Built tokens | `dist/tokens.css`, from `npm run build:package` |
+| `index.mdx` | README intro (hero), npm publish date, published component count, semantic token count, install command; *Where to go* cards; *What this site is* cards |
+| `core/components/overview.md` | the board's qualifying components, each with status, *since* version and Figma description; what is not here |
+| `core/components/<name>.mdx` | the five tabs below |
+| `core/tokens.md` | `dist/tokens.css`: what released components depend on (light, dark, used by), every semantic token by group with its description, the core scale, where tokens come from |
+| `get-started/changelog.md` | `v*` tags, the exports of `src/index.ts` at each tag, peers at each tag, npm publish dates, and unreleased commits on `main` |
+| `get-started/roadmap.md` | the board's components not `Released`; open and waived entries in `docs/design-gaps.md`; open entries in `docs/naming-conflicts.md`. No dates, owners or priorities |
+| `get-started/news.md` | npm versions with dates, components reaching `Released` (their release-review commit date), the site's first commit on `astro` |
+| `src/styles/tokens.generated.css` | `dist/tokens.css`, plus a `[data-theme="light"]` block |
+
+The generator's inputs, and nothing else:
+- the repo worktree at the pinned SHA, with `npm run build:package` run there;
+- `docs-site/sources/registry-status.json` — **you write it each run** from the board:
+  component names, `development`, `releaseVerdict`, `releaseReview` permalink. Never a
+  base, table or record ID; the file is committed;
+- `docs-site/sources/figma.json` — **you write it each run** from live Figma reads: each
+  component's documentation-frame description, and every component set's node and
+  properties (name, type, values), verbatim. `storyAliases` maps a Storybook control
+  name onto the Figma property it stands for;
+- `docs-site/reference.config.json` — site, Storybook and repo URLs, embed heights;
+- the deployed Storybook's `index.json`, and `npm view <package> time`.
+
+### The component page — header strip, then five tabs in this order
+
+**Header strip:** status badge (`released · since 0.1.0`), then links to Storybook, the
+Figma node, and the source tree at the SHA. The sidebar badge carries the status too.
+
+| Tab | Holds | From |
+|---|---|---|
+| **Usage** | When to use it; *Where it goes*; *When not to use it* (caution aside, with each alternative); best practice; what each variant is for; accessibility facts, each linked to its line; composition (built from, pairs with, imported by); what this version promises | the intent file, `src/` imports, tags |
+| **Examples** | The common case (the README usage block, when it uses the component); *Worth seeing*: every story that is not a matrix row or review view, embedded live in light and dark | README, Storybook `index.json` |
+| **Code** | Import; props table per public props type (prop, type, default, doc comment); types; tokens it needs (light, dark, used in); Storybook's docs page embedded | `dist/*.d.ts`, component defaults, component CSS, `dist/tokens.css` |
+| **Design** | The Figma node embedded; the variant matrix per component set, with every matrix story listed; both themes; what Figma never bound (every `DESIGN GAP` declaration and its reason); recorded design gaps with status | `figma.json`, Storybook `index.json`, component CSS, `docs/design-gaps.md` |
+| **Changelog** | Every commit to the component and its subcomponents, newest first, with the version each shipped in | git log and tags |
+
+**Stories are split, not dumped.** A story whose name is made only of Figma property
+names and values (after `storyAliases`) is a matrix row and goes to *Design*; `Matrix`
+and `Figma node …` are review views and go there too. Everything else — in-context,
+pairing, behaviour, edge cases — is *Worth seeing* on *Examples*. Embeds come in pairs,
+`globals=theme:light` and `globals=theme:dark`, and CSS shows the one matching the page.
+Every frame has a link beneath it.
+
+**A missing source leaves a notice in its place,** never an empty section and never
+filler.
+
+### Written — the guides
+
+`versioning`, `upgrading`, `designing/introduction`, `developing/*`, `skills/knowledge-skill`,
+`styling/theming` and `help/*` are written in prose, like the reference site's, but
+**every claim in them must be true of the repo at the pinned SHA**: package exports and
+peers, stylesheet contents, theme blocks, token modes, props that exist, recorded design
+gaps, the rules in `CLAUDE.md`, the commands in `tools.md`. On every run, re-read each
+guide against those sources and correct any sentence that has gone false. A guide never
+states a date, a plan or a promise that no source states.
+
+### The look
+
+`src/styles/reference.css` maps Starlight's variables onto Horizon tokens, and adds only
+the page-component classes (`hds-pageheader`, `hds-status`, `hds-swatch`, `hds-embed*`,
+`hds-modes`). No hex, no radius, no font stack of its own. Inter is self-hosted from
+`@fontsource/inter`; the site's CSP in `docs-site/vercel.json` allows fonts from `'self'`
+and frames from the Storybook origin and Figma only.
+
+### The site's README
+
+`docs-site/README.md` says what the site is, where it deploys, what is generated and what
+is written, and how to run it. Update it whenever any of those changes.
 
 ## Steps
 
 ### 1 · Find the site, pin the commit
-`tools.md` names the framework — Astro Starlight — and the branch that deploys it,
-`astro`. Under Paths it records the site's folder, the Vercel project linked to
-`astro`, and the production URL. If it does not record them, stop here and report it. Do not scaffold a Starlight
-site, create a Vercel project, or guess a folder or URL from another repo.
+`tools.md` records the site folder, the Vercel project and the production URL. If it
+does not, stop and report it. Pin `origin/main` (full SHA), make a worktree there, and
+run `npm ci && npm run build:package` in it. The root `README.md` must exist at that SHA;
+without it Home, Start coding and Help have no source, so stop.
 
-The page goes in `<folder>/src/content/docs/components/<name>.mdx`, Starlight's
-content collection. If the site already keeps component pages somewhere else,
-the existing pages win, and the path in `tools.md` is wrong — report that.
+Work on `astro` in a second worktree. Never touch the person's checkout.
 
-Pin the commit: the tip of `origin/main` by default, full SHA recorded. Read
-every input from a worktree at that SHA and run `npm run build:package` there.
+**Check:** one SHA; the folder and URL came from `tools.md`; README exists.
 
-**Root `README.md` must exist at that SHA** and name the package from
-`package.json` and its install command. Without it the Home, Start coding and Help
-sections have no source, so stop the run and report it. Do not write a README.
+### 2 · Read the board and Figma, write the sources
+Read the Components table (confirm `baseName` first). Write
+`docs-site/sources/registry-status.json`. Read each qualifying component's Figma page:
+the documentation frame's description line, and every component set's properties. Write
+`docs-site/sources/figma.json`.
 
-**Check:** the folder and URL came from `tools.md`, there is one SHA, and the root
-`README.md` exists there.
+**Check:** both files name only what was read this run; no IDs in the registry file.
 
-### 2 · Take stock of the sources
-Before you write anything, list which sources exist:
+### 3 · Generate, then check the guides
+Run `node scripts/generate.mjs --repo <worktree>` inside `docs-site/`. It refuses on a
+missing input or a token a component uses that `dist/tokens.css` does not declare; fix
+the cause, never the check. Then re-read every written guide against the repo and
+correct what has gone false. If a new component, export, stylesheet or theme exists,
+the guides that list those name it.
 
-| Part of the page | Source | Missing when |
-|---|---|---|
-| Header · status | The registry's `Development`, read now | The component has no row |
-| Header · name + one line | Figma documentation frame on `💠 <Name>`: title `Title goes here`, line `Component description goes here`, verbatim | No page or no frame |
-| Header · Storybook link | `Production Storybook` in the registry, deep-linked to the component's docs entry in that Storybook's `index.json` | Cell empty |
-| Header · Figma link | The node URL at the top of the story file | No URL there |
-| Header · Source link | `https://github.com/chawsuhlaing2209/horizon-design-system/tree/<SHA>/src/components/<name>` | — |
-| **Design** | The component (Figma component set: screenshot, variant properties) + tokens (`var(--…)` in its CSS, with values from `dist/tokens.css`) | No component set, or no tokens resolved |
-| **Code** | Types: the component's exported props in `dist/index.d.ts` | Not exported from `src/index.ts` |
-| **Usage** | Intent file | No intent file, or a field in it is empty |
-| **Examples** | Stories, as listed in the deployed Storybook's `index.json` | No stories, or no deployed Storybook |
-| **Changelog** | Commit history | — |
+**Check:** the generator exited 0; every guide was re-read.
 
-The header status comes from the board. The Figma frame's status labels
-("Development Completed") are typed by a person, and the board is the record. If
-the two disagree, use the board and put the disagreement in the report.
+### 4 · Build, and look at it
+`npm ci && npm run build` in `docs-site/`. Then:
+- Every internal link in `dist/` resolves to a built page (crawl the HTML; a sidebar
+  link, a card or an in-page link to nothing is a failure).
+- Open the site locally and look: the home page, one component page with every tab,
+  and the Tokens page, in light and in dark. A page that builds but shows an empty
+  props table, a blank embed, or raw Markdown is a failed build.
 
-**Check:** every row is marked present or missing before any page content exists.
+**Check:** zero broken internal links; each tab of each component page has content.
 
-### 3 · Build each tab from its source only
-
-**Design ← component + tokens.**
-- A `get_screenshot` of the component set node, saved into the site's assets.
-- The variant properties and their values, as Figma names them.
-- A token table: each token the component's CSS uses, followed through its
-  subcomponents, with `--hds-*` private properties left out. Give each token's
-  `:root` value and its `[data-theme="dark"]` value from `dist/tokens.css`.
-- The dark block lists only colours that change. Where a token has no dark
-  entry, write "same as light". That is how the build works, not a gap.
-
-**Code ← types.**
-- The import lines: the package `name` and the `./styles.css` and `./tokens.css`
-  exports from `package.json`.
-- One props table per exported props type, with prop, type, required or optional,
-  and the doc comment verbatim.
-- No defaults column. Defaults are not in the types, so they are not a source for
-  this tab.
-- A component that is not exported gets no Code tab body: "Not part of the
-  public API."
-
-**Usage ← intent.** One sub-section per field that has content, in this order:
-`use_when`, `dont_use_when` (each with its `alternative`, where there is one),
-`best_practice`, `variant_intent`, `placement`, `pairs_with`, `a11y`.
-
-Copy the entries verbatim, and do not smooth, merge, or reorder them.
-`variant_intent` values that are `null` are left out and named in the notice. An
-empty field is not rendered; the notice names it instead.
-
-**Examples ← stories.** One example per story in the Storybook's `index.json`
-under this component, in index order:
-- The story name.
-- An embedded `iframe.html?id=<id>&viewMode=story` from `Production Storybook`.
-- A link out to the story.
-
-Do not write JSX for an example. Card's stories map flat controls through a
-render function, and a snippet rebuilt from that would be code nobody wrote.
-
-**Changelog ← commit history.** From the worktree:
-`git log --date=short --format='%H%x09%ad%x09%s' -- src/components/<name> <each composed subcomponent>`,
-newest first. Each row has the date, the short SHA linked to its commit, and the
-subject verbatim. Mark each release tag (`v*`) that contains a commit. Do not
-summarise the subjects into prose.
-
-**When a source is missing,** the tab stays in its place in the order. It holds
-one notice naming what is missing and where it would come from:
-
-> Placement and pairs with — not documented. `card.intent.json` has empty
-> `placement` and `pairs_with`: no story shows Card in a product layout or
-> beside another component.
-
-**Check:** every sentence on the page can be traced to a row of step 2.
-
-### 4 · Write the sections and the pages
-First the nine site sections and `<folder>/README.md`, from their sources in the
-table above. Then one `.mdx` file per component at
-`<folder>/src/content/docs/components/<name>.mdx`. If the site already has a
-component page, match its structure.
-
-- **Frontmatter:** `title` is the component name (Starlight renders it as the
-  page's `<h1>`). `description` is the one line from Figma, verbatim, or left out
-  if it is missing.
-- **Header,** above the tabs: the status as a Starlight `<Badge>` carrying the
-  registry's `Development` text, then the three links. A link whose source is
-  missing is left out, and a notice says so.
-- **Tabs:** `<Tabs>` with five `<TabItem>`s, labels exactly `Design`, `Code`,
-  `Usage`, `Examples`, `Changelog`, in that order. Import `Tabs`, `TabItem` and
-  `Badge` from `@astrojs/starlight/components`. Do not write a tab component of
-  your own.
-
-Build the site locally with its own build command, recorded in `tools.md` once the
-site exists. It must build with no errors and no broken internal links.
-
-Commit the sections, the README, every page and their assets to the `astro`
-branch — everything from this run in one commit — and push. That commit is the
-deploy.
-
-**Check:** the site builds; the built sidebar has the nine labels in order; each
-component page's built HTML has five tab labels in order.
-
-### 5 · Wait for Vercel
-The Vercel project linked to `astro` deploys each push to production by itself.
-**Never deploy by hand** (`vercel deploy`, a dashboard redeploy): the live site
-must always trace to a commit on `astro`.
-
-Wait for the deployment of the commit you pushed, not the latest one. Vercel
-reports it on that commit in GitHub
-(`gh api repos/<owner>/<repo>/deployments?sha=<sha>`, then that deployment's
-statuses). Go on only when it reads `success`. If it fails, is cancelled, or does
-not finish, every page in the commit fails verification.
+### 5 · Commit, push, wait for Vercel
+Commit everything from the run on `astro` in one commit and push. The `horizon-docs`
+project deploys it to production by itself. **Never deploy by hand.** Wait for the
+deployment of that commit
+(`gh api "repos/<owner>/<repo>/deployments?sha=<sha>"`, environment
+`Production – horizon-docs`) to read `success`.
 
 ### 6 · Verify the live site — before anything touches the board
-**The nine sections first.** Fetch each section's live URL. Each must return `200`
-on the production domain with its sidebar label as the `<h1>`, and the live
-sidebar must list all nine labels in order. A failing section is reported; it does
-not block component pages, but the run's card shows the site as incomplete.
+- **Every page in the sidebar** returns `200` on the production domain, and the live
+  sidebar shows the seven groups in order.
+- **Each component page:** `200`; `<h1>` is the component; exactly five `role="tab"`
+  labelled `Usage`, `Examples`, `Code`, `Design`, `Changelog` in that order; five
+  `role="tabpanel"` sections, each with content (Starlight ships every panel in the
+  HTML, so check the HTML, not visibility).
+- **Every header link returns `200`,** except the Figma link: the file is team-only by
+  decision (product owner, 2026-09-14), so `www.figma.com` passes on `403` or a
+  redirect to Figma's login. Any other non-`200` Figma answer fails.
+- **Every redirect** in `astro.config.mjs` lands on a `200` page.
 
-**Then each component page.** Fetch the live page URL, not the deploy log:
+**If any component page fails, write nothing to the registry for it.**
 
-```
-curl -sSL -o page.html -w '%{http_code} %{url_effective}\n' <page URL>
-```
-
-All of these must hold:
-- The status is `200`, and the final URL is on the production docs domain.
-  A `401` or `403` from deployment protection is a failure, not an obstacle.
-- The page's `<h1>` is the component's name.
-- There are exactly five `role="tab"` elements, labelled `Design`, `Code`,
-  `Usage`, `Examples`, `Changelog`, in that order.
-- There are five `role="tabpanel"` sections, each with content — either real
-  content or its missing-source notice. An empty panel fails. Starlight puts
-  every panel in the HTML and marks all but the first `hidden`, so check what
-  each panel contains in the fetched HTML, not whether it is visible.
-- Every header link on the page returns `200`. One exception: the Figma link. The
-  design file is team-only by decision (product owner, 2026-09-14), so a
-  `www.figma.com` link passes when it answers `403` or a redirect to Figma's login
-  page. Record the status you got in the card. Any other non-`200` Figma answer
-  (`404`, a different host, a timeout) still fails.
-
-**If any check fails, write nothing to the registry.** Report which check failed
-and what the page returned.
-
-### 7 · Write `Astro Link`
-Write the exact URL you verified — the deep link to this page, not the site root
-and not a preview URL. Read it back.
+### 7 · Write `Astro Link`, then close the loop
+Write the exact component-page URL you verified (`/core/components/<name>/`), read it
+back. Then read `Development` back: if a component moved to `Released`, the badges, Home,
+All components, Roadmap and News are now stale. Update `registry-status.json`, generate,
+build, push once more, wait, and re-fetch the changed pages. Links do not change.
 
 ```
-📘 Astro site  @ <short SHA>
-sections  Home ✓ Components ✓ Tokens ✓ Start designing ✓ Start coding ✓ Changelog ✓ Roadmap ✓ News ✓ Help ✓
-notices   <section>: <missing source>
-readme    <folder>/README.md written
-
-📘 Astro page · card  @ <short SHA>
-page      <live URL>  → 200, 5 tabs, 5 panels
-sections left out
-  - <tab or header part>: <missing source>
-Astro Link → written, read back
+📘 Docs site  @ <short SHA> · astro <short SHA> · Vercel success
+sidebar   Get Started ✓ Designing ✓ Developing ✓ Skills ✓ Core ✓ Styling ✓ Help ✓ · 0 broken links
+guides    re-checked · corrected: <page: what changed, or none>
+<name>    200 · Usage Examples Code Design Changelog · Figma 403 (allowed) → Astro Link written, read back
+notices   <page or tab: missing source, or none>
 ```
-
-Once every link is written, read `Development` back. If it changed (a component
-reached `Released`), regenerate the page badges and the Home, Components, Roadmap
-and News sections from the board as it now reads, commit and push once more, wait
-for that deployment, and re-fetch the changed pages. Links do not change.
 
 If blocked:
 ```
-📘 Astro page · card · blocked
-<which step, what failed — e.g. live page 401, Changelog panel empty>
+📘 Docs site · blocked
+<which step, what failed — e.g. generator: token --x not in dist/tokens.css; live page 404>
 Astro Link → not written
 Try: <one next step>
 ```
 
 ## References
-- The intent file and what its fields mean: `.claude/skills/component-intent/SKILL.md`
-- Who writes `Astro Link`, and the board's flags: `.claude/skills/registry/SKILL.md`
-- The agent that runs this skill, and its boundaries: `.claude/agents/doc-generator.md`
-- The public surface and built output: `src/index.ts`, `dist/`
-- Stack facts, including where the docs site lives: `tools.md`
+- The format to match: https://sunim-ds-reference.vercel.app (source: `~/sunim-ds-starter/docs/`)
+- The generator and site notes: `docs-site/scripts/generate.mjs`, `docs-site/README.md` on `astro`
+- The intent file: `.claude/skills/component-intent/SKILL.md`
+- Who writes `Astro Link`: `.claude/skills/registry/SKILL.md`
+- Where the site lives: `tools.md`
 
 ## Self-check
-- [ ] The docs site is Astro Starlight, and its folder and URL came from `tools.md`, not from a guess
-- [ ] The root `README.md` existed at the pinned SHA
-- [ ] All nine sections were regenerated from their sources, in sidebar order, and `<folder>/README.md` was rewritten
-- [ ] Each section's live URL returned 200 with its label as `<h1>`, and the live sidebar lists all nine in order
-- [ ] Roadmap and News hold no date, owner, priority or claim that a source does not state
-- [ ] Every input was read at one pinned SHA
-- [ ] Every part of the page traces to its one source; nothing was filled from elsewhere
-- [ ] Missing sources are left out and named on the page and in the report
-- [ ] Usage entries are verbatim from the intent file
-- [ ] Examples come from the Storybook index, with no hand-written JSX
-- [ ] Changelog subjects are verbatim commit subjects
-- [ ] The header status is the registry's `Development`, not the Figma label
-- [ ] The live URL returned 200 and holds all five tabs, in order, each non-empty
-- [ ] Every header link returned 200, except a Figma link answering 403 or Figma's login redirect
-- [ ] `Astro Link` was written only after that, is the verified URL, and was read back
-- [ ] If verification failed, nothing was written
+- [ ] The sidebar has the seven groups in order, and every entry resolves to a page
+- [ ] Every input was read at one pinned SHA; `registry-status.json` and `figma.json` were written this run
+- [ ] The generator ran; no generated file was edited by hand
+- [ ] Every written guide was re-read against the repo, and nothing in it is false
+- [ ] Each component page has the header strip and five tabs in order: Usage, Examples, Code, Design, Changelog
+- [ ] Matrix stories are on Design; every other story is embedded on Examples, in light and dark
+- [ ] Zero broken internal links in the build, and I looked at the site in both themes
+- [ ] The live pages and redirects returned `200` before any `Astro Link` was written
+- [ ] Each `Astro Link` is the verified `/core/components/<name>/` URL, read back
+- [ ] If a status changed, the follow-up build went out so badges and lists match the board
+- [ ] `docs-site/README.md` is current
