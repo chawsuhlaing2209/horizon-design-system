@@ -200,9 +200,8 @@ agent (`.claude/agents/release.md`) owns the rest, and a release is complete onl
 with all of it:
 - **`README.md`** at the repo root on `main`, and inside the published tarball. The
   release halts at preflight without it.
-- **The Astro docs site**, built by doc-generator after the publish: its nine
-  sections (Home, Components, Tokens, Start designing, Start coding, Changelog,
-  Roadmap, News, Help) and a verified page with `Astro Link` for every component
+- **The Astro docs site**, built by doc-generator after the publish in the
+  reference-site format, with a verified page and `Astro Link` for every component
   reading `Completed` + `Cleared` (`.claude/skills/astro-page/SKILL.md`).
 
 None of these is a gate or a check in this review, and none changes a verdict.
