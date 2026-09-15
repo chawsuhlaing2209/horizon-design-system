@@ -2,7 +2,7 @@
 
 The Astro Starlight docs site for `@theproductiveschedule/horizon-design-system`, live at **https://horizon-docs-alpha.vercel.app**.
 
-It lives only on the `astro` branch. The `horizon-docs` Vercel project builds this folder (`docs-site/`) and deploys every push to `astro` to production. Never deploy it by hand, and never merge `astro` into `main`.
+It lives only on the `astro` branch. The `horizon-docs` Vercel project builds this folder (`docs-site/`) and deploys every push to `astro` to production. Vercel installs with `npm install`, not `npm ci`: a lockfile written on macOS omits optional packages that Linux needs (sharp's wasm runtime), and `npm ci` refuses it. Never deploy it by hand, and never merge `astro` into `main`.
 
 ## What is generated and what is written
 
