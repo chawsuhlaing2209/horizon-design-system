@@ -1,0 +1,8 @@
+{
+  "_comment": "The Components table as read this run by doc-generator. Names, statuses and the Release Review permalink only: never a base, table or record ID, because this file is committed.",
+  "readAt": "2026-09-14",
+  "components": [
+    { "name": "Button", "development": "Released", "releaseVerdict": "Cleared", "releaseReview": "https://github.com/chawsuhlaing2209/horizon-design-system/blob/b8bb8e8f1120b3bbe0823edf202abe25047f15ca/reports/button/release-review-b736e68.md" },
+    { "name": "Card", "development": "Released", "releaseVerdict": "Cleared", "releaseReview": "https://github.com/chawsuhlaing2209/horizon-design-system/blob/be2255f129c22c54c2a77236b5f6a4b7f6cfdf6a/reports/card/release-review-b736e68.md" }
+  ]
+}

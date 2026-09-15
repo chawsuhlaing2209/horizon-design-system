@@ -1,0 +1,193 @@
+/*
+ * The docs site, wearing the design system it documents.
+ *
+ * Every rule maps one of Starlight's variables onto a Horizon token. There is no
+ * palette here: not a hex, not a radius. If a colour on this site looks wrong,
+ * the token is wrong, and the docs site is the first place that should show.
+ *
+ * tokens.generated.css comes first. Horizon's dark theme and Starlight's both key
+ * off `data-theme="dark"` on <html>, so the mapping follows the theme switcher.
+ */
+
+:root {
+  --sl-color-white: var(--color-text-primary);
+  --sl-color-gray-1: var(--color-text-primary);
+  --sl-color-gray-2: var(--color-text-secondary);
+  --sl-color-gray-3: var(--color-text-subtle);
+  --sl-color-gray-4: var(--color-text-subtlest);
+  --sl-color-gray-5: var(--color-border-bold);
+  --sl-color-gray-6: var(--color-bg-base-subtle);
+  --sl-color-gray-7: var(--color-bg-surface-secondary);
+  --sl-color-black: var(--color-bg-base);
+
+  --sl-color-text: var(--color-text-primary);
+  --sl-color-text-accent: var(--color-text-link);
+  --sl-color-text-invert: var(--color-text-inverse);
+
+  --sl-color-bg: var(--color-bg-base);
+  --sl-color-bg-nav: var(--color-bg-surface-primary);
+  --sl-color-bg-sidebar: var(--color-bg-surface-primary);
+  --sl-color-bg-inline-code: var(--color-bg-surface-secondary);
+  --sl-color-bg-accent: var(--color-bg-primary);
+
+  --sl-color-accent-low: var(--color-bg-primary-subtle);
+  --sl-color-accent: var(--color-bg-primary);
+  --sl-color-accent-high: var(--color-text-link);
+
+  --sl-color-hairline: var(--color-border-default);
+  --sl-color-hairline-light: var(--color-border-subtle);
+  --sl-color-hairline-shade: var(--color-border-bold);
+
+  /* Asides take the system's own status colours. */
+  --sl-color-orange: var(--color-text-warning);
+  --sl-color-orange-high: var(--color-text-warning);
+  --sl-color-orange-low: var(--color-bg-warning-subtle);
+  --sl-color-green: var(--color-text-positive);
+  --sl-color-green-high: var(--color-text-positive);
+  --sl-color-green-low: var(--color-bg-positive-subtle);
+  --sl-color-blue: var(--color-text-link);
+  --sl-color-blue-high: var(--color-text-link);
+  --sl-color-blue-low: var(--color-bg-info-subtle);
+  --sl-color-red: var(--color-text-negative);
+  --sl-color-red-high: var(--color-text-negative);
+  --sl-color-red-low: var(--color-bg-negative-subtle);
+  --sl-color-purple: var(--color-text-link);
+  --sl-color-purple-high: var(--color-text-link);
+  --sl-color-purple-low: var(--color-bg-primary-subtle);
+
+  --sl-font: 'Inter', var(--sl-font-system);
+}
+
+/* ── The component page ─────────────────────────────────────────────────── */
+
+.hds-pageheader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-gap-sm);
+  font: var(--label-md);
+  margin-block: var(--spacing-margin-md) var(--spacing-gap-xs);
+}
+
+.hds-pageheader a {
+  color: var(--color-text-secondary);
+  text-decoration-color: var(--color-border-bold);
+}
+
+.hds-pageheader a:hover {
+  color: var(--color-text-link);
+}
+
+.hds-status {
+  display: inline-flex;
+  align-items: center;
+  font: var(--label-md);
+  border: var(--border-width-default) solid var(--color-border-bold);
+  border-radius: var(--border-radius-full);
+  padding: 0 var(--spacing-padding-xs);
+  color: var(--color-text-secondary);
+}
+
+.hds-release-date {
+  color: var(--color-text-secondary);
+}
+
+.hds-swatch {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  border-radius: var(--border-radius-control);
+  border: var(--border-width-default) solid var(--color-border-bold);
+  vertical-align: -0.1em;
+  margin-inline-end: var(--spacing-gap-2xs);
+}
+
+/* An embedded frame: a Storybook story, its docs page, or a Figma node. Heights
+ * are set per frame from reference.config.json, so a component shows at its
+ * natural size. */
+.hds-embed {
+  width: 100%;
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--border-radius-control);
+  background-color: var(--color-bg-surface-primary);
+  display: block;
+  color-scheme: normal;
+}
+
+.hds-embed--figma {
+  height: 480px;
+}
+
+.hds-embed-note {
+  font: var(--body-sm);
+  color: var(--color-text-subtle);
+  margin-block-start: var(--spacing-gap-2xs);
+}
+
+.hds-embed-pair {
+  margin-block: var(--spacing-gap-sm);
+}
+
+/* Two frames per story, one per theme; the page's theme decides which shows. */
+.hds-embed[data-embed-theme='dark'] {
+  display: none;
+}
+
+:root[data-theme='dark'] .hds-embed[data-embed-theme='light'] {
+  display: none;
+}
+
+:root[data-theme='dark'] .hds-embed[data-embed-theme='dark'] {
+  display: block;
+}
+
+/* Both themes side by side on the Design tab. */
+.hds-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-gap-xs);
+  margin-block: var(--spacing-gap-md);
+}
+
+.hds-mode {
+  flex: 1 1 7rem;
+  border: var(--border-width-default) solid var(--color-border-default);
+  border-radius: var(--border-radius-control);
+  overflow: hidden;
+  background-color: var(--color-bg-base);
+}
+
+.hds-mode__swatches {
+  display: flex;
+  height: 2.5rem;
+}
+
+.hds-mode__swatches span {
+  flex: 1;
+}
+
+.hds-mode__name {
+  font: var(--label-md);
+  color: var(--color-text-secondary);
+  padding: var(--spacing-gap-2xs) var(--spacing-padding-xs);
+  border-block-start: var(--border-width-default) solid var(--color-border-default);
+}
+
+/* Prop and token tables get wide: scroll rather than crush the type column. */
+.sl-markdown-content table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  font: var(--body-md);
+}
+
+.sl-markdown-content th {
+  font: var(--label-lg);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* A token or prop name is read as one word: never break it across lines. */
+.sl-markdown-content td:first-child code {
+  white-space: nowrap;
+}

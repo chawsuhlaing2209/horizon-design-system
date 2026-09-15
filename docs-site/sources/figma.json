@@ -1,0 +1,42 @@
+{
+  "_comment": "The Figma reads this run by doc-generator: each component's documentation-frame description and its component sets' properties, verbatim. storyAliases maps a Storybook control name onto the Figma property it stands for.",
+  "readAt": "2026-09-14",
+  "fileKey": "r1CpQEYecqROS0oIOMlqAx",
+  "fileSlug": "2.-Horizon-Component",
+  "fileUrl": "https://www.figma.com/design/r1CpQEYecqROS0oIOMlqAx/2.-Horizon-Component",
+  "components": {
+    "button": {
+      "description": "Buttons prompt most actions in a UI.",
+      "sets": [
+        { "label": "Button", "node": "26:70", "props": [
+          { "name": "variant", "type": "VARIANT", "values": ["filled", "outlined"] },
+          { "name": "state", "type": "VARIANT", "values": ["enable", "hover", "focused", "disabled"] }
+        ] }
+      ]
+    },
+    "card": {
+      "description": "Use this card component to display content in visually aesthetics, clean and interactive way.",
+      "storyAliases": { "imageState": "state" },
+      "sets": [
+        { "label": "Card", "node": "34:317", "props": [
+          { "name": "state", "type": "VARIANT", "values": ["enable", "hover"] }
+        ] },
+        { "label": "cardLayout", "node": "8:1251", "props": [
+          { "name": "orientation", "type": "VARIANT", "values": ["vertical", "horizontal"] },
+          { "name": "hasSlot", "type": "BOOLEAN", "values": ["true", "false"] },
+          { "name": "slot", "type": "SLOT", "values": [] }
+        ] },
+        { "label": "cardImage", "node": "8:1186", "props": [
+          { "name": "state", "type": "VARIANT", "values": ["idle", "hover"] },
+          { "name": "ratio", "type": "VARIANT", "values": ["4:3", "1:1"] },
+          { "name": "overlayAction", "type": "BOOLEAN", "values": ["true", "false"] }
+        ] },
+        { "label": "cardText", "node": "8:778", "props": [
+          { "name": "metadata", "type": "BOOLEAN", "values": ["true", "false"] },
+          { "name": "review", "type": "BOOLEAN", "values": ["true", "false"] },
+          { "name": "price", "type": "BOOLEAN", "values": ["true", "false"] }
+        ] }
+      ]
+    }
+  }
+}

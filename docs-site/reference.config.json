@@ -1,0 +1,12 @@
+{
+  "_comment": "Everything the generated site needs that is not in the repo. storybookUrl is where components render: every page embeds and links into it, so a wrong value produces dead links and blank frames rather than a build error. embeds sets iframe heights per component folder and story id.",
+  "title": "Horizon Design System",
+  "description": "What each Horizon component is for, when not to use it, and how to call it.",
+  "siteUrl": "https://horizon-docs-alpha.vercel.app",
+  "storybookUrl": "https://horizon-design-system-delta.vercel.app",
+  "repoUrl": "https://github.com/chawsuhlaing2209/horizon-design-system",
+  "embeds": {
+    "button": { "default": 140, "components-button--in-form": 260, "components-button--in-card": 520 },
+    "card": { "default": 460, "components-card--in-results-grid": 460, "components-card--in-list-with-button": 520, "components-card--long-content": 620 }
+  }
+}
