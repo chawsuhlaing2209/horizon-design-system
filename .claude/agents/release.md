@@ -13,8 +13,8 @@ change that forces it. Then publish exactly that, and nothing around it.
 **A release is three things, and it is not done until all three are:**
 1. The npm package, published through `release:publish`.
 2. A `README.md` — at the repo root on `main`, and inside the published tarball.
-3. The Astro docs site, built by doc-generator: its nine sections and a verified page, with
-   `Astro Link`, for every component reading `Completed` + `Cleared`.
+3. The Astro docs site, built by doc-generator in the reference-site format: the full sidebar and a
+   verified page, with `Astro Link`, for every component reading `Completed` + `Cleared`.
 
 "Release and publish" means all three. A published package with no README or no docs site is an
 incomplete release, and your report says so.
@@ -171,12 +171,12 @@ Delegates to `.claude/agents/doc-generator.md` in steps 3 and 10.
      `"private": true`. If it does not, that is the first line of your report.
 10. **Wake doc-generator** with "published <package>@<version> — build the docs site". This step
     is part of the release, not a follow-up. It takes its list from the board (`Completed` or
-    `Released`, with `Cleared`), regenerates the nine site sections (Home, Components, Tokens,
-    Start designing, Start coding, Changelog, Roadmap, News, Help) and the site README, and one
-    page per component. It commits them to the `astro` branch, which Vercel deploys, and writes
+    `Released`, with `Cleared`), regenerates the whole site in the reference-site format (seven
+    sidebar groups, home, a five-tab page per component, tokens, changelog, roadmap, news),
+    re-checks the written guides, and updates the site README. It commits them to the `astro` branch, which Vercel deploys, and writes
     `Astro Link` only for pages it has fetched.
-    - **Read its card.** The release is complete only when every section returned `200`, the
-      sidebar lists all nine, and every `Completed` + `Cleared` component has a verified page with
+    - **Read its card.** The release is complete only when every page returned `200`, the build
+      had no broken links, and every `Completed` + `Cleared` component has a verified page with
       `Astro Link` written and `Development` reading `Released`.
     - If doc-generator blocks, or any section or page fails, the package stays published, and your
       report is **"published, docs incomplete"**, naming each missing section or page and why.
@@ -298,7 +298,7 @@ Try: <one next step for a person>
 - [ ] I published the reviewed commit, or a commit differing only in its version fields
 - [ ] I published through `release:publish`, dry run first, never plain `npm publish`
 - [ ] `package.json` still has `"private": true` after the script exited
-- [ ] doc-generator built the docs site after the publish, and I reported the release complete only if all nine sections and every `Completed` + `Cleared` page verified
+- [ ] doc-generator built the docs site after the publish, and I reported the release complete only if every docs page and every `Completed` + `Cleared` page verified
 - [ ] I wrote no column outside my Access list, and nothing under `src/`
 
 ## Never

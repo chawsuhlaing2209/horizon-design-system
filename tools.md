@@ -42,8 +42,9 @@ Stack facts and commands only. Rules about how we work live in `CLAUDE.md`.
 - Docs site (Astro Starlight): folder `docs-site/`, which exists only on the `astro` branch. Astro 7 with Starlight 0.42, its own `package.json` and lockfile.
   - Vercel project: `horizon-docs` (root directory `docs-site`, production branch `astro`; builds on any other branch are skipped). Each push to `astro` deploys production; never deploy by hand.
   - Production URL: https://horizon-docs-alpha.vercel.app
-  - Component pages: `docs-site/src/content/docs/components/<name>.mdx`, served at `https://horizon-docs-alpha.vercel.app/components/<name>/`
-  - Site sections, always all nine, in sidebar order: Home, Components, Tokens, Start designing, Start coding, Changelog, Roadmap, News, Help. Generated from the code repo by doc-generator (`astro-page` skill), with `docs-site/README.md`.
+  - Format: the Sunim reference site (https://sunim-ds-reference.vercel.app). Sidebar groups Get Started, Designing, Developing, Skills, Core, Styling, Help; splash home page.
+  - Component pages: `docs-site/src/content/docs/core/components/<name>.mdx`, served at `https://horizon-docs-alpha.vercel.app/core/components/<name>/` (old `/components/<name>/` URLs redirect).
+  - Generator: `node docs-site/scripts/generate.mjs --repo <horizon-design-system worktree>` writes home, components, tokens, changelog, roadmap and news from the repo, `docs-site/sources/*.json` and the Storybook index. The guides are written and re-checked each run. See `docs-site/README.md`.
 - README: `README.md` at the repo root is required on `main` and in every published tarball.
 
 ## Shell and CI facts
